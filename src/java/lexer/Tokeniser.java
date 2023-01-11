@@ -14,7 +14,7 @@ public class Tokeniser {
 
     private int error = 0;
     public int getErrorCount() {
-	return this.error;
+	    return this.error;
     }
 
     public Tokeniser(Scanner scanner) {
@@ -23,7 +23,7 @@ public class Tokeniser {
 
     private void error(char c, int line, int col) {
         System.out.println("Lexing error: unrecognised character ("+c+") at "+line+":"+col);
-	error++;
+	    error++;
     }
 
 
@@ -58,11 +58,93 @@ public class Tokeniser {
         if (Character.isWhitespace(c))
             return next();
 
+
+        /*
+            DELIMITERS
+        */
+        // recognises the left brace
+        if (c == '{')
+            return new Token(TokenClass.LBRA, line, column);
+
+        // recognises the right brace
+        if (c == '}')
+            return new Token(TokenClass.RBRA, line, column);
+
+        // recognises the left paren
+        if (c == '(')
+            return new Token(TokenClass.LPAR, line, column);
+
+        // recognises the right paren
+        if (c == ')')
+            return new Token(TokenClass.RPAR, line, column);
+
+        // recognises the left square brace
+        if (c == '[')
+            return new Token(TokenClass.LSBR, line, column);
+
+        // recognises the right square brace
+        if (c == ']')
+            return new Token(TokenClass.RSBR, line, column);
+
+        // recognises the semicolon
+        if (c == ';')
+            return new Token(TokenClass.SC, line, column);
+
+        // recognises the comma
+        if (c == ',')
+            return new Token(TokenClass.COMMA, line, column);
+
+        /*
+            COMPARISON
+         */
+
+        //recognises not eq
+        if (c == '!' && scanner.peek() == '='){
+            scanner.next(); //consume next char
+            return new Token(TokenClass.NE, line, column);
+        }
+
+
+        /*
+            OPERATORS
+         */
         // recognises the plus operator
         if (c == '+')
             return new Token(TokenClass.PLUS, line, column);
 
-        // ... to be completed
+        // recognises the minus operator
+        if (c == '-')
+            return new Token(TokenClass.MINUS, line, column);
+
+        // recognises the asterix operator
+        if (c == '*')
+            return new Token(TokenClass.ASTERIX, line, column);
+
+        // recognises the div operator -> AMB
+
+        // recognises the mod operator
+        if (c == '%')
+            return new Token(TokenClass.REM, line, column);
+
+
+        /*
+            STRUCT MEMBER ACCESS
+         */
+
+        /*
+            AMBIGUOUS
+         */
+        //handle '/' char
+
+        //handle '&' char
+
+        //handle '|' char
+
+        //handle '=' char
+
+        //handle '<' char
+
+        //handle '>' char
 
 
         // if we reach this point, it means we did not recognise a valid token

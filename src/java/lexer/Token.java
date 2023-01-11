@@ -17,14 +17,14 @@ public class Token {
         ASSIGN, // '='
 
         // delimiters
-        LBRA,  // '{' // left brace
-        RBRA,  // '}' // right brace
-        LPAR,  // '(' // left parenthesis
-        RPAR,  // ')' // right parenthesis
-        LSBR,  // '[' // left square brace
-        RSBR,  // ']' // left square brace
-        SC,    // ';' // semicolon
-        COMMA, // ','
+        LBRA,  // '{' // left brace DONE
+        RBRA,  // '}' // right brace DONE
+        LPAR,  // '(' // left parenthesis DONE
+        RPAR,  // ')' // right parenthesis DONE
+        LSBR,  // '[' // left square brace DONE
+        RSBR,  // ']' // left square brace DONE
+        SC,    // ';' // semicolon DONE
+        COMMA, // ',' DONE
 
         // types
         INT,  // "int"
@@ -53,18 +53,18 @@ public class Token {
 
         // comparisons
         EQ, // "=="
-        NE, // "!="
+        NE, // "!=" DONE
         LT, // '<'
         GT, // '>'
         LE, // "<="
         GE, // ">="
 
         // operators
-        PLUS,    // '+'
-        MINUS,   // '-'
-        ASTERIX, // '*'  // can be used for multiplication or pointers
+        PLUS,    // '+' DONE
+        MINUS,   // '-' DONE
+        ASTERIX, // '*'  // can be used for multiplication or pointers DONE
         DIV,     // '/'
-        REM,     // '%'
+        REM,     // '%' DONE
         AND,     // '&'
 
         // struct member access
@@ -99,6 +99,10 @@ public class Token {
             return tokenClass.toString();
         else
             return tokenClass.toString()+"("+data+")";
+    }
+
+    public boolean equal(Token other){
+        return this.tokenClass == other.tokenClass;
     }
 
 }
