@@ -12,7 +12,7 @@ public class Token {
         // the \ (backslash) is used as an escape character in the regular expression below
         // ' is used to enclose characters while " is used to enclose strings
 
-        IDENTIFIER, // ('a'|...|'z'|'A'|...|'Z'|'_')('0'|...|'9'|'a'|...|'z'|'A'|...|'Z'|'_')*
+        IDENTIFIER, // DONE ('a'|...|'z'|'A'|...|'Z'|'_')('0'|...|'9'|'a'|...|'z'|'A'|...|'Z'|'_')*
 
         ASSIGN, // '=' DONE
 
@@ -27,25 +27,25 @@ public class Token {
         COMMA, // ',' DONE
 
         // types
-        INT,  // "int"
-        VOID, // "void"
-        CHAR, // "char"
+        INT,  // "int" DONE
+        VOID, // "void" DONE
+        CHAR, // "char" DONE
 
         // keywords
-        IF,     // "if"
-        ELSE,   // "else"
-        WHILE,  // "while"
-        RETURN, // "return"
-        STRUCT, // "struct"
-        SIZEOF, // "sizeof"
+        IF,     // "if" DONE
+        ELSE,   // "else" DONE
+        WHILE,  // "while" DONE
+        RETURN, // "return" DONE
+        STRUCT, // "struct" DONE
+        SIZEOF, // "sizeof"DONE
 
         // include
-        INCLUDE, // "#include"
+        INCLUDE, // "#include" DONE
 
         // literals
-        STRING_LITERAL, // \".*\"  any sequence of characters enclosed within two double quote " (please be aware of the escape character backslash \)
-        INT_LITERAL,    // ('0'|...|'9')+
-        CHAR_LITERAL,   // \'('a'|...|'z'|'A'|...|'Z'|'\t'|'\b'|'\n'|'\r'|'\f'|'\''|'\"'|'\\'|'\0'|'.'|','|'_'|...)\'  a character starts and end with a single quote '
+        STRING_LITERAL, // DONE \".*\"  any sequence of characters enclosed within two double quote " (please be aware of the escape character backslash \)
+        INT_LITERAL,    // DONE ('0'|...|'9')+
+        CHAR_LITERAL,   // DONE \'('a'|...|'z'|'A'|...|'Z'|'\t'|'\b'|'\n'|'\r'|'\f'|'\''|'\"'|'\\'|'\0'|'.'|','|'_'|...)\'  a character starts and end with a single quote '
 
         // logical operators
         LOGAND, // "&&" DONE

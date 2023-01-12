@@ -225,18 +225,30 @@ public class Tokeniser {
                 return new Token(TokenClass.IDENTIFIER, "i", line, column);
             }
             //potential 'if'
-            if( scanner.peek() == 'f'){
+            if( scanner.peek() == 'f' ){
                 sb.append(scanner.next()); //add f
-                //if
-                if( scanner.peek() == ' '){
+                //[if ] or [if(]
+                if( scanner.peek() == ' ' || scanner.peek() == '(') {
                     return new Token(TokenClass.IF, line, column);
                 }
-                //identifier
-                while(Character.isLetterOrDigit(scanner.peek())){
-                    sb.append(scanner.next());
-                }
-                return new Token(TokenClass.IDENTIFIER, sb.toString(), line, column);
             }
+            //potential int
+            if( scanner.peek() == 'n' ){
+                sb.append(scanner.next()); //add n
+                if( scanner.peek() == 't') {
+                    sb.append(scanner.next());
+                    //int
+                    if (scanner.peek() == ' ') {
+                        return new Token(TokenClass.INT, line, column);
+                    }
+                }
+            }
+
+            //identifier
+            while(Character.isLetterOrDigit(scanner.peek()) || scanner.peek() == '_'){
+                sb.append(scanner.next());
+            }
+            return new Token(TokenClass.IDENTIFIER, sb.toString(), line, column);
         }
 
         //handle 'v' char (void)
@@ -248,34 +260,196 @@ public class Tokeniser {
                 sb.append(scanner.next());
                 len++;
                 //void token
-                if(scanner.peek() == ' ' && len==4 && sb.toString()=="void") {
+                if(scanner.peek() == ' ' && len==4 && sb.toString().equals("void")) {
                     return new Token(TokenClass.VOID, line, column);
                 }
             }
             //identifier
-            while(Character.isLetterOrDigit(scanner.peek())){
+            while(Character.isLetterOrDigit(scanner.peek()) || scanner.peek() == '_'){
                 sb.append(scanner.next());
             }
             return new Token(TokenClass.IDENTIFIER, sb.toString(), line, column);
         }
 
         //handle 'e' char (else)
+        if( c == 'e' ){
+            StringBuilder sb = new StringBuilder();
+            sb.append(c);
+            short len = 1;
+            while(Character.isLetterOrDigit(scanner.peek())){
+                sb.append(scanner.next());
+                len++;
+                //[else ] or [else{]
+                if( (scanner.peek() == ' ' || scanner.peek() == '{')
+                        && len==4 && sb.toString().equals("else")) {
+                    return new Token(TokenClass.ELSE, line, column);
+                }
+            }
+            //identifier
+            while(Character.isLetterOrDigit(scanner.peek()) || scanner.peek() == '_'){
+                sb.append(scanner.next());
+            }
+            return new Token(TokenClass.IDENTIFIER, sb.toString(), line, column);
+        }
 
         //handle 'w' char (while)
+        if( c == 'w' ){
+            StringBuilder sb = new StringBuilder();
+            sb.append(c);
+            short len = 1;
+            while(Character.isLetterOrDigit(scanner.peek())){
+                sb.append(scanner.next());
+                len++;
+                //[while ] or [while{]
+                if( (scanner.peek() == ' ' || scanner.peek() == '{')
+                        && len==5 && sb.toString().equals("while")) {
+                    return new Token(TokenClass.WHILE, line, column);
+                }
+            }
+            //identifier
+            while(Character.isLetterOrDigit(scanner.peek()) || scanner.peek() == '_'){
+                sb.append(scanner.next());
+            }
+            return new Token(TokenClass.IDENTIFIER, sb.toString(), line, column);
+        }
 
         //handle 'r' char (return)
+        if( c == 'r' ){
+            StringBuilder sb = new StringBuilder();
+            sb.append(c);
+            short len = 1;
+            while(Character.isLetterOrDigit(scanner.peek())){
+                sb.append(scanner.next());
+                len++;
+                //[return ] or [return;]
+                if( (scanner.peek() == ' ' || scanner.peek() == ';')
+                        && len==6 && sb.toString().equals("return")) {
+                    return new Token(TokenClass.RETURN, line, column);
+                }
+            }
+            //identifier
+            while(Character.isLetterOrDigit(scanner.peek()) || scanner.peek() == '_'){
+                sb.append(scanner.next());
+            }
+            return new Token(TokenClass.IDENTIFIER, sb.toString(), line, column);
+        }
 
         //handle 's' char (struct,sizeof)
+        if( c == 's' ){
+            StringBuilder sb = new StringBuilder();
+            sb.append(c);
+            short len = 1;
+            while(Character.isLetterOrDigit(scanner.peek())){
+                sb.append(scanner.next());
+                len++;
+                //[struct ]
+                if( scanner.peek() == ' ' && len==6 && sb.toString().equals("struct")) {
+                    return new Token(TokenClass.STRUCT, line, column);
+                }
+                if( (scanner.peek() == ' ' || scanner.peek() == '(')
+                        && len==6 && sb.toString().equals("sizeof")) {
+                    return new Token(TokenClass.SIZEOF, line, column);
+                }
+            }
+            //identifier
+            while(Character.isLetterOrDigit(scanner.peek()) || scanner.peek() == '_'){
+                sb.append(scanner.next());
+            }
+            return new Token(TokenClass.IDENTIFIER, sb.toString(), line, column);
+        }
+
+        //handle 'c' char (char)
+        if( c == 'c'){
+            StringBuilder sb = new StringBuilder();
+            sb.append(c);
+            short len = 1;
+            while(Character.isLetterOrDigit(scanner.peek())){
+                sb.append(scanner.next());
+                len++;
+                //void token
+                if(scanner.peek() == ' ' && len==4 && sb.toString().equals("char")) {
+                    return new Token(TokenClass.CHAR, line, column);
+                }
+            }
+            //identifier
+            while(Character.isLetterOrDigit(scanner.peek()) || scanner.peek() == '_'){
+                sb.append(scanner.next());
+            }
+            return new Token(TokenClass.IDENTIFIER, sb.toString(), line, column);
+        }
 
         //handle '#' char (#include)
+        if( c == '#'){
+            StringBuilder sb = new StringBuilder();
+            sb.append(c); //append #
+            short len = 1;
+            while(Character.isLetterOrDigit(scanner.peek())) {
+                sb.append(scanner.next());
+                len++;
+                if( len==8 && sb.toString().equals("#include")){
+                    return new Token(TokenClass.INCLUDE, line, column);
+                }
+            }
+            //identifier
+            while(Character.isLetterOrDigit(scanner.peek()) || scanner.peek() == '_'){
+                sb.append(scanner.next());
+            }
+            return new Token(TokenClass.INVALID, sb.toString(), line, column);
+        }
 
-        //
+        /*
+            LITERALS
+         */
+        //string literal
+        if( c == '\"'){
+            StringBuilder sb = new StringBuilder();
+            while(scanner.peek()  != '\"'){
+                sb.append(scanner.next());
+            }
+            scanner.next(); //consume trailing "
+            return new Token(TokenClass.STRING_LITERAL, sb.toString(), line, column);
+        }
 
+        //int_literal
+        if( Character.isDigit(c) ){
+            StringBuilder sb = new StringBuilder();
+            sb.append(c);
+            while(Character.isDigit(scanner.peek())){
+                sb.append(scanner.next());
+            }
+            return new Token(TokenClass.INT_LITERAL, sb.toString(), line, column);
+        }
+
+        //char_literal
+        if( c == '\''){
+            StringBuilder sb = new StringBuilder();
+            while(scanner.peek()  != '\''){
+                sb.append(scanner.next());
+            }
+            scanner.next(); //consume trailing '
+            return new Token(TokenClass.CHAR_LITERAL, sb.toString(), line, column);
+        }
+
+        /*
+            IDENTIFIER
+         */
+        if( Character.isLetterOrDigit(c) || c == '_'){
+            StringBuilder sb = new StringBuilder();
+            sb.append(c);
+            while(Character.isLetterOrDigit(scanner.peek()) || scanner.peek() == '_'){
+                sb.append(scanner.next());
+            }
+            return new Token(TokenClass.IDENTIFIER, sb.toString(), line, column);
+        }
 
         // if we reach this point, it means we did not recognise a valid token
         error(c, line, column);
         return new Token(TokenClass.INVALID, line, column);
     }
 
+    @SuppressWarnings("unused")
+    private void print(String s){
+        System.out.println(s);
+    }
 
 }
