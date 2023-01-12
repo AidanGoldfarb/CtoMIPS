@@ -10,7 +10,7 @@ import java.io.IOException;
  */
 public class Tokeniser {
 
-    private Scanner scanner;
+    private final Scanner scanner;
 
     private int error = 0;
     public int getErrorCount() {
@@ -52,7 +52,12 @@ public class Tokeniser {
         int column = scanner.getColumn();
 
         // get the next character
-        char c = scanner.next();
+        char c;
+        try{
+            c = scanner.next();
+        }catch (EOFException e){
+            return new Token(TokenClass.EOF, line,column);
+        }
 
         // skip white spaces
         if (Character.isWhitespace(c))
@@ -130,21 +135,141 @@ public class Tokeniser {
         /*
             STRUCT MEMBER ACCESS
          */
+        // recognises the period operator
+        if (c == '.')
+            return new Token(TokenClass.DOT, line, column);
 
         /*
             AMBIGUOUS
          */
         //handle '/' char
+        if (c == '/'){
+            //line comment, consume until newline
+            if (scanner.peek() == '/'){
+                while(scanner.next() != '\n'){}
+                return next();
+            }
+            //block comment, consume until */
+            if (scanner.peek() == '*'){
+                scanner.next();
+                while(scanner.next() != '*' || scanner.peek() != '/'){}
+                scanner.next();
+                return next();
+            }
+
+            //division
+            return new Token(TokenClass.DIV, line, column);
+        }
 
         //handle '&' char
+        if (c == '&'){
+            //&& logical
+            if(scanner.peek() == '&'){
+                scanner.next();
+                return new Token(TokenClass.LOGAND, line, column);
+            }
+            // & bitwise
+            return new Token(TokenClass.AND, line, column);
+        }
 
         //handle '|' char
+        if (c == '|'){
+            //|| logical
+            if(scanner.peek() == '|'){
+                scanner.next();
+                return new Token(TokenClass.LOGOR, line, column);
+            }
+            // no | bitwise i guess
+            return new Token(TokenClass.INVALID, line, column);
+        }
 
         //handle '=' char
+        if (c == '='){
+            //==
+            if(scanner.peek() == '='){
+                scanner.next();
+                return new Token(TokenClass.EQ, line, column);
+            }
+            // = assign
+            return new Token(TokenClass.ASSIGN, line, column);
+        }
 
         //handle '<' char
+        if (c == '<'){
+            // <=
+            if(scanner.peek() == '='){
+                scanner.next();
+                return new Token(TokenClass.LE, line, column);
+            }
+            //  <
+            return new Token(TokenClass.LT, line, column);
+        }
 
         //handle '>' char
+        if (c == '>'){
+            // >=
+            if(scanner.peek() == '='){
+                scanner.next();
+                return new Token(TokenClass.GE, line, column);
+            }
+            //  >
+            return new Token(TokenClass.GT, line, column);
+        }
+
+        //handle 'i' char (int, if) NOT CORRECT YET, IDENT HAS A STRUCTURE
+        if( c == 'i'){
+            StringBuilder sb = new StringBuilder();
+            sb.append(c);
+            //Identifier 'i'
+            if( scanner.peek() == ' '){
+                return new Token(TokenClass.IDENTIFIER, "i", line, column);
+            }
+            //potential 'if'
+            if( scanner.peek() == 'f'){
+                sb.append(scanner.next()); //add f
+                //if
+                if( scanner.peek() == ' '){
+                    return new Token(TokenClass.IF, line, column);
+                }
+                //identifier
+                while(Character.isLetterOrDigit(scanner.peek())){
+                    sb.append(scanner.next());
+                }
+                return new Token(TokenClass.IDENTIFIER, sb.toString(), line, column);
+            }
+        }
+
+        //handle 'v' char (void)
+        if( c == 'v' ){
+            StringBuilder sb = new StringBuilder();
+            sb.append(c);
+            short len = 1;
+            while(Character.isLetterOrDigit(scanner.peek())){
+                sb.append(scanner.next());
+                len++;
+                //void token
+                if(scanner.peek() == ' ' && len==4 && sb.toString()=="void") {
+                    return new Token(TokenClass.VOID, line, column);
+                }
+            }
+            //identifier
+            while(Character.isLetterOrDigit(scanner.peek())){
+                sb.append(scanner.next());
+            }
+            return new Token(TokenClass.IDENTIFIER, sb.toString(), line, column);
+        }
+
+        //handle 'e' char (else)
+
+        //handle 'w' char (while)
+
+        //handle 'r' char (return)
+
+        //handle 's' char (struct,sizeof)
+
+        //handle '#' char (#include)
+
+        //
 
 
         // if we reach this point, it means we did not recognise a valid token

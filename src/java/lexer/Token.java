@@ -14,7 +14,7 @@ public class Token {
 
         IDENTIFIER, // ('a'|...|'z'|'A'|...|'Z'|'_')('0'|...|'9'|'a'|...|'z'|'A'|...|'Z'|'_')*
 
-        ASSIGN, // '='
+        ASSIGN, // '=' DONE
 
         // delimiters
         LBRA,  // '{' // left brace DONE
@@ -48,31 +48,31 @@ public class Token {
         CHAR_LITERAL,   // \'('a'|...|'z'|'A'|...|'Z'|'\t'|'\b'|'\n'|'\r'|'\f'|'\''|'\"'|'\\'|'\0'|'.'|','|'_'|...)\'  a character starts and end with a single quote '
 
         // logical operators
-        LOGAND, // "&&"
-        LOGOR,  // "||"
+        LOGAND, // "&&" DONE
+        LOGOR,  // "||" DONE
 
         // comparisons
-        EQ, // "=="
+        EQ, // "==" DONE
         NE, // "!=" DONE
-        LT, // '<'
-        GT, // '>'
-        LE, // "<="
-        GE, // ">="
+        LT, // '<' DONE
+        GT, // '>' DONE
+        LE, // "<=" DONE
+        GE, // ">=" DONE
 
         // operators
         PLUS,    // '+' DONE
         MINUS,   // '-' DONE
-        ASTERIX, // '*'  // can be used for multiplication or pointers DONE
-        DIV,     // '/'
+        ASTERIX, // '*'  // DONE, can be used for multiplication or pointers
+        DIV,     // '/' DONE
         REM,     // '%' DONE
-        AND,     // '&'
+        AND,     // '&' DONE
 
         // struct member access
-        DOT, // '.'
+        DOT, // '.' //DONE
 
         // special tokens
-        EOF,    // signal end of file
-        INVALID // in case we cannot recognise a character as part of a valid token
+        EOF,    // signal end of file DONE
+        INVALID // DONE, in case we cannot recognise a character as part of a valid token
     }
 
 
@@ -100,11 +100,6 @@ public class Token {
         else
             return tokenClass.toString()+"("+data+")";
     }
-
-    public boolean equal(Token other){
-        return this.tokenClass == other.tokenClass;
-    }
-
 }
 
 
