@@ -47,7 +47,6 @@ public class Tokeniser {
      * To be completed
      */
     private Token next() throws IOException {
-
         int line = scanner.getLine();
         int column = scanner.getColumn();
 
@@ -402,13 +401,35 @@ public class Tokeniser {
             LITERALS
          */
         //string literal
-        if( c == '\"'){
+        if( c == '\"'){ // "\0";
             StringBuilder sb = new StringBuilder();
-            while(scanner.peek()  != '\"'){
-                sb.append(scanner.next());
+
+            while (scanner.peek() != '\"'){
+                //escape char. consume next two as one
+                if( scanner.peek()  == '\\'){
+                    sb.append(scanner.next()+"" + scanner.next()+"");
+                }else{
+                    sb.append(scanner.next());
+                }
             }
             scanner.next(); //consume trailing "
             return new Token(TokenClass.STRING_LITERAL, sb.toString(), line, column);
+
+            //            StringBuilder sb = new StringBuilder();
+//            char fst = scanner.peek();
+//            while(fst  != '\"'){
+//                //escape char, append next two as one char
+//                if (fst == '\\'){
+//                    String v = fst+"" + scanner.next()+"";
+//                    print("appending: " + v);
+//                    sb.append(v);
+//                }
+//                else {
+//                    sb.append(scanner.next());
+//                }
+//            }
+//            scanner.next(); //consume trailing "
+//            return new Token(TokenClass.STRING_LITERAL, sb.toString(), line, column);
         }
 
         //int_literal
@@ -452,5 +473,19 @@ public class Tokeniser {
     private void print(String s){
         System.out.println(s);
     }
+    @SuppressWarnings("unused")
+    private void print_rest(){
+        while(true){
+            try{
+                print(scanner.next()+"");
+            }catch (EOFException e){
+                print("EOF caught");
+                System.exit(0);
+            } catch (IOException e) {
+                print("IO EXCEPTION");
+            }
+        }
+    }
+
 
 }

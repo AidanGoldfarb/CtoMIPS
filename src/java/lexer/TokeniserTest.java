@@ -674,6 +674,47 @@
 //        assert tk.nextToken().tokenClass == Token.TokenClass.EOF;
 //
 //    }
+//
+//
+//    @Test
+//    void escape_char0() throws FileNotFoundException {
+//        Scanner sc = new Scanner(new File("tests/escape_char0.c")); //char c = "\0";
+//        Tokeniser tk = new Tokeniser(sc);
+//
+//        assert tk.nextToken().tokenClass == Token.TokenClass.CHAR;
+//        assert tk.nextToken().tokenClass == Token.TokenClass.IDENTIFIER;
+//        assert tk.nextToken().tokenClass == Token.TokenClass.ASSIGN;
+//
+//        Token qt_tk = tk.nextToken();
+//        assert qt_tk.tokenClass == Token.TokenClass.STRING_LITERAL;
+//        assert qt_tk.data.equals("\\0");
+//
+////        print_rest(tk);
+////        Token semi = tk.nextToken();
+////        print(semi.tokenClass);
+//        assert tk.nextToken().tokenClass == Token.TokenClass.SC;
+//        assert tk.nextToken().tokenClass == Token.TokenClass.EOF;
+//    }
+//    @Test
+//    void escape_char1(){
+//        Scanner sc = new Scanner("void* str = \"I said:\\t\\\"hello\\\"\";");
+//        Tokeniser tk = new Tokeniser(sc);
+//        assert tk.nextToken().tokenClass == Token.TokenClass.VOID;
+//        assert tk.nextToken().tokenClass == Token.TokenClass.ASTERIX;
+//        assert tk.nextToken().tokenClass == Token.TokenClass.IDENTIFIER;
+//        assert tk.nextToken().tokenClass == Token.TokenClass.ASSIGN;
+//
+//        print("void* str = \"I said:\\t\\\"hello\\\"\";");
+//        Token qt_tk = tk.nextToken();
+//        print(qt_tk.tokenClass);
+//        print(qt_tk.data);
+//        assert qt_tk.tokenClass == Token.TokenClass.STRING_LITERAL;
+//        assert qt_tk.data.equals("I said:\\t\\\"hello\\\"");
+//
+//        assert tk.nextToken().tokenClass == Token.TokenClass.SC;
+//        assert tk.nextToken().tokenClass == Token.TokenClass.EOF;
+//    }
+//
 //    @SuppressWarnings("unused")
 //    private void print_rest(Tokeniser tk){
 //        Token cur = tk.nextToken();
@@ -682,6 +723,14 @@
 //            cur = tk.nextToken();
 //        }
 //        print(cur);
+//    }
+//
+//    @SuppressWarnings("unused")
+//    private void exhaust(Tokeniser tk){
+//        Token cur = tk.nextToken();
+//        while(cur.tokenClass != Token.TokenClass.EOF){
+//            cur = tk.nextToken();
+//        }
 //    }
 //    @SuppressWarnings("unused")
 //    private <T> void print(T s){
