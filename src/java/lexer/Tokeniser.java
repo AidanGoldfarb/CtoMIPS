@@ -4,14 +4,17 @@ import lexer.Token.TokenClass;
 
 import java.io.EOFException;
 import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * @author cdubach
  */
+
+
 public class Tokeniser {
 
     private final Scanner scanner;
-
+    private final String [] VALID_ESC = {"\\t","\\b","\\n","\\r","\\f","\\'","\\\"","\\\\","\\0"};
     private int error = 0;
     public int getErrorCount() {
 	    return this.error;
@@ -47,6 +50,7 @@ public class Tokeniser {
      * To be completed
      */
     private Token next() throws IOException {
+        //print_rest(); //debug
         int line = scanner.getLine();
         int column = scanner.getColumn();
 
@@ -390,7 +394,7 @@ public class Tokeniser {
                     return new Token(TokenClass.INCLUDE, line, column);
                 }
             }
-            //identifier
+
             while(Character.isLetterOrDigit(scanner.peek()) || scanner.peek() == '_'){
                 sb.append(scanner.next());
             }
@@ -407,29 +411,22 @@ public class Tokeniser {
             while (scanner.peek() != '\"'){
                 //escape char. consume next two as one
                 if( scanner.peek()  == '\\'){
-                    sb.append(scanner.next()+"" + scanner.next()+"");
+                    sb.append(scanner.next()); // append \
+                    if( "tbnrf\'\"\\0".contains(scanner.peek()+"") ){
+                        sb.append(scanner.next());
+                    }
+                    //invalid escape
+                    else{
+                        sb.append(scanner.next());
+                        scanner.next();//consume trailing '
+                        return new Token(TokenClass.INVALID, sb.toString(), line, column);
+                    }
                 }else{
                     sb.append(scanner.next());
                 }
             }
             scanner.next(); //consume trailing "
             return new Token(TokenClass.STRING_LITERAL, sb.toString(), line, column);
-
-            //            StringBuilder sb = new StringBuilder();
-//            char fst = scanner.peek();
-//            while(fst  != '\"'){
-//                //escape char, append next two as one char
-//                if (fst == '\\'){
-//                    String v = fst+"" + scanner.next()+"";
-//                    print("appending: " + v);
-//                    sb.append(v);
-//                }
-//                else {
-//                    sb.append(scanner.next());
-//                }
-//            }
-//            scanner.next(); //consume trailing "
-//            return new Token(TokenClass.STRING_LITERAL, sb.toString(), line, column);
         }
 
         //int_literal
@@ -445,10 +442,29 @@ public class Tokeniser {
         //char_literal
         if( c == '\''){
             StringBuilder sb = new StringBuilder();
-            while(scanner.peek()  != '\''){
-                sb.append(scanner.next());
+            while (scanner.peek() != '\''){
+                //escape char. consume next two as one
+                if( scanner.peek()  == '\\'){
+                    sb.append(scanner.next()); // append \
+                    if( "tbnrf\'\"\\0".contains(scanner.peek()+"") ){
+                        sb.append(scanner.next());
+                    }
+                    //invalid escape
+                    else{
+                        sb.append(scanner.next());
+                        scanner.next();//consume trailing '
+                        return new Token(TokenClass.INVALID, sb.toString(), line, column);
+                    }
+                }else{
+                    sb.append(scanner.next());
+                }
             }
-            scanner.next(); //consume trailing '
+            scanner.next(); //consume trailing "
+
+            if(sb.toString().length()>1 && !is_valid_esc(sb.toString())){
+                //print(""+sb.toString());
+                return new Token(TokenClass.INVALID, sb.toString(), line, column);
+            }
             return new Token(TokenClass.CHAR_LITERAL, sb.toString(), line, column);
         }
 
@@ -487,5 +503,13 @@ public class Tokeniser {
         }
     }
 
+    private boolean is_valid_esc(String str){
+        for(String s: VALID_ESC){
+            if (str.equals(s)){
+                return true;
+            }
+        }
+        return false;
+    }
 
 }
