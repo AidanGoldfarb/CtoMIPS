@@ -408,23 +408,28 @@ public class Tokeniser {
         if( c == '\"'){ // "\0";
             StringBuilder sb = new StringBuilder();
 
-            while (scanner.peek() != '\"'){
-                //escape char. consume next two as one
-                if( scanner.peek()  == '\\'){
-                    sb.append(scanner.next()); // append \
-                    if( "tbnrf\'\"\\0".contains(scanner.peek()+"") ){
+            try{
+                while (scanner.peek() != '\"'){
+                    //escape char. consume next two as one
+                    if( scanner.peek()  == '\\'){
+                        sb.append(scanner.next()); // append \
+                        if( "tbnrf\'\"\\0".contains(scanner.peek()+"") ){
+                            sb.append(scanner.next());
+                        }
+                        //invalid escape
+                        else{
+                            sb.append(scanner.next());
+                            scanner.next();//consume trailing '
+                            return new Token(TokenClass.INVALID, sb.toString(), line, column);
+                        }
+                    }else{
                         sb.append(scanner.next());
                     }
-                    //invalid escape
-                    else{
-                        sb.append(scanner.next());
-                        scanner.next();//consume trailing '
-                        return new Token(TokenClass.INVALID, sb.toString(), line, column);
-                    }
-                }else{
-                    sb.append(scanner.next());
                 }
+            }catch(EOFException e){
+                return new Token(TokenClass.INVALID,sb.toString(), line, column);
             }
+
             scanner.next(); //consume trailing "
             return new Token(TokenClass.STRING_LITERAL, sb.toString(), line, column);
         }
@@ -442,25 +447,34 @@ public class Tokeniser {
         //char_literal
         if( c == '\''){
             StringBuilder sb = new StringBuilder();
-            while (scanner.peek() != '\''){
-                //escape char. consume next two as one
-                if( scanner.peek()  == '\\'){
-                    sb.append(scanner.next()); // append \
-                    if( "tbnrf\'\"\\0".contains(scanner.peek()+"") ){
+            try{
+                while (scanner.peek() != '\''){
+                    //escape char. consume next two as one
+                    if( scanner.peek()  == '\\'){
+                        sb.append(scanner.next()); // append \
+                        //valid escape
+                        if( "tbnrf\'\"\\0".contains(scanner.peek()+"") ){
+                            sb.append(scanner.next());
+                            if(scanner.peek() != '\''){
+                                //"Expected \' found "+scanner.peek()+""
+                                return new Token(TokenClass.INVALID,sb.toString(), line, column);
+                            }
+                        }
+                        //invalid escape
+                        else{
+                            sb.append(scanner.next());
+                            scanner.next();//consume trailing '
+                            return new Token(TokenClass.INVALID, sb.toString(), line, column);
+                        }
+                    }else{
                         sb.append(scanner.next());
                     }
-                    //invalid escape
-                    else{
-                        sb.append(scanner.next());
-                        scanner.next();//consume trailing '
-                        return new Token(TokenClass.INVALID, sb.toString(), line, column);
-                    }
-                }else{
-                    sb.append(scanner.next());
                 }
+            }catch (EOFException e){
+                return new Token(TokenClass.INVALID,sb.toString(), line, column);
             }
-            scanner.next(); //consume trailing "
 
+            scanner.next(); //consume trailing "
             if(sb.toString().length()>1 && !is_valid_esc(sb.toString())){
                 //print(""+sb.toString());
                 return new Token(TokenClass.INVALID, sb.toString(), line, column);
