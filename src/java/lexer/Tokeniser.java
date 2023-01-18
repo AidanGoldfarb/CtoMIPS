@@ -219,7 +219,7 @@ public class Tokeniser {
             return new Token(TokenClass.GT, line, column);
         }
 
-        //handle 'i' char (int, if) NOT CORRECT YET, IDENT HAS A STRUCTURE
+        //handle 'i' char (int, if)
         if( c == 'i'){
             StringBuilder sb = new StringBuilder();
             sb.append(c);
@@ -387,16 +387,20 @@ public class Tokeniser {
             StringBuilder sb = new StringBuilder();
             sb.append(c); //append #
             short len = 1;
-            while(Character.isLetterOrDigit(scanner.peek())) {
-                sb.append(scanner.next());
-                len++;
-                if( len==8 && sb.toString().equals("#include")){
-                    return new Token(TokenClass.INCLUDE, line, column);
+            try {
+                while (Character.isLetterOrDigit(scanner.peek())) {
+                    sb.append(scanner.next());
+                    len++;
+                    if (len == 8 && sb.toString().equals("#include")) {
+                        return new Token(TokenClass.INCLUDE, line, column);
+                    }
                 }
-            }
 
-            while(Character.isLetterOrDigit(scanner.peek()) || scanner.peek() == '_'){
-                sb.append(scanner.next());
+                while (Character.isLetterOrDigit(scanner.peek()) || scanner.peek() == '_') {
+                    sb.append(scanner.next());
+                }
+            }catch(EOFException e){
+                return new Token(TokenClass.INVALID, sb.toString(), line, column);
             }
             return new Token(TokenClass.INVALID, sb.toString(), line, column);
         }
