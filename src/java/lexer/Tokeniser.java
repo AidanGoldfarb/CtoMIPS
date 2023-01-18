@@ -160,6 +160,7 @@ public class Tokeniser {
                     scanner.next();
                     return next();
                 }catch(EOFException e){
+                    error(c,line,column); //update c more?
                     return new Token(TokenClass.INVALID, line, column);
                 }
 
@@ -188,6 +189,7 @@ public class Tokeniser {
                 return new Token(TokenClass.LOGOR, line, column);
             }
             // no | bitwise i guess
+            error(c,line,column);
             return new Token(TokenClass.INVALID, line, column);
         }
 
@@ -405,8 +407,10 @@ public class Tokeniser {
                     sb.append(scanner.next());
                 }
             }catch(EOFException e){
+                error(c,line,column);
                 return new Token(TokenClass.INVALID, sb.toString(), line, column);
             }
+            error(c,line,column);
             return new Token(TokenClass.INVALID, sb.toString(), line, column);
         }
 
@@ -429,6 +433,7 @@ public class Tokeniser {
                         else{
                             sb.append(scanner.next());
                             scanner.next();//consume trailing '
+                            error(c,line,column);
                             return new Token(TokenClass.INVALID, sb.toString(), line, column);
                         }
                     }else{
@@ -436,6 +441,7 @@ public class Tokeniser {
                     }
                 }
             }catch(EOFException e){
+                error(c,line,column);
                 return new Token(TokenClass.INVALID,sb.toString(), line, column);
             }
 
@@ -466,6 +472,7 @@ public class Tokeniser {
                             sb.append(scanner.next());
                             if(scanner.peek() != '\''){
                                 //"Expected \' found "+scanner.peek()+""
+                                error(c,line,column);
                                 return new Token(TokenClass.INVALID,sb.toString(), line, column);
                             }
                         }
@@ -473,6 +480,7 @@ public class Tokeniser {
                         else{
                             sb.append(scanner.next());
                             scanner.next();//consume trailing '
+                            error(c,line,column);
                             return new Token(TokenClass.INVALID, sb.toString(), line, column);
                         }
                     }else{
@@ -480,12 +488,14 @@ public class Tokeniser {
                     }
                 }
             }catch (EOFException e){
+                error(c,line,column);
                 return new Token(TokenClass.INVALID,sb.toString(), line, column);
             }
 
             scanner.next(); //consume trailing "
             if(sb.toString().length()>1 && !is_valid_esc(sb.toString())){
                 //print(""+sb.toString());
+                error(c,line,column);
                 return new Token(TokenClass.INVALID, sb.toString(), line, column);
             }
             return new Token(TokenClass.CHAR_LITERAL, sb.toString(), line, column);
