@@ -154,10 +154,15 @@ public class Tokeniser {
             }
             //block comment, consume until */
             if (scanner.peek() == '*'){
-                scanner.next();
-                while(scanner.next() != '*' || scanner.peek() != '/'){}
-                scanner.next();
-                return next();
+                try{
+                    scanner.next();
+                    while(scanner.next() != '*' || scanner.peek() != '/'){}
+                    scanner.next();
+                    return next();
+                }catch(EOFException e){
+                    return new Token(TokenClass.INVALID, line, column);
+                }
+
             }
 
             //division
