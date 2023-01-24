@@ -49,6 +49,7 @@ public class Parser {
     private final TokenClass [] first_sizeof = {TokenClass.SIZEOF};
     private final TokenClass [] first_typecast = {TokenClass.LPAR};
 
+
     private Token token;
 
     private Queue<Token> buffer = new LinkedList<>();
@@ -120,6 +121,7 @@ public class Parser {
      * Consumes the next token from the tokeniser or the buffer if not empty.
      */
     private void nextToken() {
+        print("consuming: "+token);
         if (!buffer.isEmpty())
             token = buffer.remove();
         else
@@ -132,8 +134,8 @@ public class Parser {
     private void expect(TokenClass... expected) {
         for (TokenClass e : expected) {
             if (e == token.tokenClass) {
-                Token cur = token;
                 nextToken();
+                return;
             }
         }
         error(expected);
@@ -151,6 +153,7 @@ public class Parser {
 
 
     private void parseProgram() {
+        print("parseProgram");
         parseIncludes();
 
         while (accept(TokenClass.STRUCT, TokenClass.INT, TokenClass.CHAR, TokenClass.VOID)) {
@@ -174,19 +177,22 @@ public class Parser {
         // to be completed ...
 
         expect(TokenClass.EOF);
+        print("exit parseProgram");
     }
 
     // includes are ignored, so does not need to return an AST node
     private void parseIncludes() {
+        print("parseIncludes");
         if (accept(TokenClass.INCLUDE)) {
-            nextToken();
-            expect(TokenClass.STRING_LITERAL);
+            nextToken(); //consume INCLUDE token
+            expect(TokenClass.STRING_LITERAL); //consume STRL
             parseIncludes();
         }
+        print("exit parseIncludes");
     }
 
     private void parseStructDecl(){
-        // to be completed ...
+        print("parseStructDecl");
         expect(TokenClass.STRUCT);
         expect(TokenClass.IDENTIFIER);
         expect(TokenClass.LBRA);
@@ -198,11 +204,13 @@ public class Parser {
 
         expect(TokenClass.RBRA);
         expect(TokenClass.SC);
+        print("exit praseStructDecl");
     }
 
     private void parseVardecl() {
+        print("parseVardecl");
         //type
-        expect(first_vardecl);
+        parseType();
         expect(TokenClass.IDENTIFIER);
         //int a[3][2]...
         while(accept(TokenClass.LBRA)){
@@ -211,31 +219,37 @@ public class Parser {
             expect(TokenClass.RBRA);
         }
         expect(TokenClass.SC);
+        print("exit parseVardecl");
     }
 
     private void parseFundecl(){
+        print("parseFundecl");
         //type
-        expect(first_fundecl);
+        parseType();
         expect(TokenClass.IDENTIFIER);
         expect(TokenClass.LPAR);
         parseParams();
         expect(TokenClass.RPAR);
         parseBlock();
+        print("exit parseFundecl");
     }
 
     private void parseParams(){
+        print("parseParams");
         if(accept(first_params)){
-            expect(first_params);
+            parseType();
             expect(TokenClass.IDENTIFIER);
             while(accept(TokenClass.COMMA)){
                 expect(TokenClass.COMMA);
-                expect(first_type);
+                parseType();
                 expect(TokenClass.IDENTIFIER);
             }
         }
+        print("exit parseParams");
     }
 
     private void parseStmt(){
+        print("parse Stmt");
         //block
         if(accept(first_block)){
             parseBlock();
@@ -273,9 +287,11 @@ public class Parser {
             parseExp();
             expect(TokenClass.SC);
         }
+        print("exit parseStmt");
     }
 
     private void parseBlock(){
+        print("parseBlock");
         expect(first_block);
         while(accept(first_vardecl)){
             parseVardecl();
@@ -284,9 +300,11 @@ public class Parser {
             parseStmt();
         }
         expect(TokenClass.RBRA);
+        print("exit parseBlock");
     }
 
     private void parseExp(){
+        print("parseExp");
         //(exp) || typecast
         if(accept(TokenClass.LPAR)){
             //typecast
@@ -295,8 +313,19 @@ public class Parser {
             }
             // else do nothing, (exp) handled in exptail
         }
-        else if(accept(TokenClass.IDENTIFIER,TokenClass.INT_LITERAL)){
-            expect(TokenClass.IDENTIFIER,TokenClass.INT_LITERAL);
+        //(IDENT || funcall
+        else if(accept(TokenClass.IDENTIFIER)){
+            //funcall
+            if(lookAhead(1).tokenClass == TokenClass.LPAR){
+                parseFuncall();
+            }
+            //ident
+            else{
+                expect(TokenClass.IDENTIFIER);
+            }
+        }
+        else if(accept(TokenClass.INT_LITERAL)){
+            expect(TokenClass.INT_LITERAL);
         }
         else if(accept(TokenClass.MINUS, TokenClass.PLUS)){
             expect(TokenClass.MINUS, TokenClass.PLUS);
@@ -321,9 +350,11 @@ public class Parser {
             parseSizeof();
         }
         parseExpTail();
+        print("exit parseExp");
     }
 
     private void parseExpTail(){
+        print("parseExpTail");
         if(accept(TokenClass.LPAR)){
             expect(TokenClass.LPAR);
             parseExp();
@@ -333,15 +364,21 @@ public class Parser {
             expect(TokenClass.ASSIGN);
             parseExp();
         }
+        if(accept(first_exptail)){
+            expect(first_exptail);
+            parseExp();
+        }
         if(accept(TokenClass.LSBR)){
             parseArrayaccess();
         }
         if(accept(TokenClass.DOT)){
             parseFieldaccess();
         }
+        print("exit parseExpTail");
     }
 
     private void parseFuncall(){
+        print("parseFuncall");
         expect(first_funcall);
         expect(TokenClass.LPAR);
         if(accept(first_exp)){
@@ -351,41 +388,64 @@ public class Parser {
                 parseExp();
             }
         }
+        expect(TokenClass.RPAR);
+        print("exit parseFuncall");
     }
 
     private void parseArrayaccess(){
+        print("parseArrayaccess");
         expect(TokenClass.LSBR);
         parseExp();
         expect(TokenClass.RSBR);
+        print("exit parseArrayaccess");
     }
 
     private void parseFieldaccess(){
+        print("parseFieldaccess");
         expect(TokenClass.DOT);
         expect(TokenClass.IDENTIFIER);
+        print("exit parseFieldaccess");
     }
 
     private void parseValueat(){
+        print("parseValueat");
         expect(first_valueat);
         parseExp();
+        print("exit parseValueat");
     }
 
     private void parseAddressof(){
+        print("parseAddressof");
         expect(first_addressof);
         parseExp();
+        print("exit parseAddressof");
     }
 
     private void parseSizeof(){
+        print("parseSizeof");
         expect(first_sizeof);
         expect(TokenClass.LPAR);
-        expect(first_type);
+        parseType();
         expect(TokenClass.RPAR);
+        print("exit parseSizeof");
     }
 
     private void parseTypecast(){
+        print("parseTypecast");
         expect(first_typecast);
-        expect(first_type);
+        parseType();
         expect(TokenClass.RPAR);
         parseExp();
+        print("exit parseTypecast");
+    }
+
+    private void parseType(){
+        print("parseType");
+        expect(first_type);
+        while(accept(TokenClass.ASTERIX)){
+            expect(TokenClass.ASTERIX);
+        }
+        print("exit parseType");
     }
 
     //if tk \in lst
@@ -396,5 +456,10 @@ public class Parser {
             }
         }
         return false;
+    }
+
+    @SuppressWarnings("unused")
+    private void print(String s){
+        System.out.println(s);
     }
 }
