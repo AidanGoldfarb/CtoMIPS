@@ -14,6 +14,36 @@ import java.util.Queue;
  */
 public class Parser {
 
+    //First sets
+    private final TokenClass [] first_program = {TokenClass.INCLUDE,TokenClass.STRUCT,TokenClass.INT,TokenClass.CHAR,TokenClass.VOID};
+    private final TokenClass [] first_include = {TokenClass.INCLUDE};
+    private final TokenClass [] first_structdelc = {TokenClass.STRUCT};
+    private final TokenClass [] first_vardecl = {TokenClass.INT,TokenClass.CHAR,TokenClass.VOID, TokenClass.STRUCT};
+    private final TokenClass [] first_fundecl = {TokenClass.INT,TokenClass.CHAR,TokenClass.VOID, TokenClass.STRUCT};
+    private final TokenClass [] first_type = {TokenClass.INT,TokenClass.CHAR,TokenClass.VOID, TokenClass.STRUCT};
+    private final TokenClass [] first_structype = {TokenClass.STRUCT};
+    private final TokenClass [] first_params = {TokenClass.INT,TokenClass.CHAR,TokenClass.VOID, TokenClass.STRUCT};
+    private final TokenClass [] first_stmt = {TokenClass.LBRA, TokenClass.WHILE, TokenClass.IF, TokenClass.RETURN,
+                                              TokenClass.LPAR, TokenClass.IDENTIFIER, TokenClass.INT_LITERAL,
+                                              TokenClass.MINUS, TokenClass.PLUS, TokenClass.CHAR_LITERAL,
+                                              TokenClass.STRING_LITERAL, TokenClass.ASTERIX, TokenClass.AND,
+                                              TokenClass.SIZEOF};
+    private final TokenClass [] first_block = {TokenClass.LBRA};
+    private final TokenClass [] first_exp = {TokenClass.LPAR, TokenClass.IDENTIFIER, TokenClass.INT_LITERAL, TokenClass.MINUS,
+                                             TokenClass.PLUS, TokenClass.CHAR_LITERAL, TokenClass.STRING_LITERAL, TokenClass.ASTERIX,
+                                             TokenClass.AND, TokenClass.SIZEOF};
+    private final TokenClass [] first_funcall = {TokenClass.IDENTIFIER};
+    private final TokenClass [] first_arrayaccess = {TokenClass.LPAR, TokenClass.IDENTIFIER, TokenClass.INT_LITERAL, TokenClass.MINUS,
+                                                     TokenClass.PLUS, TokenClass.CHAR_LITERAL, TokenClass.STRING_LITERAL, TokenClass.ASTERIX,
+                                                     TokenClass.AND, TokenClass.SIZEOF};
+    private final TokenClass [] first_fieldaccess = {TokenClass.LPAR, TokenClass.IDENTIFIER, TokenClass.INT_LITERAL, TokenClass.MINUS,
+                                                     TokenClass.PLUS, TokenClass.CHAR_LITERAL, TokenClass.STRING_LITERAL, TokenClass.ASTERIX,
+                                                     TokenClass.AND, TokenClass.SIZEOF};
+    private final TokenClass [] first_valueat = {TokenClass.ASTERIX};
+    private final TokenClass [] first_addressof = {TokenClass.AND};
+    private final TokenClass [] first_sizeof = {TokenClass.SIZEOF};
+    private final TokenClass [] first_typecast = {TokenClass.LPAR};
+
     private Token token;
 
     private Queue<Token> buffer = new LinkedList<>();
@@ -92,7 +122,7 @@ public class Parser {
     }
 
     /*
-     * If the current token is equals to the expected one, then skip it, otherwise report an error.
+     * If the current token is equals to the expected one, then skip (consume) it, otherwise report an error.
      */
     private void expect(TokenClass... expected) {
         for (TokenClass e : expected) {
@@ -148,6 +178,148 @@ public class Parser {
         expect(TokenClass.STRUCT);
         expect(TokenClass.IDENTIFIER);
         expect(TokenClass.LBRA);
+
+        //1 or more vardecl
+        do{
+            parseVardecl();
+        } while(accept(first_vardecl));
+
+        expect(TokenClass.RBRA);
+        expect(TokenClass.SC);
+    }
+
+    private void parseVardecl() {
+        //type
+        expect(first_vardecl);
+        expect(TokenClass.IDENTIFIER);
+        //int a[3][2]...
+        while(accept(TokenClass.LBRA)){
+            expect(TokenClass.LBRA);
+            expect(TokenClass.INT_LITERAL);
+            expect(TokenClass.RBRA);
+        }
+        expect(TokenClass.SC);
+    }
+
+    private void parseFundecl(){
+        //type
+        expect(first_fundecl);
+        expect(TokenClass.IDENTIFIER);
+        expect(TokenClass.LPAR);
+        parseParams();
+        expect(TokenClass.RPAR);
+        parseBlock();
+    }
+
+    private void parseParams(){
+        if(accept(first_params)){
+            expect(first_params);
+            expect(TokenClass.IDENTIFIER);
+            while(accept(TokenClass.COMMA)){
+                expect(TokenClass.COMMA);
+                expect(first_type);
+                expect(TokenClass.IDENTIFIER);
+            }
+        }
+    }
+
+    private void parseStmt(){
+        //block
+        if(accept(first_block)){
+            parseBlock();
+        }
+        //while loop
+        if(accept(TokenClass.WHILE)){
+            expect(TokenClass.WHILE);
+            expect(TokenClass.LPAR);
+            parseExp();
+            expect(TokenClass.RPAR);
+            parseStmt();
+        }
+        //if then else
+        if(accept(TokenClass.IF)){
+            expect(TokenClass.IF);
+            expect(TokenClass.LPAR);
+            parseExp();
+            expect(TokenClass.RPAR);
+            parseStmt();
+            if(accept(TokenClass.ELSE)){
+                expect(TokenClass.ELSE);
+                parseStmt();
+            }
+        }
+        //return
+        if(accept(TokenClass.RETURN)){
+            expect(TokenClass.RETURN);
+            if(accept(first_exp)){
+                parseExp();
+            }
+            expect(TokenClass.SC);
+        }
+        //expr
+        if(accept(first_exp)){
+            parseExp();
+            expect(TokenClass.SC);
+        }
+    }
+
+    private void parseBlock(){
+        expect(first_block);
+        while(accept(first_vardecl)){
+            parseVardecl();
+        }
+        while(accept(first_stmt)){
+            parseStmt();
+        }
+        expect(TokenClass.RBRA);
+    }
+
+    private void parseExp(){
+        //je pense je dois massage pour ce
+    }
+
+    private void parseFuncall(){
+        expect(first_funcall);
+        expect(TokenClass.LPAR);
+        if(accept(first_exp)){
+            parseExp();
+            while(accept(TokenClass.COMMA)){
+                expect(TokenClass.COMMA);
+                parseExp();
+            }
+        }
+    }
+
+    private void parseArrayaccess(){
+        //je pense je dois massage pour ce
+    }
+
+    private void parseFieldaccess(){
+        //je pense je dois massage pour ce
+    }
+
+    private void parseValueat(){
+        expect(first_valueat);
+        parseExp();
+    }
+
+    private void parseAddressof(){
+        expect(first_addressof);
+        parseExp();
+    }
+
+    private void parseSizeof(){
+        expect(first_sizeof);
+        expect(TokenClass.LPAR);
+        expect(first_type);
+        expect(TokenClass.RPAR);
+    }
+
+    private void parseTypecast(){
+        expect(first_typecast);
+        expect(first_type);
+        expect(TokenClass.RPAR);
+        parseExp();
     }
 
     // to be completed ...
