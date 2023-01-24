@@ -32,6 +32,11 @@ public class Parser {
     private final TokenClass [] first_exp = {TokenClass.LPAR, TokenClass.IDENTIFIER, TokenClass.INT_LITERAL, TokenClass.MINUS,
                                              TokenClass.PLUS, TokenClass.CHAR_LITERAL, TokenClass.STRING_LITERAL, TokenClass.ASTERIX,
                                              TokenClass.AND, TokenClass.SIZEOF};
+
+    private final TokenClass [] first_exptail = {TokenClass.ASSIGN, TokenClass.LT, TokenClass.GT, TokenClass.LE,
+                                                 TokenClass.GE, TokenClass.NE, TokenClass.PLUS, TokenClass.MINUS,
+                                                 TokenClass.DIV, TokenClass.ASSIGN, TokenClass.LOGOR, TokenClass.LOGAND,
+                                                 TokenClass.REM};
     private final TokenClass [] first_funcall = {TokenClass.IDENTIFIER};
     private final TokenClass [] first_arrayaccess = {TokenClass.LPAR, TokenClass.IDENTIFIER, TokenClass.INT_LITERAL, TokenClass.MINUS,
                                                      TokenClass.PLUS, TokenClass.CHAR_LITERAL, TokenClass.STRING_LITERAL, TokenClass.ASTERIX,
@@ -154,8 +159,15 @@ public class Parser {
                     lookAhead(2).tokenClass == TokenClass.LBRA) {
                 parseStructDecl();
             }
+            //fundecl
+            else if(contains(first_fundecl,token.tokenClass) &&
+                    lookAhead(2).tokenClass == TokenClass.LPAR){
+                parseFundecl();
+            }
+            else if(contains(first_vardecl,token.tokenClass)){
+                parseVardecl();
+            }
             else {
-                // to be completed ...
                 nextToken();
             }
         }
@@ -275,7 +287,58 @@ public class Parser {
     }
 
     private void parseExp(){
-        //je pense je dois massage pour ce
+        //(exp) || typecast
+        if(accept(TokenClass.LPAR)){
+            //typecast
+            if(contains(first_type,lookAhead(1).tokenClass)){
+                parseTypecast();
+            }
+            // else do nothing, (exp) handled in exptail
+        }
+        else if(accept(TokenClass.IDENTIFIER,TokenClass.INT_LITERAL)){
+            expect(TokenClass.IDENTIFIER,TokenClass.INT_LITERAL);
+        }
+        else if(accept(TokenClass.MINUS, TokenClass.PLUS)){
+            expect(TokenClass.MINUS, TokenClass.PLUS);
+            parseExp();
+        }
+        else if(accept(TokenClass.CHAR_LITERAL)){
+            expect(TokenClass.CHAR_LITERAL);
+        }
+        else if(accept(TokenClass.STRING_LITERAL)){
+            expect(TokenClass.STRING_LITERAL);
+        }
+        else if(accept(first_valueat)){
+            parseValueat();
+        }
+        else if(accept(first_addressof)){
+            parseAddressof();
+        }
+        else if(accept(first_funcall)){
+            parseFuncall();
+        }
+        else if(accept(first_sizeof)){
+            parseSizeof();
+        }
+        parseExpTail();
+    }
+
+    private void parseExpTail(){
+        if(accept(TokenClass.LPAR)){
+            expect(TokenClass.LPAR);
+            parseExp();
+            expect(TokenClass.RPAR);
+        }
+        if(accept(TokenClass.ASSIGN)){
+            expect(TokenClass.ASSIGN);
+            parseExp();
+        }
+        if(accept(TokenClass.LSBR)){
+            parseArrayaccess();
+        }
+        if(accept(TokenClass.DOT)){
+            parseFieldaccess();
+        }
     }
 
     private void parseFuncall(){
@@ -291,11 +354,14 @@ public class Parser {
     }
 
     private void parseArrayaccess(){
-        //je pense je dois massage pour ce
+        expect(TokenClass.LSBR);
+        parseExp();
+        expect(TokenClass.RSBR);
     }
 
     private void parseFieldaccess(){
-        //je pense je dois massage pour ce
+        expect(TokenClass.DOT);
+        expect(TokenClass.IDENTIFIER);
     }
 
     private void parseValueat(){
@@ -322,5 +388,13 @@ public class Parser {
         parseExp();
     }
 
-    // to be completed ...
+    //if tk \in lst
+    private boolean contains(TokenClass [] lst, TokenClass tk){
+        for(TokenClass t: lst){
+            if (t == tk){
+                return true;
+            }
+        }
+        return false;
+    }
 }
