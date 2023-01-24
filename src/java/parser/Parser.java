@@ -36,7 +36,7 @@ public class Parser {
     private final TokenClass [] first_exptail = {TokenClass.ASSIGN, TokenClass.LT, TokenClass.GT, TokenClass.LE,
                                                  TokenClass.GE, TokenClass.NE, TokenClass.PLUS, TokenClass.MINUS,
                                                  TokenClass.DIV, TokenClass.ASSIGN, TokenClass.LOGOR, TokenClass.LOGAND,
-                                                 TokenClass.REM};
+                                                 TokenClass.REM, TokenClass.EQ};
     private final TokenClass [] first_funcall = {TokenClass.IDENTIFIER};
     private final TokenClass [] first_arrayaccess = {TokenClass.LPAR, TokenClass.IDENTIFIER, TokenClass.INT_LITERAL, TokenClass.MINUS,
                                                      TokenClass.PLUS, TokenClass.CHAR_LITERAL, TokenClass.STRING_LITERAL, TokenClass.ASTERIX,
