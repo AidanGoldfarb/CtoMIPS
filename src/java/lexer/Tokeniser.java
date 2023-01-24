@@ -310,8 +310,8 @@ public class Tokeniser {
             while(Character.isLetterOrDigit(scanner.peek())){
                 sb.append(scanner.next());
                 len++;
-                //[while ] or [while{]
-                if( (scanner.peek() == ' ' || scanner.peek() == '{')
+                //[while ] or [while(]
+                if( (scanner.peek() == ' ' || scanner.peek() == '(')
                         && len==5 && sb.toString().equals("while")) {
                     return new Token(TokenClass.WHILE, line, column);
                 }

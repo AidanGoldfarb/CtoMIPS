@@ -249,7 +249,7 @@ public class Parser {
     }
 
     private void parseStmt(){
-        print("parse Stmt");
+        print("parse Stmt"+token);
         //block
         if(accept(first_block)){
             parseBlock();
