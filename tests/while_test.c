@@ -1,4 +1,4 @@
 int main(){
-    struct b;
-    b = (char)q;
+    int b;
+    b = ((b))+((((1))));
 }

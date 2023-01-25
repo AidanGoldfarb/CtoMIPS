@@ -206,7 +206,6 @@ public class Parser {
         expect(TokenClass.SC);
         print("exit praseStructDecl");
     }
-
     private void parseVardecl() {
         print("parseVardecl");
         //type
@@ -310,9 +309,11 @@ public class Parser {
             //typecast
             if(contains(first_type,lookAhead(1).tokenClass)){
                 parseTypecast();
-                return;
             }
-            // else do nothing, (exp) handled in exptail
+            else {
+                parseExpTail();
+            }// else do nothing, (exp) handled in exptail
+            return;
         }
         //(IDENT || funcall
         else if(accept(TokenClass.IDENTIFIER)){
