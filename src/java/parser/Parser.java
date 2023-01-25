@@ -200,7 +200,7 @@ public class Parser {
         //1 or more vardecl
         do{
             parseVardecl();
-        } while(accept(first_vardecl));
+        } while(accept(first_vardecl) && error == 0);
 
         expect(TokenClass.RBRA);
         expect(TokenClass.SC);
@@ -213,7 +213,7 @@ public class Parser {
         parseType();
         expect(TokenClass.IDENTIFIER);
         //int a[3][2]...
-        while(accept(TokenClass.LBRA)){
+        while(accept(TokenClass.LBRA) && error == 0){
             expect(TokenClass.LBRA);
             expect(TokenClass.INT_LITERAL);
             expect(TokenClass.RBRA);
@@ -239,7 +239,7 @@ public class Parser {
         if(accept(first_params)){
             parseType();
             expect(TokenClass.IDENTIFIER);
-            while(accept(TokenClass.COMMA)){
+            while(accept(TokenClass.COMMA) && error == 0){
                 expect(TokenClass.COMMA);
                 parseType();
                 expect(TokenClass.IDENTIFIER);
@@ -293,10 +293,10 @@ public class Parser {
     private void parseBlock(){
         print("parseBlock");
         expect(first_block);
-        while(accept(first_vardecl)){
+        while(accept(first_vardecl) && error == 0){
             parseVardecl();
         }
-        while(accept(first_stmt)){
+        while(accept(first_stmt) && error == 0){
             parseStmt();
         }
         expect(TokenClass.RBRA);
@@ -404,7 +404,7 @@ public class Parser {
         expect(TokenClass.LPAR);
         if(accept(first_exp)){
             parseExp();
-            while(accept(TokenClass.COMMA)){
+            while(accept(TokenClass.COMMA) && error == 0){
                 expect(TokenClass.COMMA);
                 parseExp();
             }
@@ -463,7 +463,7 @@ public class Parser {
     private void parseType(){
         print("parseType");
         expect(first_type);
-        while(accept(TokenClass.ASTERIX)){
+        while(accept(TokenClass.ASTERIX) && error == 0){
             expect(TokenClass.ASTERIX);
         }
         print("exit parseType");
