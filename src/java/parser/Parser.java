@@ -36,7 +36,7 @@ public class Parser {
     private final TokenClass [] first_exptail = {TokenClass.ASSIGN, TokenClass.LT, TokenClass.GT, TokenClass.LE,
                                                  TokenClass.GE, TokenClass.NE, TokenClass.PLUS, TokenClass.MINUS,
                                                  TokenClass.DIV, TokenClass.ASSIGN, TokenClass.LOGOR, TokenClass.LOGAND,
-                                                 TokenClass.REM, TokenClass.EQ};
+                                                 TokenClass.REM, TokenClass.EQ, TokenClass.ASTERIX};
     private final TokenClass [] first_funcall = {TokenClass.IDENTIFIER};
     private final TokenClass [] first_arrayaccess = {TokenClass.LPAR, TokenClass.IDENTIFIER, TokenClass.INT_LITERAL, TokenClass.MINUS,
                                                      TokenClass.PLUS, TokenClass.CHAR_LITERAL, TokenClass.STRING_LITERAL, TokenClass.ASTERIX,
@@ -310,6 +310,7 @@ public class Parser {
             //typecast
             if(contains(first_type,lookAhead(1).tokenClass)){
                 parseTypecast();
+                return;
             }
             // else do nothing, (exp) handled in exptail
         }
@@ -318,38 +319,58 @@ public class Parser {
             //funcall
             if(lookAhead(1).tokenClass == TokenClass.LPAR){
                 parseFuncall();
+                parseExpTail();
+                return;
             }
             //ident
             else{
                 expect(TokenClass.IDENTIFIER);
+                parseExpTail();
+                return;
             }
         }
         else if(accept(TokenClass.INT_LITERAL)){
             expect(TokenClass.INT_LITERAL);
+            parseExpTail();
+            return;
         }
         else if(accept(TokenClass.MINUS, TokenClass.PLUS)){
             expect(TokenClass.MINUS, TokenClass.PLUS);
             parseExp();
+            parseExpTail();
+            return;
         }
         else if(accept(TokenClass.CHAR_LITERAL)){
             expect(TokenClass.CHAR_LITERAL);
+            parseExpTail();
+            return;
         }
         else if(accept(TokenClass.STRING_LITERAL)){
             expect(TokenClass.STRING_LITERAL);
+            parseExpTail();
+            return;
         }
         else if(accept(first_valueat)){
             parseValueat();
+            parseExpTail();
+            return;
         }
         else if(accept(first_addressof)){
             parseAddressof();
+            parseExpTail();
+            return;
         }
         else if(accept(first_funcall)){
             parseFuncall();
+            parseExpTail();
+            return;
         }
         else if(accept(first_sizeof)){
             parseSizeof();
+            parseExpTail();
+            return;
         }
-        parseExpTail();
+        error(token.tokenClass);
         print("exit parseExp");
     }
 

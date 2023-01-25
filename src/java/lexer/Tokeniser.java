@@ -15,6 +15,9 @@ public class Tokeniser {
 
     private final Scanner scanner;
     private final String [] VALID_ESC = {"\\t","\\b","\\n","\\r","\\f","\\'","\\\"","\\\\","\\0"};
+
+    private final String [] RESERVED_KW = {"return","int","char","void","struct","if","else","while","sizeof"};
+
     private int error = 0;
     public int getErrorCount() {
 	    return this.error;
@@ -258,7 +261,11 @@ public class Tokeniser {
             while(Character.isLetterOrDigit(scanner.peek()) || scanner.peek() == '_'){
                 sb.append(scanner.next());
             }
-            return new Token(TokenClass.IDENTIFIER, sb.toString(), line, column);
+            if(is_valid_id(sb.toString())){
+                return new Token(TokenClass.IDENTIFIER, sb.toString(), line, column);
+            }
+            error(c,line,column);
+            return new Token(TokenClass.INVALID, sb.toString(), line, column);
         }
 
         //handle 'v' char (void)
@@ -278,7 +285,11 @@ public class Tokeniser {
             while(Character.isLetterOrDigit(scanner.peek()) || scanner.peek() == '_'){
                 sb.append(scanner.next());
             }
-            return new Token(TokenClass.IDENTIFIER, sb.toString(), line, column);
+            if(is_valid_id(sb.toString())){
+                return new Token(TokenClass.IDENTIFIER, sb.toString(), line, column);
+            }
+            error(c,line,column);
+            return new Token(TokenClass.INVALID, sb.toString(), line, column);
         }
 
         //handle 'e' char (else)
@@ -299,7 +310,11 @@ public class Tokeniser {
             while(Character.isLetterOrDigit(scanner.peek()) || scanner.peek() == '_'){
                 sb.append(scanner.next());
             }
-            return new Token(TokenClass.IDENTIFIER, sb.toString(), line, column);
+            if(is_valid_id(sb.toString())){
+                return new Token(TokenClass.IDENTIFIER, sb.toString(), line, column);
+            }
+            error(c,line,column);
+            return new Token(TokenClass.INVALID, sb.toString(), line, column);
         }
 
         //handle 'w' char (while)
@@ -320,7 +335,11 @@ public class Tokeniser {
             while(Character.isLetterOrDigit(scanner.peek()) || scanner.peek() == '_'){
                 sb.append(scanner.next());
             }
-            return new Token(TokenClass.IDENTIFIER, sb.toString(), line, column);
+            if(is_valid_id(sb.toString())){
+                return new Token(TokenClass.IDENTIFIER, sb.toString(), line, column);
+            }
+            error(c,line,column);
+            return new Token(TokenClass.INVALID, sb.toString(), line, column);
         }
 
         //handle 'r' char (return)
@@ -341,7 +360,11 @@ public class Tokeniser {
             while(Character.isLetterOrDigit(scanner.peek()) || scanner.peek() == '_'){
                 sb.append(scanner.next());
             }
-            return new Token(TokenClass.IDENTIFIER, sb.toString(), line, column);
+            if(is_valid_id(sb.toString())){
+                return new Token(TokenClass.IDENTIFIER, sb.toString(), line, column);
+            }
+            error(c,line,column);
+            return new Token(TokenClass.INVALID, sb.toString(), line, column);
         }
 
         //handle 's' char (struct,sizeof)
@@ -365,7 +388,11 @@ public class Tokeniser {
             while(Character.isLetterOrDigit(scanner.peek()) || scanner.peek() == '_'){
                 sb.append(scanner.next());
             }
-            return new Token(TokenClass.IDENTIFIER, sb.toString(), line, column);
+            if(is_valid_id(sb.toString())){
+                return new Token(TokenClass.IDENTIFIER, sb.toString(), line, column);
+            }
+            error(c,line,column);
+            return new Token(TokenClass.INVALID, sb.toString(), line, column);
         }
 
         //handle 'c' char (char)
@@ -386,7 +413,11 @@ public class Tokeniser {
             while(Character.isLetterOrDigit(scanner.peek()) || scanner.peek() == '_'){
                 sb.append(scanner.next());
             }
-            return new Token(TokenClass.IDENTIFIER, sb.toString(), line, column);
+            if(is_valid_id(sb.toString())){
+                return new Token(TokenClass.IDENTIFIER, sb.toString(), line, column);
+            }
+            error(c,line,column);
+            return new Token(TokenClass.INVALID, sb.toString(), line, column);
         }
 
         //handle '#' char (#include)
@@ -510,7 +541,11 @@ public class Tokeniser {
             while(Character.isLetterOrDigit(scanner.peek()) || scanner.peek() == '_'){
                 sb.append(scanner.next());
             }
-            return new Token(TokenClass.IDENTIFIER, sb.toString(), line, column);
+            if(is_valid_id(sb.toString())){
+                return new Token(TokenClass.IDENTIFIER, sb.toString(), line, column);
+            }
+            error(c,line,column);
+            return new Token(TokenClass.INVALID, sb.toString(), line, column);
         }
 
         // if we reach this point, it means we did not recognise a valid token
@@ -543,6 +578,15 @@ public class Tokeniser {
             }
         }
         return false;
+    }
+
+    private boolean is_valid_id(String str){
+        for(String s: RESERVED_KW){
+            if (str.equals(s)){
+                return false;
+            }
+        }
+        return true;
     }
 
 }
