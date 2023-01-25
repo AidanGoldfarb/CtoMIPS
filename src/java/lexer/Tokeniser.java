@@ -251,7 +251,7 @@ public class Tokeniser {
                 if( scanner.peek() == 't') {
                     sb.append(scanner.next());
                     //int
-                    if (scanner.peek() == ' ' || scanner.peek() == '*' || scanner.peek() == ';') {
+                    if (scanner.peek() == ' ' || scanner.peek() == '*' || scanner.peek() == ';' || scanner.peek() == ')') {
                         return new Token(TokenClass.INT, line, column);
                     }
                 }
@@ -270,7 +270,7 @@ public class Tokeniser {
                 sb.append(scanner.next());
                 len++;
                 //void token
-                if((scanner.peek() == ' ' || scanner.peek() == '*' || scanner.peek() == ';') && len==4 && sb.toString().equals("void")) {
+                if((scanner.peek() == ' ' || scanner.peek() == '*' || scanner.peek() == ';' || scanner.peek() == ')') && len==4 && sb.toString().equals("void")) {
                     return new Token(TokenClass.VOID, line, column);
                 }
             }
@@ -362,7 +362,7 @@ public class Tokeniser {
                 sb.append(scanner.next());
                 len++;
                 //char token
-                if((scanner.peek() == ' ' || scanner.peek() == '*'|| scanner.peek() == ';')
+                if((scanner.peek() == ' ' || scanner.peek() == '*'|| scanner.peek() == ';' || scanner.peek() == ')')
                         && len==4 && sb.toString().equals("char")) {
                     return new Token(TokenClass.CHAR, line, column);
                 }
