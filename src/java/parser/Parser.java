@@ -320,15 +320,13 @@ public class Parser {
             //funcall
             if(lookAhead(1).tokenClass == TokenClass.LPAR){
                 parseFuncall();
-                parseExpTail();
-                return;
             }
             //ident
             else{
                 expect(TokenClass.IDENTIFIER);
-                parseExpTail();
-                return;
             }
+            parseExpTail();
+            return;
         }
         else if(accept(TokenClass.INT_LITERAL)){
             expect(TokenClass.INT_LITERAL);
