@@ -212,10 +212,10 @@ public class Parser {
         parseType();
         expect(TokenClass.IDENTIFIER);
         //int a[3][2]...
-        while(accept(TokenClass.LBRA) && error == 0){
-            expect(TokenClass.LBRA);
+        while(accept(TokenClass.LSBR) && error == 0){
+            expect(TokenClass.LSBR);
             expect(TokenClass.INT_LITERAL);
-            expect(TokenClass.RBRA);
+            expect(TokenClass.RSBR);
         }
         expect(TokenClass.SC);
         print("exit parseVardecl");

@@ -1,5 +1,8 @@
+struct id
+{
+    int b[2][2];
+    int c[2][3];
+};
 int main(){
-    int b;
-    if(b == 2 && c <= a.d){
-    }
+    a  = id.b[2];
 }
