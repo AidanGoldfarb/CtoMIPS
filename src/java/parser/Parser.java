@@ -390,9 +390,11 @@ public class Parser {
         }
         if(accept(TokenClass.LSBR)){
             parseArrayaccess();
+            parseExpTail();
         }
         if(accept(TokenClass.DOT)){
             parseFieldaccess();
+            parseExpTail();
         }
         print("exit parseExpTail");
     }
