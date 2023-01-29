@@ -236,6 +236,7 @@ public class Parser {
     private void parseParams(){
         print("parseParams");
         if(accept(first_params)){
+            print("SUIS ICI");
             parseType();
             expect(TokenClass.IDENTIFIER);
             while(accept(TokenClass.COMMA) && error == 0){

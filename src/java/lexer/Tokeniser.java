@@ -341,7 +341,7 @@ public class Tokeniser {
                 sb.append(scanner.next());
                 len++;
                 //[struct ]
-                if( (scanner.peek() == ' ' || scanner.peek() == ';') && len==6 && sb.toString().equals("struct")) {
+                if( (scanner.peek() == ' ' || scanner.peek() == ';' || scanner.peek() == '*') && len==6 && sb.toString().equals("struct")) {
                     return new Token(TokenClass.STRUCT, line, column);
                 }
                 if( (scanner.peek() == ' ' || scanner.peek() == '(' || scanner.peek() == ';')
