@@ -1,5 +1,5 @@
 int main(){
-    b = (struct b)* d;
+    b = (struct b***) d;
 }
 
 

@@ -475,6 +475,7 @@ public class Parser {
         while(accept(TokenClass.ASTERIX) && error == 0){
             expect(TokenClass.ASTERIX);
         }
+
         print("exit parseType");
     }
 
