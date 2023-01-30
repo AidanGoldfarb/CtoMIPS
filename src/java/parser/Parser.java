@@ -236,7 +236,6 @@ public class Parser {
     private void parseParams(){
         print("parseParams");
         if(accept(first_params)){
-            print("SUIS ICI");
             parseType();
             expect(TokenClass.IDENTIFIER);
             while(accept(TokenClass.COMMA) && error == 0){
@@ -455,6 +454,7 @@ public class Parser {
 
     private void parseTypecast(){
         print("parseTypecast");
+        // (
         expect(first_typecast);
         parseType();
         expect(TokenClass.RPAR);
@@ -464,7 +464,14 @@ public class Parser {
 
     private void parseType(){
         print("parseType");
-        expect(first_type);
+        // structtype: "struct" IDENT
+        if(accept(TokenClass.STRUCT)){
+            expect(TokenClass.STRUCT);
+            expect(TokenClass.IDENTIFIER);
+        }
+        else {
+            expect(first_type);
+        }
         while(accept(TokenClass.ASTERIX) && error == 0){
             expect(TokenClass.ASTERIX);
         }

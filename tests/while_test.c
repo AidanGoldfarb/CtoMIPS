@@ -1,8 +1,5 @@
-int fun(struct* a){}
-
-
 int main(){
-
+    b = (struct b)* d;
 }
 
 
