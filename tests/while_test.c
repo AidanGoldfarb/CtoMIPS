@@ -1,5 +1,18 @@
-int main(){
-    b = (struct b***) d;
-}
+#include "h e l l o "
+
+int man
+
+(
+
+ char
+
+ *
+
+ c
+ )
+
+ {
 
 
+
+ }

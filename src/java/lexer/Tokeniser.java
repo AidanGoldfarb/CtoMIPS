@@ -137,7 +137,6 @@ public class Tokeniser {
         if (c == '%')
             return new Token(TokenClass.REM, line, column);
 
-
         /*
             STRUCT MEMBER ACCESS
          */
@@ -241,7 +240,7 @@ public class Tokeniser {
             if( scanner.peek() == 'f' ){
                 sb.append(scanner.next()); //add f
                 //[if ] or [if(]
-                if( scanner.peek() == ' ' || scanner.peek() == '(' || scanner.peek() == ';') {
+                if( scanner.peek() == ' ' || scanner.peek() == '(' || scanner.peek() == ';'|| scanner.peek() == '\n') {
                     return new Token(TokenClass.IF, line, column);
                 }
             }
@@ -251,7 +250,7 @@ public class Tokeniser {
                 if( scanner.peek() == 't') {
                     sb.append(scanner.next());
                     //int
-                    if (scanner.peek() == ' ' || scanner.peek() == '*' || scanner.peek() == ';' || scanner.peek() == ')') {
+                    if (scanner.peek() == ' ' || scanner.peek() == '*' || scanner.peek() == ';' || scanner.peek() == ')'|| scanner.peek() == '\n') {
                         return new Token(TokenClass.INT, line, column);
                     }
                 }
@@ -270,7 +269,7 @@ public class Tokeniser {
                 sb.append(scanner.next());
                 len++;
                 //void token
-                if((scanner.peek() == ' ' || scanner.peek() == '*' || scanner.peek() == ';' || scanner.peek() == ')') && len==4 && sb.toString().equals("void")) {
+                if((scanner.peek() == ' ' || scanner.peek() == '*' || scanner.peek() == ';' || scanner.peek() == ')'|| scanner.peek() == '\n') && len==4 && sb.toString().equals("void")) {
                     return new Token(TokenClass.VOID, line, column);
                 }
             }
@@ -305,7 +304,7 @@ public class Tokeniser {
                 sb.append(scanner.next());
                 len++;
                 //[while ] or [while(]
-                if( (scanner.peek() == ' ' || scanner.peek() == '(' || scanner.peek() == ';')
+                if( (scanner.peek() == ' ' || scanner.peek() == '(' || scanner.peek() == ';'|| scanner.peek() == '\n')
                         && len==5 && sb.toString().equals("while")) {
                     return new Token(TokenClass.WHILE, line, column);
                 }
@@ -323,7 +322,7 @@ public class Tokeniser {
                 sb.append(scanner.next());
                 len++;
                 //[return ] or [return;]
-                if( (scanner.peek() == ' ' || scanner.peek() == ';')
+                if( (scanner.peek() == ' ' || scanner.peek() == ';'|| scanner.peek() == '\n')
                         && len==6 && sb.toString().equals("return")) {
                     return new Token(TokenClass.RETURN, line, column);
                 }
@@ -341,7 +340,7 @@ public class Tokeniser {
                 sb.append(scanner.next());
                 len++;
                 //[struct ]
-                if( (scanner.peek() == ' ' || scanner.peek() == ';' || scanner.peek() == '*') && len==6 && sb.toString().equals("struct")) {
+                if( (scanner.peek() == ' ' || scanner.peek() == ';' || scanner.peek() == '*'|| scanner.peek() == '\n') && len==6 && sb.toString().equals("struct")) {
                     return new Token(TokenClass.STRUCT, line, column);
                 }
                 if( (scanner.peek() == ' ' || scanner.peek() == '(' || scanner.peek() == ';')
@@ -362,7 +361,7 @@ public class Tokeniser {
                 sb.append(scanner.next());
                 len++;
                 //char token
-                if((scanner.peek() == ' ' || scanner.peek() == '*'|| scanner.peek() == ';' || scanner.peek() == ')')
+                if((scanner.peek() == ' ' || scanner.peek() == '*'|| scanner.peek() == ';' || scanner.peek() == ')'|| scanner.peek() == '\n')
                         && len==4 && sb.toString().equals("char")) {
                     return new Token(TokenClass.CHAR, line, column);
                 }
