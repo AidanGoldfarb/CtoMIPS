@@ -13,7 +13,11 @@ import java.util.Queue;
  * @author cdubach
  */
 public class Parser {
-
+    private final TokenClass [] INVALID_ID = {TokenClass.LBRA,TokenClass.RBRA,
+            TokenClass.LPAR,TokenClass.LSBR,TokenClass.RSBR,TokenClass.SC,
+            TokenClass.COMMA,TokenClass.INT,TokenClass.VOID,TokenClass.CHAR,
+            TokenClass.IF,TokenClass.ELSE,TokenClass.WHILE,TokenClass.RETURN,
+            TokenClass.STRUCT,TokenClass.SIZEOF};
     //First sets
     private final TokenClass [] first_program = {TokenClass.INCLUDE,TokenClass.STRUCT,TokenClass.INT,TokenClass.CHAR,TokenClass.VOID};
     private final TokenClass [] first_include = {TokenClass.INCLUDE};
@@ -194,7 +198,7 @@ public class Parser {
     private void parseStructDecl(){
         print("parseStructDecl");
         expect(TokenClass.STRUCT);
-        expect(TokenClass.IDENTIFIER);
+        parseIdentifier();
         expect(TokenClass.LBRA);
 
         //1 or more vardecl
@@ -210,7 +214,7 @@ public class Parser {
         print("parseVardecl");
         //type
         parseType();
-        expect(TokenClass.IDENTIFIER);
+        parseIdentifier();
         //int a[3][2]...
         while(accept(TokenClass.LSBR) && error == 0){
             expect(TokenClass.LSBR);
@@ -225,7 +229,7 @@ public class Parser {
         print("parseFundecl");
         //type
         parseType();
-        expect(TokenClass.IDENTIFIER);
+        parseIdentifier();
         expect(TokenClass.LPAR);
         parseParams();
         expect(TokenClass.RPAR);
@@ -237,11 +241,11 @@ public class Parser {
         print("parseParams");
         if(accept(first_params)){
             parseType();
-            expect(TokenClass.IDENTIFIER);
+            parseIdentifier();
             while(accept(TokenClass.COMMA) && error == 0){
                 expect(TokenClass.COMMA);
                 parseType();
-                expect(TokenClass.IDENTIFIER);
+                parseIdentifier();
             }
         }
         print("exit parseParams");
@@ -323,7 +327,7 @@ public class Parser {
             }
             //ident
             else{
-                expect(TokenClass.IDENTIFIER);
+                parseIdentifier();
             }
             parseExpTail();
             return;
@@ -425,7 +429,7 @@ public class Parser {
     private void parseFieldaccess(){
         print("parseFieldaccess");
         expect(TokenClass.DOT);
-        expect(TokenClass.IDENTIFIER);
+        parseIdentifier();
         print("exit parseFieldaccess");
     }
 
@@ -467,7 +471,7 @@ public class Parser {
         // structtype: "struct" IDENT
         if(accept(TokenClass.STRUCT)){
             expect(TokenClass.STRUCT);
-            expect(TokenClass.IDENTIFIER);
+            parseIdentifier();
         }
         else {
             expect(first_type);
@@ -479,6 +483,14 @@ public class Parser {
         print("exit parseType");
     }
 
+    private void parseIdentifier(){
+        print("parseIdentifier");
+        assert accept(TokenClass.IDENTIFIER);
+        if(is_valid_id(token.data)){
+            expect(TokenClass.IDENTIFIER);
+        }else error(token.tokenClass);
+        print("exit parseIdentifier");
+    }
     //if tk \in lst
     private boolean contains(TokenClass [] lst, TokenClass tk){
         for(TokenClass t: lst){
@@ -487,6 +499,16 @@ public class Parser {
             }
         }
         return false;
+    }
+
+    private boolean is_valid_id(String str){
+        print(str);
+        for(TokenClass t: INVALID_ID){
+            if (t.toString().toLowerCase().equals(str)){
+                return false;
+            }
+        }
+        return true;
     }
 
     @SuppressWarnings("unused")

@@ -1,18 +1,4 @@
-#include "h e l l o "
+int main(){
+    int while[2];
 
-int man
-
-(
-
- char
-
- *
-
- c
- )
-
- {
-
-
-
- }
+}

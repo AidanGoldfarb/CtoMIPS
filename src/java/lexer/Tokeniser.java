@@ -240,7 +240,7 @@ public class Tokeniser {
             if( scanner.peek() == 'f' ){
                 sb.append(scanner.next()); //add f
                 //[if ] or [if(]
-                if( scanner.peek() == ' ' || scanner.peek() == '(' || scanner.peek() == ';'|| scanner.peek() == '\n') {
+                if(scanner.peek() == '(' || scanner.peek() == ';'|| Character.isWhitespace(scanner.peek())) {
                     return new Token(TokenClass.IF, line, column);
                 }
             }
@@ -250,7 +250,7 @@ public class Tokeniser {
                 if( scanner.peek() == 't') {
                     sb.append(scanner.next());
                     //int
-                    if (scanner.peek() == ' ' || scanner.peek() == '*' || scanner.peek() == ';' || scanner.peek() == ')'|| scanner.peek() == '\n') {
+                    if (scanner.peek() == '*' || scanner.peek() == ';' || scanner.peek() == ')'|| Character.isWhitespace(scanner.peek())) {
                         return new Token(TokenClass.INT, line, column);
                     }
                 }
@@ -269,7 +269,8 @@ public class Tokeniser {
                 sb.append(scanner.next());
                 len++;
                 //void token
-                if((scanner.peek() == ' ' || scanner.peek() == '*' || scanner.peek() == ';' || scanner.peek() == ')'|| scanner.peek() == '\n') && len==4 && sb.toString().equals("void")) {
+                if((scanner.peek() == '*' || scanner.peek() == ';' || scanner.peek() == ')'|| Character.isWhitespace(scanner.peek()))
+                        && len==4 && sb.toString().equals("void")) {
                     return new Token(TokenClass.VOID, line, column);
                 }
             }
@@ -286,7 +287,7 @@ public class Tokeniser {
                 sb.append(scanner.next());
                 len++;
                 //[else ] or [else{]
-                if( (scanner.peek() == ' ' || scanner.peek() == '\n'|| scanner.peek() == '{' || scanner.peek() == ';')
+                if( (Character.isWhitespace(scanner.peek())|| scanner.peek() == '{' || scanner.peek() == ';')
                         && len==4 && sb.toString().equals("else")) {
                     return new Token(TokenClass.ELSE, line, column);
                 }
@@ -303,8 +304,8 @@ public class Tokeniser {
             while(Character.isLetterOrDigit(scanner.peek())){
                 sb.append(scanner.next());
                 len++;
-                //[while ] or [while(]
-                if( (scanner.peek() == ' ' || scanner.peek() == '(' || scanner.peek() == ';'|| scanner.peek() == '\n')
+                //[while; ] or [while(]
+                if( (scanner.peek() == '(' || scanner.peek() == ';'|| Character.isWhitespace(scanner.peek()))
                         && len==5 && sb.toString().equals("while")) {
                     return new Token(TokenClass.WHILE, line, column);
                 }
@@ -322,7 +323,7 @@ public class Tokeniser {
                 sb.append(scanner.next());
                 len++;
                 //[return ] or [return;]
-                if( (scanner.peek() == ' ' || scanner.peek() == ';'|| scanner.peek() == '\n')
+                if( (scanner.peek() == ';'|| Character.isWhitespace(scanner.peek()))
                         && len==6 && sb.toString().equals("return")) {
                     return new Token(TokenClass.RETURN, line, column);
                 }
@@ -340,10 +341,11 @@ public class Tokeniser {
                 sb.append(scanner.next());
                 len++;
                 //[struct ]
-                if( (scanner.peek() == ' ' || scanner.peek() == ';' || scanner.peek() == '*'|| scanner.peek() == '\n') && len==6 && sb.toString().equals("struct")) {
+                if( (scanner.peek() == ';' || scanner.peek() == '*'|| Character.isWhitespace(scanner.peek()))
+                        && len==6 && sb.toString().equals("struct")) {
                     return new Token(TokenClass.STRUCT, line, column);
                 }
-                if( (scanner.peek() == ' ' || scanner.peek() == '(' || scanner.peek() == ';')
+                if( (scanner.peek() == '(' || scanner.peek() == ';' || Character.isWhitespace(scanner.peek()))
                         && len==6 && sb.toString().equals("sizeof")) {
                     return new Token(TokenClass.SIZEOF, line, column);
                 }
@@ -361,7 +363,7 @@ public class Tokeniser {
                 sb.append(scanner.next());
                 len++;
                 //char token
-                if((scanner.peek() == ' ' || scanner.peek() == '*'|| scanner.peek() == ';' || scanner.peek() == ')'|| scanner.peek() == '\n')
+                if((scanner.peek() == '*'|| scanner.peek() == ';' || scanner.peek() == ')'|| Character.isWhitespace(scanner.peek()))
                         && len==4 && sb.toString().equals("char")) {
                     return new Token(TokenClass.CHAR, line, column);
                 }
