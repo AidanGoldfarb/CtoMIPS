@@ -19,13 +19,13 @@ public class Parser {
             TokenClass.IF,TokenClass.ELSE,TokenClass.WHILE,TokenClass.RETURN,
             TokenClass.STRUCT,TokenClass.SIZEOF};
     //First sets
-    private final TokenClass [] first_program = {TokenClass.INCLUDE,TokenClass.STRUCT,TokenClass.INT,TokenClass.CHAR,TokenClass.VOID};
-    private final TokenClass [] first_include = {TokenClass.INCLUDE};
-    private final TokenClass [] first_structdelc = {TokenClass.STRUCT};
+    //private final TokenClass [] first_program = {TokenClass.INCLUDE,TokenClass.STRUCT,TokenClass.INT,TokenClass.CHAR,TokenClass.VOID};
+    //private final TokenClass [] first_include = {TokenClass.INCLUDE};
+    //private final TokenClass [] first_structdelc = {TokenClass.STRUCT};
     private final TokenClass [] first_vardecl = {TokenClass.INT,TokenClass.CHAR,TokenClass.VOID, TokenClass.STRUCT};
     private final TokenClass [] first_fundecl = {TokenClass.INT,TokenClass.CHAR,TokenClass.VOID, TokenClass.STRUCT};
     private final TokenClass [] first_type = {TokenClass.INT,TokenClass.CHAR,TokenClass.VOID, TokenClass.STRUCT};
-    private final TokenClass [] first_structype = {TokenClass.STRUCT};
+    //private final TokenClass [] first_structype = {TokenClass.STRUCT};
     private final TokenClass [] first_params = {TokenClass.INT,TokenClass.CHAR,TokenClass.VOID, TokenClass.STRUCT};
     private final TokenClass [] first_stmt = {TokenClass.LBRA, TokenClass.WHILE, TokenClass.IF, TokenClass.RETURN,
                                               TokenClass.LPAR, TokenClass.IDENTIFIER, TokenClass.INT_LITERAL,
@@ -42,12 +42,12 @@ public class Parser {
                                                  TokenClass.DIV, TokenClass.ASSIGN, TokenClass.LOGOR, TokenClass.LOGAND,
                                                  TokenClass.REM, TokenClass.EQ, TokenClass.ASTERIX};
     private final TokenClass [] first_funcall = {TokenClass.IDENTIFIER};
-    private final TokenClass [] first_arrayaccess = {TokenClass.LPAR, TokenClass.IDENTIFIER, TokenClass.INT_LITERAL, TokenClass.MINUS,
-                                                     TokenClass.PLUS, TokenClass.CHAR_LITERAL, TokenClass.STRING_LITERAL, TokenClass.ASTERIX,
-                                                     TokenClass.AND, TokenClass.SIZEOF};
-    private final TokenClass [] first_fieldaccess = {TokenClass.LPAR, TokenClass.IDENTIFIER, TokenClass.INT_LITERAL, TokenClass.MINUS,
-                                                     TokenClass.PLUS, TokenClass.CHAR_LITERAL, TokenClass.STRING_LITERAL, TokenClass.ASTERIX,
-                                                     TokenClass.AND, TokenClass.SIZEOF};
+//    private final TokenClass [] first_arrayaccess = {TokenClass.LPAR, TokenClass.IDENTIFIER, TokenClass.INT_LITERAL, TokenClass.MINUS,
+//                                                     TokenClass.PLUS, TokenClass.CHAR_LITERAL, TokenClass.STRING_LITERAL, TokenClass.ASTERIX,
+//                                                     TokenClass.AND, TokenClass.SIZEOF};
+//    private final TokenClass [] first_fieldaccess = {TokenClass.LPAR, TokenClass.IDENTIFIER, TokenClass.INT_LITERAL, TokenClass.MINUS,
+//                                                     TokenClass.PLUS, TokenClass.CHAR_LITERAL, TokenClass.STRING_LITERAL, TokenClass.ASTERIX,
+//                                                     TokenClass.AND, TokenClass.SIZEOF};
     private final TokenClass [] first_valueat = {TokenClass.ASTERIX};
     private final TokenClass [] first_addressof = {TokenClass.AND};
     private final TokenClass [] first_sizeof = {TokenClass.SIZEOF};
@@ -56,7 +56,7 @@ public class Parser {
 
     private Token token;
 
-    private Queue<Token> buffer = new LinkedList<>();
+    private final Queue<Token> buffer = new LinkedList<>();
 
     private final Tokeniser tokeniser;
 
@@ -258,7 +258,7 @@ public class Parser {
             parseBlock();
         }
         //while loop
-        if(accept(TokenClass.WHILE)){
+        else if(accept(TokenClass.WHILE)){
             expect(TokenClass.WHILE);
             expect(TokenClass.LPAR);
             parseExp();
@@ -266,7 +266,7 @@ public class Parser {
             parseStmt();
         }
         //if then else
-        if(accept(TokenClass.IF)){
+        else if(accept(TokenClass.IF)){
             expect(TokenClass.IF);
             expect(TokenClass.LPAR);
             parseExp();
@@ -278,7 +278,7 @@ public class Parser {
             }
         }
         //return
-        if(accept(TokenClass.RETURN)){
+        else if(accept(TokenClass.RETURN)){
             expect(TokenClass.RETURN);
             if(accept(first_exp)){
                 parseExp();
@@ -286,9 +286,12 @@ public class Parser {
             expect(TokenClass.SC);
         }
         //expr
-        if(accept(first_exp)){
+        else if(accept(first_exp)){
             parseExp();
             expect(TokenClass.SC);
+        }
+        else{
+            error(token.tokenClass);
         }
         print("exit parseStmt");
     }

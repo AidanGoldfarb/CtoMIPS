@@ -1,4 +1,6 @@
 int main(){
-    int while[2];
-
+    if   ( a   ==  1    )
+    b
+    =
+    3;
 }

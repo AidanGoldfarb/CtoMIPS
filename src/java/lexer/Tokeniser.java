@@ -16,7 +16,7 @@ public class Tokeniser {
     private final Scanner scanner;
     private final String [] VALID_ESC = {"\\t","\\b","\\n","\\r","\\f","\\'","\\\"","\\\\","\\0"};
 
-    private final TokenClass [] RESERVED_KW = {TokenClass.RETURN,TokenClass.INT,TokenClass.CHAR,TokenClass.VOID,TokenClass.STRUCT,TokenClass.IF,TokenClass.ELSE,TokenClass.WHILE,TokenClass.SIZEOF};
+    //private final TokenClass [] RESERVED_KW = {TokenClass.RETURN,TokenClass.INT,TokenClass.CHAR,TokenClass.VOID,TokenClass.STRUCT,TokenClass.IF,TokenClass.ELSE,TokenClass.WHILE,TokenClass.SIZEOF};
 
     private int error = 0;
     public int getErrorCount() {
