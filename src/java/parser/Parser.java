@@ -1,11 +1,14 @@
 package parser;
 
 
+import ast.*;
 import lexer.Token;
 import lexer.Token.TokenClass;
 import lexer.Tokeniser;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 
 
@@ -69,8 +72,8 @@ public class Parser {
     public void parse() {
         // get the first token
         nextToken();
-
         parseProgram();
+        //return parseProgram();
     }
 
     public int getErrorCount() {
@@ -133,7 +136,7 @@ public class Parser {
     }
 
     /*
-     * If the current token is equals to the expected one, then skip (consume) it, otherwise report an error.
+     * If the current token is equals to the expected one, then skip it, otherwise report an error.
      */
     private void expect(TokenClass... expected) {
         for (TokenClass e : expected) {
@@ -156,22 +159,28 @@ public class Parser {
     }
 
 
-    private void parseProgram() {
-        print("parseProgram");
+    private void parseProgram() { //return program
         parseIncludes();
+
+        List<StructTypeDecl> stds = new ArrayList<>();
+        List<VarDecl> vds = new ArrayList<>();
+        List<FunDecl> fds = new ArrayList<>();
 
         while (accept(TokenClass.STRUCT, TokenClass.INT, TokenClass.CHAR, TokenClass.VOID)) {
             if (token.tokenClass == TokenClass.STRUCT &&
                     lookAhead(1).tokenClass == TokenClass.IDENTIFIER &&
                     lookAhead(2).tokenClass == TokenClass.LBRA) {
+                //stds.add(parseStructDecl());
                 parseStructDecl();
             }
             //fundecl
             else if(contains(first_fundecl,token.tokenClass) &&
                     lookAhead(2).tokenClass == TokenClass.LPAR){
+                //fds.add(parseFundecl());
                 parseFundecl();
             }
             else if(contains(first_vardecl,token.tokenClass)){
+                //vds.add(parseVardecl());
                 parseVardecl();
             }
             else {
@@ -181,7 +190,7 @@ public class Parser {
         // to be completed ...
 
         expect(TokenClass.EOF);
-        print("exit parseProgram");
+        //return new Program(stds, vds, fds);
     }
 
     // includes are ignored, so does not need to return an AST node
@@ -196,7 +205,6 @@ public class Parser {
     }
 
     private void parseStructDecl(){
-        print("parseStructDecl");
         expect(TokenClass.STRUCT);
         parseIdentifier();
         expect(TokenClass.LBRA);
@@ -311,15 +319,43 @@ public class Parser {
 
     private void parseExp(){
         print("parseExp");
+        parseTerm();
+        parseTermTail();
+        print("exit parseExp");
+    }
+
+    private void parseTerm(){
+        parseFactor();
+        parseFactorTail();
+    }
+
+    private void parseTermTail(){
+        if(accept(TokenClass.PLUS,TokenClass.MINUS)){
+            nextToken();
+            parseTerm();
+            parseTermTail();
+        }
+    }
+
+    private void parseFactorTail(){
+        if(accept(TokenClass.ASTERIX,TokenClass.DIV)){
+            nextToken();
+            parseFactor();
+            parseFactorTail();
+        }
+    }
+
+    private void parseFactor(){
         //(exp) || typecast
         if(accept(TokenClass.LPAR)){
-            //typecast
             if(contains(first_type,lookAhead(1).tokenClass)){
                 parseTypecast();
             }
-            else {
-                parseExpTail();
-            }// else do nothing, (exp) handled in exptail
+            else{
+                expect(TokenClass.LPAR);
+                parseExp();
+                expect(TokenClass.RPAR);
+            }
             return;
         }
         //(IDENT || funcall
@@ -332,52 +368,33 @@ public class Parser {
             else{
                 parseIdentifier();
             }
-            parseExpTail();
             return;
         }
         else if(accept(TokenClass.INT_LITERAL)){
             expect(TokenClass.INT_LITERAL);
-            parseExpTail();
-            return;
-        }
-        else if(accept(TokenClass.MINUS, TokenClass.PLUS)){
-            expect(TokenClass.MINUS, TokenClass.PLUS);
-            parseExp();
-            parseExpTail();
             return;
         }
         else if(accept(TokenClass.CHAR_LITERAL)){
             expect(TokenClass.CHAR_LITERAL);
-            parseExpTail();
             return;
         }
         else if(accept(TokenClass.STRING_LITERAL)){
             expect(TokenClass.STRING_LITERAL);
-            parseExpTail();
             return;
         }
-        else if(accept(first_valueat)){
+        else if(accept(TokenClass.ASTERIX)){
             parseValueat();
-            parseExpTail();
             return;
         }
-        else if(accept(first_addressof)){
+        else if(accept(TokenClass.AND)){
             parseAddressof();
-            parseExpTail();
             return;
         }
-        else if(accept(first_funcall)){
-            parseFuncall();
-            parseExpTail();
-            return;
-        }
-        else if(accept(first_sizeof)){
+        else if(accept(TokenClass.SIZEOF)){
             parseSizeof();
-            parseExpTail();
             return;
         }
         error(token.tokenClass);
-        print("exit parseExp");
     }
 
     private void parseExpTail(){
@@ -474,7 +491,9 @@ public class Parser {
         // structtype: "struct" IDENT
         if(accept(TokenClass.STRUCT)){
             expect(TokenClass.STRUCT);
+            //String id = parseIdentifier();
             parseIdentifier();
+            //return new StructTypeDecl(id);
         }
         else {
             expect(first_type);

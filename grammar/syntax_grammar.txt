@@ -29,14 +29,33 @@ stmt       ::= block
 
 block      ::= "{" (vardecl)* (stmt)* "}"
 
-exp        ::= "(" exp ")"
-             | exp "=" exp                           # assignment
-             | (IDENT | INT_LITERAL)
+
+exp        ::= term term_tail
+
+term       ::= factor factor_tail
+
+term_tail  := ('+'|'-') term term_tail | eps
+
+factor     ::= (IDENT | INT_LITERAL | CHAR_LITERAL | STRING_LITERAL)
+             | arrayaccess | fieldaccess | valueat | addressof | funcall | sizeof | typecast
+             | "(" exp ")"
+
+factor_tail := ('*'|'/') factor factor_tail | eps
+
+exp        ::= (IDENT | INT_LITERAL)
              | ("-" | "+") exp
              | CHAR_LITERAL
              | STRING_LITERAL
-             | exp (">" | "<" | ">=" | "<=" | "!=" | "==" | "+" | "-" | "/" | "*" | "%" | "||" | "&&") exp  # binary operators
-             | arrayaccess | fieldaccess | valueat | addressof | funcall | sizeof | typecast
+             | valueat | addressof | funcall | sizeof | typecast
+
+
+exp_tail  ::= "(" exp ")"
+            |  "=" exp  # assignment
+            |  (">" | "<" | ">=" | "<=" | "!=" | "==" | "+" | "-" | "/" | "*" | "%" | "||" | "&&") exp # binary operators
+            |  arrayaccess
+            |  fieldaccess
+            |  eps
+
 
 funcall      ::= IDENT "(" [ exp ("," exp)* ] ")" # function call
 arrayaccess  ::= exp "[" exp "]"                  # array access
