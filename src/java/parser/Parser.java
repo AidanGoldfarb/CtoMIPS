@@ -159,7 +159,7 @@ public class Parser {
     }
 
 
-    private void parseProgram() { //return program
+    private Program parseProgram() { //return program
         parseIncludes();
 
         List<StructTypeDecl> stds = new ArrayList<>();
@@ -170,18 +170,18 @@ public class Parser {
             if (token.tokenClass == TokenClass.STRUCT &&
                     lookAhead(1).tokenClass == TokenClass.IDENTIFIER &&
                     lookAhead(2).tokenClass == TokenClass.LBRA) {
-                //stds.add(parseStructDecl());
-                parseStructDecl();
+                stds.add(parseStructDecl());
+                //parseStructDecl();
             }
             //fundecl
             else if(contains(first_fundecl,token.tokenClass) &&
                     lookAhead(2).tokenClass == TokenClass.LPAR){
-                //fds.add(parseFundecl());
-                parseFundecl();
+                fds.add(parseFundecl());
+                //parseFundecl();
             }
             else if(contains(first_vardecl,token.tokenClass)){
-                //vds.add(parseVardecl());
-                parseVardecl();
+                vds.add(parseVardecl());
+                //parseVardecl();
             }
             else {
                 nextToken();
@@ -190,7 +190,7 @@ public class Parser {
         // to be completed ...
 
         expect(TokenClass.EOF);
-        //return new Program(stds, vds, fds);
+        return new Program(stds, vds, fds);
     }
 
     // includes are ignored, so does not need to return an AST node
@@ -204,25 +204,30 @@ public class Parser {
         print("exit parseIncludes");
     }
 
-    private void parseStructDecl(){
+    private StructTypeDecl parseStructDecl(){
+        StructTypeDecl std;
+        ArrayList<VarDecl> vardecls = new ArrayList<VarDecl>();
+
         expect(TokenClass.STRUCT);
-        parseIdentifier();
+        String id = parseIdentifier();
         expect(TokenClass.LBRA);
 
         //1 or more vardecl
         do{
-            parseVardecl();
+            vardecls.add(parseVardecl());
         } while(accept(first_vardecl) && error == 0);
 
         expect(TokenClass.RBRA);
         expect(TokenClass.SC);
         print("exit praseStructDecl");
+
+        return new StructTypeDecl(new StructType(id), vardecls);
     }
-    private void parseVardecl() {
+    private VarDecl parseVardecl() {
         print("parseVardecl");
         //type
-        parseType();
-        parseIdentifier();
+        Type t = parseType();
+        String id = parseIdentifier();
         //int a[3][2]...
         while(accept(TokenClass.LSBR) && error == 0){
             expect(TokenClass.LSBR);
@@ -231,9 +236,10 @@ public class Parser {
         }
         expect(TokenClass.SC);
         print("exit parseVardecl");
+        return null;
     }
 
-    private void parseFundecl(){
+    private FunDecl parseFundecl(){
         print("parseFundecl");
         //type
         parseType();
@@ -243,6 +249,7 @@ public class Parser {
         expect(TokenClass.RPAR);
         parseBlock();
         print("exit parseFundecl");
+        return null;
     }
 
     private void parseParams(){
@@ -486,32 +493,35 @@ public class Parser {
         print("exit parseTypecast");
     }
 
-    private void parseType(){
+    private Type parseType(){
         print("parseType");
         // structtype: "struct" IDENT
         if(accept(TokenClass.STRUCT)){
             expect(TokenClass.STRUCT);
-            //String id = parseIdentifier();
-            parseIdentifier();
-            //return new StructTypeDecl(id);
+            String id = parseIdentifier();
+            return new StructType(id);
         }
         else {
-            expect(first_type);
+            expect(first_type);//DO TO
         }
         while(accept(TokenClass.ASTERIX) && error == 0){
             expect(TokenClass.ASTERIX);
         }
 
         print("exit parseType");
+        return null;
     }
 
-    private void parseIdentifier(){
+    private String parseIdentifier(){
         print("parseIdentifier");
+        String id = "NO_ID";
         assert accept(TokenClass.IDENTIFIER);
         if(is_valid_id(token.data)){
+            id = token.data;
             expect(TokenClass.IDENTIFIER);
         }else error(token.tokenClass);
         print("exit parseIdentifier");
+        return id;
     }
     //if tk \in lst
     private boolean contains(TokenClass [] lst, TokenClass tk){
