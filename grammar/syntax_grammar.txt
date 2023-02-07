@@ -39,6 +39,7 @@ term_tail  := ('+'|'-') term term_tail | eps
 factor     ::= (IDENT | INT_LITERAL | CHAR_LITERAL | STRING_LITERAL)
              | arrayaccess | fieldaccess | valueat | addressof | funcall | sizeof | typecast
              | "(" exp ")"
+             | "=" exp
 
 factor_tail := ('*'|'/') factor factor_tail | eps
 

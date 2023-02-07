@@ -22,7 +22,7 @@ public class Parser {
             TokenClass.IF,TokenClass.ELSE,TokenClass.WHILE,TokenClass.RETURN,
             TokenClass.STRUCT,TokenClass.SIZEOF};
     //First sets
-    //private final TokenClass [] first_program = {TokenClass.INCLUDE,TokenClass.STRUCT,TokenClass.INT,TokenClass.CHAR,TokenClass.VOID};
+    private final TokenClass [] first_program = {TokenClass.INCLUDE,TokenClass.STRUCT,TokenClass.INT,TokenClass.CHAR,TokenClass.VOID};
     //private final TokenClass [] first_include = {TokenClass.INCLUDE};
     //private final TokenClass [] first_structdelc = {TokenClass.STRUCT};
     private final TokenClass [] first_vardecl = {TokenClass.INT,TokenClass.CHAR,TokenClass.VOID, TokenClass.STRUCT};
@@ -69,11 +69,11 @@ public class Parser {
         this.tokeniser = tokeniser;
     }
 
-    public void parse() {
+    public Program parse() {
         // get the first token
         nextToken();
-        parseProgram();
-        //return parseProgram();
+
+        return parseProgram();
     }
 
     public int getErrorCount() {
@@ -152,45 +152,48 @@ public class Parser {
     * Returns true if the current token is equals to any of the expected ones.
     */
     private boolean accept(TokenClass... expected) {
-        boolean result = false;
-        for (TokenClass e : expected)
-            result |= (e == token.tokenClass);
-        return result;
+        for (TokenClass e : expected) {
+            if (e == token.tokenClass)
+                return true;
+        }
+        return false;
     }
 
 
     private Program parseProgram() { //return program
         parseIncludes();
 
-        List<StructTypeDecl> stds = new ArrayList<>();
-        List<VarDecl> vds = new ArrayList<>();
-        List<FunDecl> fds = new ArrayList<>();
+        List<Decl> decls = new ArrayList<>();
 
         while (accept(TokenClass.STRUCT, TokenClass.INT, TokenClass.CHAR, TokenClass.VOID)) {
             if (token.tokenClass == TokenClass.STRUCT &&
                     lookAhead(1).tokenClass == TokenClass.IDENTIFIER &&
                     lookAhead(2).tokenClass == TokenClass.LBRA) {
-                stds.add(parseStructDecl());
+                decls.add(parseStructDecl());
                 //parseStructDecl();
             }
             //fundecl
             else if(contains(first_fundecl,token.tokenClass) &&
                     lookAhead(2).tokenClass == TokenClass.LPAR){
-                fds.add(parseFundecl());
+                decls.add(parseFundecl());
                 //parseFundecl();
             }
             else if(contains(first_vardecl,token.tokenClass)){
-                vds.add(parseVardecl());
+                decls.add(parseVardecl());
                 //parseVardecl();
             }
             else {
-                nextToken();
+                // to be completed ...
+                if(!accept(TokenClass.EOF)) {
+                    error(first_program);
+                    nextToken(); // this line should be modified/removed
+                }
             }
         }
         // to be completed ...
 
         expect(TokenClass.EOF);
-        return new Program(stds, vds, fds);
+        return new Program(decls);
     }
 
     // includes are ignored, so does not need to return an AST node
@@ -236,115 +239,139 @@ public class Parser {
         }
         expect(TokenClass.SC);
         print("exit parseVardecl");
-        return null;
+        return new VarDecl(t,id);
     }
 
     private FunDecl parseFundecl(){
         print("parseFundecl");
         //type
-        parseType();
-        parseIdentifier();
+        Type t = parseType();
+        String id = parseIdentifier();
         expect(TokenClass.LPAR);
         parseParams();
         expect(TokenClass.RPAR);
-        parseBlock();
+        Block block = parseBlock();
         print("exit parseFundecl");
         return null;
     }
 
-    private void parseParams(){
+    private List<VarDecl> parseParams(){
         print("parseParams");
+        List<VarDecl> params = new ArrayList<>();
         if(accept(first_params)){
             parseType();
             parseIdentifier();
             while(accept(TokenClass.COMMA) && error == 0){
                 expect(TokenClass.COMMA);
-                parseType();
-                parseIdentifier();
+                Type t = parseType();
+                String id = parseIdentifier();
+                params.add(new VarDecl(t,id));
             }
         }
         print("exit parseParams");
+        return params;
     }
 
-    private void parseStmt(){
+    private Stmt parseStmt(){
         print("parse Stmt"+token);
+        Stmt stmt = null;
         //block
         if(accept(first_block)){
-            parseBlock();
+            stmt = parseBlock();
         }
         //while loop
         else if(accept(TokenClass.WHILE)){
             expect(TokenClass.WHILE);
             expect(TokenClass.LPAR);
-            parseExp();
+            Expr expr = parseExp();
             expect(TokenClass.RPAR);
-            parseStmt();
+            Stmt wstmt = parseStmt();
+            stmt = new While(expr,wstmt);
         }
         //if then else
         else if(accept(TokenClass.IF)){
             expect(TokenClass.IF);
             expect(TokenClass.LPAR);
-            parseExp();
+            Expr expr = parseExp();
             expect(TokenClass.RPAR);
-            parseStmt();
+            Stmt istmt = parseStmt();
+            Stmt estmt = null;
             if(accept(TokenClass.ELSE)){
                 expect(TokenClass.ELSE);
-                parseStmt();
+                estmt = parseStmt();
             }
+            stmt = new If(expr,istmt,estmt);
         }
         //return
         else if(accept(TokenClass.RETURN)){
             expect(TokenClass.RETURN);
+            Expr expr = null;
             if(accept(first_exp)){
-                parseExp();
+                expr = parseExp();
             }
             expect(TokenClass.SC);
+            stmt = new Return(expr);
         }
         //expr
         else if(accept(first_exp)){
-            parseExp();
+            Expr expr = parseExp();
             expect(TokenClass.SC);
+            stmt = new ExprStmt(expr);
         }
         else{
             error(token.tokenClass);
         }
         print("exit parseStmt");
+        return stmt;
     }
 
-    private void parseBlock(){
+    private Block parseBlock(){
         print("parseBlock");
+        List<VarDecl> vds = new ArrayList<>();
+        List<Stmt> stmts = new ArrayList<>();
+
         expect(first_block);
         while(accept(first_vardecl) && error == 0){
-            parseVardecl();
+            vds.add(parseVardecl());
         }
         while(accept(first_stmt) && error == 0){
-            parseStmt();
+            stmts.add(parseStmt());
         }
         expect(TokenClass.RBRA);
         print("exit parseBlock");
+        return new Block(vds,stmts);
     }
 
-    private void parseExp(){
+    private Expr parseExp(){
         print("parseExp");
+        Expr expr;
+
         parseTerm();
         parseTermTail();
+
         print("exit parseExp");
+        return expr;
     }
 
-    private void parseTerm(){
-        parseFactor();
-        parseFactorTail();
+    private Expr parseTerm(){
+        return new Term(parseFactor(),parseFactorTail());
     }
 
-    private void parseTermTail(){
-        if(accept(TokenClass.PLUS,TokenClass.MINUS)){
+    private TermTail parseTermTail(){
+        TermTail tt;
+
+        // + binop
+        if(accept(TokenClass.PLUS)){
             nextToken();
             parseTerm();
             parseTermTail();
         }
+        // - binop
+        else if(accept(TokenClass.MINUS)) {
+        }
     }
 
-    private void parseFactorTail(){
+    private FactorTail parseFactorTail(){
         if(accept(TokenClass.ASTERIX,TokenClass.DIV)){
             nextToken();
             parseFactor();
@@ -352,56 +379,59 @@ public class Parser {
         }
     }
 
-    private void parseFactor(){
+    private Expr parseFactor(){
         //(exp) || typecast
         if(accept(TokenClass.LPAR)){
             if(contains(first_type,lookAhead(1).tokenClass)){
-                parseTypecast();
+                return parseTypecast();
             }
             else{
                 expect(TokenClass.LPAR);
-                parseExp();
+                Expr expr = parseExp();
                 expect(TokenClass.RPAR);
+                return expr;
             }
-            return;
         }
         //(IDENT || funcall
         else if(accept(TokenClass.IDENTIFIER)){
             //funcall
             if(lookAhead(1).tokenClass == TokenClass.LPAR){
-                parseFuncall();
+                return parseFuncall();
             }
             //ident
             else{
-                parseIdentifier();
+                return new VarExpr(parseIdentifier());
             }
-            return;
         }
         else if(accept(TokenClass.INT_LITERAL)){
+            IntLiteral il = new IntLiteral(Integer.parseInt(token.data)); //i hope casting was right here
             expect(TokenClass.INT_LITERAL);
-            return;
+            return il;
         }
         else if(accept(TokenClass.CHAR_LITERAL)){
+            ChrLiteral cl = new ChrLiteral(token.data.charAt(0)); //i hope charat was right here
             expect(TokenClass.CHAR_LITERAL);
-            return;
+            return cl;
         }
         else if(accept(TokenClass.STRING_LITERAL)){
+            StrLiteral sl = new StrLiteral(token.data);
             expect(TokenClass.STRING_LITERAL);
-            return;
+            return sl;
         }
         else if(accept(TokenClass.ASTERIX)){
-            parseValueat();
-            return;
+            return parseValueat();
         }
         else if(accept(TokenClass.AND)){
-            parseAddressof();
-            return;
+            return parseAddressof();
         }
         else if(accept(TokenClass.SIZEOF)){
-            parseSizeof();
-            return;
+            return parseSizeof();
+        }
+        else if(accept(TokenClass.ASSIGN)){
+            //need lhs??
         }
         error(token.tokenClass);
+        return null;
     }
 
     private void parseExpTail(){
@@ -430,19 +460,21 @@ public class Parser {
         print("exit parseExpTail");
     }
 
-    private void parseFuncall(){
+    private FunCallExpr parseFuncall(){
         print("parseFuncall");
-        expect(first_funcall);
+        List<Expr> args = new ArrayList<>();
+        String name = parseIdentifier();
         expect(TokenClass.LPAR);
         if(accept(first_exp)){
-            parseExp();
+            args.add(parseExp());
             while(accept(TokenClass.COMMA) && error == 0){
                 expect(TokenClass.COMMA);
-                parseExp();
+                args.add(parseExp());
             }
         }
         expect(TokenClass.RPAR);
         print("exit parseFuncall");
+        return new FunCallExpr(name,args);
     }
 
     private void parseArrayaccess(){
@@ -460,37 +492,42 @@ public class Parser {
         print("exit parseFieldaccess");
     }
 
-    private void parseValueat(){
+    private ValueAtExpr parseValueat(){
         print("parseValueat");
         expect(first_valueat);
-        parseExp();
+        Expr expr = parseExp();
         print("exit parseValueat");
+        return new ValueAtExpr(expr);
     }
 
-    private void parseAddressof(){
+    private AddressOfExpr parseAddressof(){
         print("parseAddressof");
         expect(first_addressof);
-        parseExp();
+        Expr expr = parseExp();
         print("exit parseAddressof");
+        return new AddressOfExpr(expr);
     }
 
-    private void parseSizeof(){
+    private SizeOfExpr parseSizeof(){
         print("parseSizeof");
         expect(first_sizeof);
         expect(TokenClass.LPAR);
-        parseType();
+        Type t = parseType();
         expect(TokenClass.RPAR);
         print("exit parseSizeof");
+        return new SizeOfExpr(t);
     }
 
-    private void parseTypecast(){
+    private TypecastExpr parseTypecast(){
         print("parseTypecast");
         // (
         expect(first_typecast);
-        parseType();
+        Type t = parseType();
         expect(TokenClass.RPAR);
-        parseExp();
+        Expr expr = parseExp();
         print("exit parseTypecast");
+        return new TypecastExpr(t,expr);
+
     }
 
     private Type parseType(){

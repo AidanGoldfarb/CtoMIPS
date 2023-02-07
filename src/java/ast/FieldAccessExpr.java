@@ -1,0 +1,18 @@
+package ast;
+
+import java.util.List;
+
+public final class FieldAccessExpr implements Factor {
+
+    private Expr struct;
+    private String field;
+
+    public FieldAccessExpr(Expr struct, String field){
+        this.struct = struct;
+        this.field = field;
+    }
+    @Override
+    public List<ASTNode> children() {
+        return null;
+    }
+}
