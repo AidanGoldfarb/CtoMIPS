@@ -2,7 +2,7 @@ package ast;
 
 import java.util.List;
 
-public final class Assign implements Factor {
+public final class Assign extends Expr{
 
     private Expr lhs;
     private Expr rhs;

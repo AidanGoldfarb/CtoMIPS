@@ -2,7 +2,7 @@ package ast;
 
 import java.util.List;
 
-public final class FunCallExpr extends Expr implements Factor {
+public final class FunCallExpr extends Expr{
 
     private String name;
     private List<Expr> args;

@@ -25,17 +25,6 @@ FunDecl  ::= Type String VarDecl* Block
 // Expressions
 Expr       ::= IntLiteral | StrLiteral | ChrLiteral | VarExpr | FunCallExpr | BinOp | ArrayAccessExpr | FieldAccessExpr | ValueAtExpr | AddressOfExpr | SizeOfExpr | TypecastExpr | Assign
 
-Expr       ::= Term TermTail
-
-Term       ::= Factor FactorTail
-
-Factor     ::= IntLiteral | StrLiteral | ChrLiteral | VarExpr | FunCallExpr | ArrayAccessExpr | FieldAccessExpr | ValueAtExpr | AddressOfExpr | SizeOfExpr | TypecastExpr | Assign
-
-FactorTail ::= [BinOp Factor FactorTail] # or null/eps
-
-TermTail   ::= [BinOp Term TermTail] #or null/eps
-
-
 // Literals
 IntLiteral ::= int     // int stores the value of the integer
 StrLiteral ::= String  // String stores the value of the String
@@ -90,3 +79,14 @@ Return     ::= [Expr]
 
 // Block statement (starts with { and end with } in the source code)
 Block      ::= VarDecl* Stmt*
+
+
+Expr       ::= Term TermTail
+
+Term       ::= Factor FactorTail
+
+Factor     ::= IntLiteral | StrLiteral | ChrLiteral | VarExpr | FunCallExpr | ArrayAccessExpr | FieldAccessExpr | ValueAtExpr | AddressOfExpr | SizeOfExpr | TypecastExpr | Assign
+
+FactorTail ::= [BinOp Factor FactorTail] # or null/eps
+
+TermTail   ::= [BinOp Term TermTail] #or null/eps

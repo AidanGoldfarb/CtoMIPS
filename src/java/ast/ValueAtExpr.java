@@ -2,7 +2,7 @@ package ast;
 
 import java.util.List;
 
-public final class ValueAtExpr extends Expr implements Factor {
+public final class ValueAtExpr extends Expr{
 
     private Expr expr;
 

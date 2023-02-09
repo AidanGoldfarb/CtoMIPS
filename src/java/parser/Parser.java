@@ -344,79 +344,121 @@ public class Parser {
 
     private Expr parseExp(){
         print("parseExp");
-        Expr expr;
-
-        parseTerm();
-        parseTermTail();
-
+        Expr lhs = parseB();
+        if(accept(TokenClass.ASSIGN)){
+            expect(TokenClass.ASSIGN);
+            Expr rhs = parseExp();
+            print("exit parseExp");
+            return new Assign(lhs,rhs);
+        }
         print("exit parseExp");
-        return expr;
+        return lhs;
     }
 
-    private Expr parseTerm(){
-        return new Term(parseFactor(),parseFactorTail());
-    }
-
-    private TermTail parseTermTail(){
-        TermTail tt;
-
-        // + binop
-        if(accept(TokenClass.PLUS)){
-            nextToken();
-            parseTerm();
-            parseTermTail();
+    private Expr parseB(){
+        Expr lhs = parseC();
+        if(accept(TokenClass.LOGOR)){
+            expect(TokenClass.LOGOR);
+            Expr rhs = parseExp();
+            return new BinOp(lhs,Op.OR,rhs);
         }
-        // - binop
-        else if(accept(TokenClass.MINUS)) {
-        }
+        return lhs;
     }
 
-    private FactorTail parseFactorTail(){
+    private Expr parseC(){
+        Expr lhs = parseD();
+        if(accept(TokenClass.LOGAND)){
+            expect(TokenClass.LOGAND);
+            Expr rhs = parseExp();
+            return new BinOp(lhs,Op.AND,rhs);
+        }
+        return lhs;
+    }
+
+    private Expr parseD(){
+        Expr lhs = parseE();
+        if(accept(TokenClass.EQ,TokenClass.NE)){
+            Op op;
+            if (token.tokenClass == TokenClass.EQ){
+                expect(TokenClass.EQ);
+                op = Op.EQ;
+            }
+            else{
+                expect(TokenClass.NE);
+                op = Op.NE;
+            }
+            Expr rhs = parseExp();
+            return new BinOp(lhs,op,rhs);
+        }
+        return lhs;
+    }
+
+    private Expr parseE(){
+        Expr lhs = parseF();
+        if(accept(TokenClass.LT,TokenClass.LE,TokenClass.GT,TokenClass.GE)){
+            Op op;
+            if (token.tokenClass == TokenClass.LT){
+                expect(TokenClass.LT);
+                op = Op.LT;
+            }
+            else if(token.tokenClass == TokenClass.LE){
+                expect(TokenClass.LE);
+                op = Op.LE;
+            }
+            else if(token.tokenClass == TokenClass.GT){
+                expect(TokenClass.GT);
+                op = Op.GT;
+            }
+            else{
+                expect(TokenClass.GE);
+                op = Op.LT;
+            }
+            Expr rhs = parseExp();
+            return new BinOp(lhs,op,rhs);
+        }
+        return lhs;
+    }
+
+    private Expr parseF(){
+        Expr lhs = parseG();
+        if(accept(TokenClass.PLUS,TokenClass.MINUS)){
+            Op op;
+            if (token.tokenClass == TokenClass.PLUS){
+                expect(TokenClass.PLUS);
+                op = Op.ADD;
+            }
+            else{
+                expect(TokenClass.MINUS);
+                op = Op.SUB;
+            }
+            Expr rhs = parseExp();
+            return new BinOp(lhs,op,rhs);
+        }
+        return lhs;
+    }
+
+    private Expr parseG(){
+        Expr lhs = parseH();
         if(accept(TokenClass.ASTERIX,TokenClass.DIV)){
-            nextToken();
-            parseFactor();
-            parseFactorTail();
+            Op op;
+            if (token.tokenClass == TokenClass.ASTERIX){
+                expect(TokenClass.ASTERIX);
+                op = Op.MUL;
+            }
+            else{
+                expect(TokenClass.DIV);
+                op = Op.DIV;
+            }
+            Expr rhs = parseExp();
+            return new BinOp(lhs,op,rhs);
         }
+        return lhs;
     }
 
-    private Expr parseFactor(){
-        //(exp) || typecast
-        if(accept(TokenClass.LPAR)){
-            if(contains(first_type,lookAhead(1).tokenClass)){
-                return parseTypecast();
-            }
-            else{
-                expect(TokenClass.LPAR);
-                Expr expr = parseExp();
-                expect(TokenClass.RPAR);
-                return expr;
-            }
-        }
-        //(IDENT || funcall
-        else if(accept(TokenClass.IDENTIFIER)){
-            //funcall
-            if(lookAhead(1).tokenClass == TokenClass.LPAR){
-                return parseFuncall();
-            }
-            //ident
-            else{
-                return new VarExpr(parseIdentifier());
-            }
-        }
-        else if(accept(TokenClass.INT_LITERAL)){
-            IntLiteral il = new IntLiteral(Integer.parseInt(token.data)); //i hope casting was right here
-            expect(TokenClass.INT_LITERAL);
-            return il;
-        }
-        else if(accept(TokenClass.CHAR_LITERAL)){
-            ChrLiteral cl = new ChrLiteral(token.data.charAt(0)); //i hope charat was right here
-            expect(TokenClass.CHAR_LITERAL);
-            return cl;
-        }
-        else if(accept(TokenClass.STRING_LITERAL)){
-            StrLiteral sl = new StrLiteral(token.data);
-            expect(TokenClass.STRING_LITERAL);
-            return sl;
+    private Expr parseH(){
+        //typecast
+        if(accept(TokenClass.LPAR) && contains(first_type,lookAhead(1).tokenClass)){
+            return parseTypecast();
         }
         else if(accept(TokenClass.ASTERIX)){
             return parseValueat();
@@ -424,40 +466,60 @@ public class Parser {
         else if(accept(TokenClass.AND)){
             return parseAddressof();
         }
-        else if(accept(TokenClass.SIZEOF)){
-            return parseSizeof();
+        else{
+            return parseI();
         }
-        else if(accept(TokenClass.ASSIGN)){
-            //need lhs??
-        }
-        error(token.tokenClass);
-        return null;
+
     }
 
-    private void parseExpTail(){
-        print("parseExpTail");
-        if(accept(TokenClass.LPAR)){
+    private Expr parseI(){
+        TokenClass tk = token.tokenClass;
+        //funcall | arrayaccess | fieldaccess | varexp
+        if(tk == TokenClass.IDENTIFIER){
+            //funcall
+            if(lookAhead(1).tokenClass == TokenClass.LPAR) {
+                return parseFuncall();
+            }
+            //arrayaccess
+            else if(lookAhead(1).tokenClass == TokenClass.LBRA){
+                Expr index = parseArrayaccess();
+                return new ArrayAccessExpr(new VarExpr(token.data),index); //??
+            }
+            //fieldaccess
+            else if(lookAhead(1).tokenClass == TokenClass.DOT){
+                String field = parseFieldaccess();
+                return new FieldAccessExpr(new VarExpr(token.data),field);
+            }
+            else{
+                return new VarExpr(parseIdentifier());
+            }
+        }
+        else if(tk == TokenClass.INT_LITERAL){
+            int data = Integer.parseInt(token.data);
+            nextToken();
+            return new IntLiteral(data);
+        }
+        else if(tk == TokenClass.CHAR_LITERAL){
+            char data = token.data.charAt(0);
+            nextToken();
+            return new ChrLiteral(data);
+        }
+        else if(tk == TokenClass.STRING_LITERAL){
+            String data = token.data;
+            nextToken();
+            return new StrLiteral(data);
+        }
+        //(expr)
+        else if(tk == TokenClass.LPAR){
             expect(TokenClass.LPAR);
-            parseExp();
+            Expr expr = parseExp();
             expect(TokenClass.RPAR);
+            return expr;
         }
-        if(accept(TokenClass.ASSIGN)){
-            expect(TokenClass.ASSIGN);
-            parseExp();
+        else{
+            error(TokenClass.EOF);
+            return null;
         }
-        if(accept(first_exptail)){
-            expect(first_exptail);
-            parseExp();
-        }
-        if(accept(TokenClass.LSBR)){
-            parseArrayaccess();
-            parseExpTail();
-        }
-        if(accept(TokenClass.DOT)){
-            parseFieldaccess();
-            parseExpTail();
-        }
-        print("exit parseExpTail");
     }
 
     private FunCallExpr parseFuncall(){
@@ -477,19 +539,21 @@ public class Parser {
         return new FunCallExpr(name,args);
     }
 
-    private void parseArrayaccess(){
+    private Expr parseArrayaccess(){
         print("parseArrayaccess");
         expect(TokenClass.LSBR);
-        parseExp();
+        Expr index = parseExp();
         expect(TokenClass.RSBR);
         print("exit parseArrayaccess");
+        return index;
     }
 
-    private void parseFieldaccess(){
+    private String parseFieldaccess(){
         print("parseFieldaccess");
         expect(TokenClass.DOT);
-        parseIdentifier();
+        String field = parseIdentifier();
         print("exit parseFieldaccess");
+        return field;
     }
 
     private ValueAtExpr parseValueat(){

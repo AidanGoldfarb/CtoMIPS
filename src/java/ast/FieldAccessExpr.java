@@ -2,7 +2,7 @@ package ast;
 
 import java.util.List;
 
-public final class FieldAccessExpr implements Factor {
+public final class FieldAccessExpr extends Expr{
 
     private Expr struct;
     private String field;

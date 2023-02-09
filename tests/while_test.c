@@ -1,6 +1,6 @@
-int main(){
-    if   ( a   ==  1    )
-    b
-    =
-    3;
+#include "hello"
+
+int main(int a){
+    int a;
+    a = 5;
 }

@@ -2,7 +2,7 @@ package ast;
 
 import java.util.List;
 
-public final class TypecastExpr extends Expr implements Factor{
+public final class TypecastExpr extends Expr{
 
     private Type t;
     private Expr expr;

@@ -2,12 +2,15 @@ package ast;
 
 import java.util.List;
 
-public final class ArrayAccessExpr implements Factor {
+public final class ArrayAccessExpr extends Expr{
 
-    private Expr expr;
+    private Expr arr;
+    private Expr indx;
 
-    public ArrayAccessExpr(Expr expr){
-        this.expr = expr;
+    public ArrayAccessExpr(Expr arr, Expr indx){
+
+        this.arr = arr;
+        this.indx = indx;
     }
     @Override
     public List<ASTNode> children() {

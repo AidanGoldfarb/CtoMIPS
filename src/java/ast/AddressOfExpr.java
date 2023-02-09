@@ -2,7 +2,7 @@ package ast;
 
 import java.util.List;
 
-public final class AddressOfExpr extends Expr implements Factor {
+public final class AddressOfExpr extends Expr{
 
     private Expr expr;
 

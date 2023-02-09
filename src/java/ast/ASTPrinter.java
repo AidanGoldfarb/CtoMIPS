@@ -66,7 +66,9 @@ public class ASTPrinter {
             case (StructTypeDecl std) -> {
                 // to complete
             }
-
+            default -> {
+                writer.print("tbd");
+            }
             // to complete ...
         }
 

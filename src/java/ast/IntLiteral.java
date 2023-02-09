@@ -2,7 +2,7 @@ package ast;
 
 import java.util.List;
 
-public final class IntLiteral extends Expr implements Factor {
+public final class IntLiteral extends Expr{
 
     private int val;
 

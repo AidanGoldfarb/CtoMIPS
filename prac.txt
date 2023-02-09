@@ -1,0 +1,60 @@
+A -> B BT
+
+B -> C CT
+
+CT -> “=“ C CT | eps
+
+C -> D DT
+
+DT -> "||" D DT | eps
+
+D -> E ET
+
+ET -> "&&" E ET | eps
+
+E -> F FT
+
+FT -> ("==" | "!=") F FT | eps
+
+F -> G GT
+
+GT -> ("<" | "<=" | ">" | ">=") G GT | eps
+
+G -> H HT
+
+HT -> ("+" | "-") H HT | eps
+
+H -> I IT
+
+IT -> ("*" | "/") I IT | eps
+
+I -> J JT
+
+JT -> (typecast | "*" | "&") J JT | eps
+
+J -> (IDENT | INT_LITERAL| CHAR_LITERAL | STRING_LITERAL | arrayaccess | fieldaccess | sizeof| "(" A ")" )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exp        ::= term term_tail
+
+term       ::= factor factor_tail
+
+term_tail  := ('+'|'-') term term_tail | eps
+
+factor     ::= (IDENT | INT_LITERAL | CHAR_LITERAL | STRING_LITERAL)
+
+factor_tail := ('*'|'/') factor factor_tail | eps

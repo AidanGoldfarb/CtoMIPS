@@ -43,6 +43,14 @@ factor     ::= (IDENT | INT_LITERAL | CHAR_LITERAL | STRING_LITERAL)
 
 factor_tail := ('*'|'/') factor factor_tail | eps
 
+
+
+
+
+
+
+
+
 exp        ::= (IDENT | INT_LITERAL)
              | ("-" | "+") exp
              | CHAR_LITERAL
@@ -58,12 +66,62 @@ exp_tail  ::= "(" exp ")"
             |  eps
 
 
+exp     ::= (IDENT | INT_LITERAL)
+          | "(" exp ")"
+          | arrayaccess
+          | fieldaccess
+
+exp2    ::= ( "+" | "-")
+          | typecast
+          | "*"
+          | "&"
+
+exp3    ::= ("*" | "/")
+
+exp4    ::= ("+" | "-")
+
+exp5    ::= ("<" | "<=" | ">" | ">=")
+
+exp6    ::= ("==" | "!=")
+
+exp7    ::= ("&&")
+
+exp8    ::= ("||")
+
+exp9    ::= exp "=" exp
+
+
+#PREC 1
 funcall      ::= IDENT "(" [ exp ("," exp)* ] ")" # function call
 arrayaccess  ::= exp "[" exp "]"                  # array access
 fieldaccess  ::= exp "." IDENT                    # structure field member access
+sizeof       ::= "sizeof" "(" type ")"            # size of type
+
+#PREC 2
 valueat      ::= "*" exp                          # Value at operator (pointer indirection)
 addressof    ::= "&" exp                          # Address-of operator
-sizeof       ::= "sizeof" "(" type ")"            # size of type
 typecast     ::= "(" type ")" exp                 # type casting
+uplus        ::= "+"
+uminus       ::= "-"
 
+#PREC 3
+mo           ::= ("*" | "/")
+
+#PREC 4
+ao           ::= ("+" | "-")
+
+#PREC 5
+ro_f           ::= (">" | "<" | ">=" | "<=")
+
+#PREC 6
+ro_s           ::= ("==" | "!=")
+
+#PREC 7
+log_a          ::= ("&&")
+
+#PREC 8
+log_o          ::= ("||")
+
+#PREC 9
+assign         ::= ("=")
 

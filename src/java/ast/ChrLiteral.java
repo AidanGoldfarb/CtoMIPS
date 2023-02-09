@@ -2,7 +2,7 @@ package ast;
 
 import java.util.List;
 
-public final class ChrLiteral extends Expr implements Factor {
+public final class ChrLiteral extends Expr{
 
     private char c;
 
