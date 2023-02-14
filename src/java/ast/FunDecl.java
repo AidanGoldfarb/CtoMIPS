@@ -18,7 +18,8 @@ public final class FunDecl extends Decl {
     @Override
     public String toString(){
         return "FunDecl( type: " + this.type + ", name: " +
-                this.name + ", params: " + params_to_string() + ")";
+                this.name + ", params: " + params_to_string() +
+                ")\n\tBlock: " + this.block;
     }
 
     private String params_to_string(){

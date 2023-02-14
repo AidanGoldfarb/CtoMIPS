@@ -15,6 +15,12 @@ public final class BinOp extends Expr{
     }
 
     @Override
+    public String toString(){
+        return "BINOP( LHS: " + this.lhs + ",OP: " + this.op
+                + ",RHS: " + this.rhs;
+    }
+
+    @Override
     public List<ASTNode> children() {
         return null;
     }

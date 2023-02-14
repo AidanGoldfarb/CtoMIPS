@@ -11,6 +11,11 @@ public final class VarExpr extends Expr{
 	this.name = name;
     }
 
+    @Override
+    public String toString(){
+        return "VAREXPR( " + this.name +" )";
+    }
+
     public List<ASTNode> children() {
         return new ArrayList<ASTNode>();
     }

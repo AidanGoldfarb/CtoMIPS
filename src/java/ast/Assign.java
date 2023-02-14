@@ -12,6 +12,11 @@ public final class Assign extends Expr{
         this.lhs = lhs;
         this.rhs = rhs;
     }
+
+    @Override
+    public String toString(){
+        return "ASSIGN( LHS: " + this.lhs + ", RHS: " + this.rhs;
+    }
     @Override
     public List<ASTNode> children() {
         return null;

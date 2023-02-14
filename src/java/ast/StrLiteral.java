@@ -9,6 +9,11 @@ public final class StrLiteral extends Expr{
     public StrLiteral(String str){
         this.str = str;
     }
+
+    @Override
+    public String toString(){
+        return "STR_LITERAL( " + this.str + " )";
+    }
     @Override
     public List<ASTNode> children() {
         return null;

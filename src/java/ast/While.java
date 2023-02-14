@@ -13,6 +13,11 @@ public final class While extends Stmt {
     }
 
     @Override
+    public String toString(){
+        return "WHILE( EXPR: " + this.expr + ") STMT: " + this.stmt;
+    }
+
+    @Override
     public List<ASTNode> children() {
         return null;
     }

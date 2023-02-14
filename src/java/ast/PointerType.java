@@ -2,17 +2,19 @@ package ast;
 
 import java.util.List;
 
-public final class ExprStmt extends Stmt {
+public final class PointerType implements Type{
 
-    private Expr expr;
-    public ExprStmt(Expr expr) {
-        this.expr = expr;
+    private Type type;
+
+    public PointerType(Type type){
+        this.type = type;
     }
 
     @Override
     public String toString(){
-        return "EXPR_STMT( " + this.expr + " )";
+        return "pointer(" + type + ")";
     }
+
     @Override
     public List<ASTNode> children() {
         return null;

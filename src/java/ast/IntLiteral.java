@@ -9,6 +9,11 @@ public final class IntLiteral extends Expr{
     public IntLiteral(int val){
         this.val = val;
     }
+
+    @Override
+    public String toString(){
+        return "INT_LITERAL( " + this.val + " )";
+    }
     @Override
     public List<ASTNode> children() {
         return null;

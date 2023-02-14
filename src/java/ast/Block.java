@@ -15,6 +15,24 @@ public final class Block extends Stmt {
     }
 
     @Override
+    public String toString(){
+        StringBuilder sb = new StringBuilder();
+        if (this.vds.size() > 0) {
+            sb.append("VarDecl: ");
+            for (VarDecl vd : this.vds) {
+                sb.append(vd + " ");
+            }
+        }
+        if (this.stmts.size() > 0) {
+            sb.append("\nStatements: ");
+            for (Stmt stmt : this.stmts) {
+                sb.append(stmt + " ");
+            }
+        }
+        return sb.toString();
+    }
+
+    @Override
     public List<ASTNode> children() {
         List children = new ArrayList<ASTNode>();
         children.addAll(vds);

@@ -193,10 +193,11 @@ public class Parser {
         // to be completed ...
 
         expect(TokenClass.EOF);
-        System.out.println(decls.get(0));
-//        for(Decl e: decls){
-//            System.out.println(e);
-//        }
+        print("\n");
+        for(Decl e: decls){
+            System.out.println(e);
+        }
+        print("\n");
         return new Program(decls);
     }
 
@@ -600,17 +601,17 @@ public class Parser {
     private TypecastExpr parseTypecast(){
         print("parseTypecast");
         // (
-        expect(first_typecast);
+        expect(TokenClass.LPAR); //LPAR
         Type t = parseType();
         expect(TokenClass.RPAR);
         Expr expr = parseExp();
         print("exit parseTypecast");
         return new TypecastExpr(t,expr);
-
     }
 
     private Type parseType(){
         print("parseType");
+        Type roottype = null;
         // structtype: "struct" IDENT
         if(accept(TokenClass.STRUCT)){
             expect(TokenClass.STRUCT);
@@ -619,17 +620,21 @@ public class Parser {
         }
         else {
             TokenClass t = token.tokenClass;
-            expect(first_type); //TODO
-//            return switch(t){
-//                case TokenClass.INT:
-//            }
+            expect(first_type); //
+            switch(t){
+                case INT: roottype = BaseType.INT; break;
+                case CHAR: roottype = BaseType.CHAR; break;
+                case VOID: roottype =  BaseType.VOID; break;
+                default: print("*DEFAULT CASE*"); break;
+            }
         }
         while(accept(TokenClass.ASTERIX) && error == 0){
+            PointerType pt = new PointerType(roottype);
+            roottype = pt;
             expect(TokenClass.ASTERIX);
         }
-
         print("exit parseType");
-        return new StructType("placeholder");
+        return roottype;
     }
 
     private String parseIdentifier(){

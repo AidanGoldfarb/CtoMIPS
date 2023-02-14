@@ -14,6 +14,15 @@ public final class If extends Stmt {
     }
 
     @Override
+    public String toString(){
+        if (estmt == null){
+            return "IF( EXPR: " + this.expr + ", ISTMT: " + this.istmt;
+        }
+        return "IF( EXPR: " + this.expr + ", ISTMT: " + this.istmt
+                + ", ESTMT: " + this.estmt;
+    }
+
+    @Override
     public List<ASTNode> children() {
         return null;
     }
