@@ -1,3 +1,6 @@
+
+
+
 int main(){
-   a = (char*)a;
+    a = -(char)
 }
