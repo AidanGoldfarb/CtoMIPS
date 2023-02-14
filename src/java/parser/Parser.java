@@ -629,7 +629,7 @@ public class Parser {
         }
 
         print("exit parseType");
-        return null;
+        return new StructType("placeholder");
     }
 
     private String parseIdentifier(){
