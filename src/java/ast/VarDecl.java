@@ -11,6 +11,11 @@ public final class VarDecl extends Decl {
 	    this.name = name;
     }
 
+    @Override
+    public String toString(){
+        return "type: " + this.type + ", name: " + this.name;
+    }
+
     public List<ASTNode> children() {
         List children = new ArrayList<ASTNode>();
         children.add(this.type);

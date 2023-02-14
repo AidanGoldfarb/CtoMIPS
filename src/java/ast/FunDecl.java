@@ -15,6 +15,20 @@ public final class FunDecl extends Decl {
 	    this.block = block;
     }
 
+    @Override
+    public String toString(){
+        return "FunDecl( type: " + this.type + ", name: " +
+                this.name + ", params: " + params_to_string() + ")";
+    }
+
+    private String params_to_string(){
+        StringBuilder sb = new StringBuilder();
+        for(VarDecl vd: this.params){
+            sb.append(vd.toString() + ", ");
+        }
+        return sb.toString();
+    }
+
     public List<ASTNode> children() {
         List<ASTNode> children = new ArrayList<ASTNode>();
         children.addAll(params);

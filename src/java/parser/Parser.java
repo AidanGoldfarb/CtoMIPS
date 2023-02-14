@@ -193,6 +193,10 @@ public class Parser {
         // to be completed ...
 
         expect(TokenClass.EOF);
+        System.out.println(decls.get(0));
+//        for(Decl e: decls){
+//            System.out.println(e);
+//        }
         return new Program(decls);
     }
 
@@ -246,13 +250,13 @@ public class Parser {
         print("parseFundecl");
         //type
         Type t = parseType();
-        String id = parseIdentifier();
+        String name = parseIdentifier();
         expect(TokenClass.LPAR);
-        parseParams();
+        List<VarDecl> params = parseParams();
         expect(TokenClass.RPAR);
         Block block = parseBlock();
         print("exit parseFundecl");
-        return null;
+        return new FunDecl(t,name,params,block);
     }
 
     private List<VarDecl> parseParams(){
@@ -614,7 +618,11 @@ public class Parser {
             return new StructType(id);
         }
         else {
-            expect(first_type);//DO TO
+            TokenClass t = token.tokenClass;
+            expect(first_type); //TODO
+//            return switch(t){
+//                case TokenClass.INT:
+//            }
         }
         while(accept(TokenClass.ASTERIX) && error == 0){
             expect(TokenClass.ASTERIX);
