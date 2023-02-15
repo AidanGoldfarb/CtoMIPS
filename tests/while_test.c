@@ -1,3 +1,5 @@
+struct node_t n;
+
 void foo(){
-    struct node_t { int field1; char field2; };
+
 }

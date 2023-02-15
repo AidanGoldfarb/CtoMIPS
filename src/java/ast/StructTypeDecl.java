@@ -12,9 +12,12 @@ public final class StructTypeDecl extends Decl {
     @Override
     public String toString(){
         StringBuilder sb = new StringBuilder();
+        String prefix = "";
         sb.append("StructTypeDecl(" + st + ",");
         for(VarDecl vd: this.vardecls){
-            sb.append(vd + ",");
+            sb.append(prefix);
+            prefix = ",";
+            sb.append(vd);
         }
         return sb.toString() + ")";
     }
