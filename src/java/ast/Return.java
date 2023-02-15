@@ -12,7 +12,7 @@ public final class Return extends Stmt {
     @Override
     public String toString(){
         if (this.expr == null){
-            return "RETURN";
+            return "RETURN()";
         }
         else{
             return "RETURN( " + expr +")";

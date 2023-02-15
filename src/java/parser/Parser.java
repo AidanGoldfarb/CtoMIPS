@@ -475,12 +475,12 @@ public class Parser {
             //useless
             nextToken();
             Expr expr = parseExp();
-            return new BinOp(new IntLiteral(1),Op.MUL,expr);
+            return new BinOp(new IntLiteral(0),Op.ADD,expr);
         }
         else if(accept(TokenClass.MINUS)){
             nextToken();
             Expr expr = parseExp();
-            return new BinOp(new IntLiteral(-1),Op.MUL,expr);
+            return new BinOp(new IntLiteral(0),Op.SUB,expr);
         }
         else{
             return parseI();

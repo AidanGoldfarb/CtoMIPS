@@ -17,9 +17,14 @@ public final class FunDecl extends Decl {
 
     @Override
     public String toString(){
-        return "FunDecl( type: " + this.type + ", name: " +
-                this.name + ", params: " + params_to_string() +
-                ")\n\tBlock: " + this.block;
+        if(params.size() > 0){
+            return "FunDecl(" + this.type + "," +
+                    this.name + "," + params_to_string() + ","
+                    + this.block + ")";
+        }
+        return "FunDecl(" + this.type + "," +
+                this.name + "," + this.block + ")";
+
     }
 
     private String params_to_string(){

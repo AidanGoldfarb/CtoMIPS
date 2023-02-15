@@ -17,7 +17,7 @@ public final class BinOp extends Expr{
     @Override
     public String toString(){
         return "BinOp(" + this.lhs + "," + this.op
-                + "," + this.rhs;
+                + "," + this.rhs + ")";
     }
 
     @Override

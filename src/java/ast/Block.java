@@ -16,20 +16,25 @@ public final class Block extends Stmt {
 
     @Override
     public String toString(){
+        String prefix = "";
         StringBuilder sb = new StringBuilder();
+        sb.append("Block(");
         if (this.vds.size() > 0) {
-            sb.append("VarDecl: ");
             for (VarDecl vd : this.vds) {
-                sb.append(vd + " ");
+                sb.append(prefix);
+                prefix = ",";
+                sb.append(vd);
             }
         }
+        prefix = "";
         if (this.stmts.size() > 0) {
-            sb.append("\nStatements: ");
             for (Stmt stmt : this.stmts) {
-                sb.append(stmt + " ");
+                sb.append(prefix);
+                prefix = ",";
+                sb.append(stmt);
             }
         }
-        return sb.toString();
+        return sb.toString() + ")";
     }
 
     @Override
