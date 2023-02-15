@@ -12,7 +12,7 @@ public final class SizeOfExpr extends Expr{
 
     @Override
     public String toString(){
-        return "SIZE_OF_EXPR( " + this.t + " )";
+        return "SizeOfExpr( " + this.t + " )";
     }
     @Override
     public List<ASTNode> children() {

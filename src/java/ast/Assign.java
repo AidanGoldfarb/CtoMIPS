@@ -15,7 +15,7 @@ public final class Assign extends Expr{
 
     @Override
     public String toString(){
-        return "ASSIGN( LHS: " + this.lhs + ", RHS: " + this.rhs;
+        return "Assign(" + this.lhs + "," +this.rhs + ")";
     }
     @Override
     public List<ASTNode> children() {

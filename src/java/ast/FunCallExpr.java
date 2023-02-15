@@ -15,12 +15,12 @@ public final class FunCallExpr extends Expr{
     @Override
     public String toString(){
         StringBuilder sb = new StringBuilder();
-        sb.append("FUN_CALL_EXPR( NAME:" + this.name);
-        sb.append(", ARGS: ");
+        sb.append("FunCallExpr(" + this.name);
+        sb.append(", ");
         for(Expr e: this.args){
             sb.append(e + ",");
         }
-        return sb.toString();
+        return sb.toString() + ")";
     }
     @Override
     public List<ASTNode> children() {

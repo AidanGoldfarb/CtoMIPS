@@ -12,7 +12,7 @@ public final class ValueAtExpr extends Expr{
 
     @Override
     public String toString(){
-        return "VALUE_AT_EXPR( " + expr + " )";
+        return "ValueAtExpr( " + this.expr + " )";
     }
     @Override
     public List<ASTNode> children() {

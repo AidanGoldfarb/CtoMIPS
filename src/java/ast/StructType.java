@@ -11,6 +11,12 @@ public final class StructType implements Type {
         this.name = name;
     }
 
+
+    @Override
+    public String toString(){
+        return "StructType(" + name + ")";
+    }
+
     @Override
     public List<ASTNode> children() {
         List children = new ArrayList<ASTNode>();

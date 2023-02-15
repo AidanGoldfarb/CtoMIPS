@@ -13,7 +13,7 @@ public final class VarDecl extends Decl {
 
     @Override
     public String toString(){
-        return "type: " + this.type + ", name: " + this.name;
+        return "VarDecl(" + this.type + "," + this.name + ")";
     }
 
     public List<ASTNode> children() {

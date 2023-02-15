@@ -11,7 +11,7 @@ public final class ExprStmt extends Stmt {
 
     @Override
     public String toString(){
-        return "EXPR_STMT( " + this.expr + " )";
+        return "ExprStmt( " + this.expr + " )";
     }
     @Override
     public List<ASTNode> children() {

@@ -13,7 +13,7 @@ public final class VarExpr extends Expr{
 
     @Override
     public String toString(){
-        return "VAREXPR( " + this.name +" )";
+        return "VarExpr( " + this.name +" )";
     }
 
     public List<ASTNode> children() {

@@ -16,10 +16,10 @@ public final class If extends Stmt {
     @Override
     public String toString(){
         if (estmt == null){
-            return "IF( EXPR: " + this.expr + ", ISTMT: " + this.istmt;
+            return "If(" + this.expr + "," + this.istmt;
         }
-        return "IF( EXPR: " + this.expr + ", ISTMT: " + this.istmt
-                + ", ESTMT: " + this.estmt;
+        return "If(" + this.expr + "," + this.istmt
+                + "," + this.estmt + ")";
     }
 
     @Override

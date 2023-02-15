@@ -12,7 +12,7 @@ public final class PointerType implements Type{
 
     @Override
     public String toString(){
-        return "pointer(" + type + ")";
+        return "PointerType(" + type + ")";
     }
 
     @Override

@@ -8,7 +8,18 @@ public final class StructTypeDecl extends Decl {
     private StructType st;
     private ArrayList<VarDecl> vardecls;
 
-    // to be completed
+
+    @Override
+    public String toString(){
+        StringBuilder sb = new StringBuilder();
+        sb.append("StructTypeDecl(" + st + ",");
+        for(VarDecl vd: this.vardecls){
+            sb.append(vd + ",");
+        }
+        return sb.toString() + ")";
+    }
+
+
     public StructTypeDecl(StructType st, ArrayList<VarDecl> vardelcs){
         this.st = st;
         this.vardecls = vardelcs;

@@ -14,7 +14,7 @@ public final class While extends Stmt {
 
     @Override
     public String toString(){
-        return "WHILE( EXPR: " + this.expr + ") STMT: " + this.stmt;
+        return "While(" + this.expr + "," + this.stmt+")";
     }
 
     @Override

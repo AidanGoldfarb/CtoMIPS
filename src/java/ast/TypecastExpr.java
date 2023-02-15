@@ -14,7 +14,7 @@ public final class TypecastExpr extends Expr{
 
     @Override
     public String toString(){
-        return "TYPECAST_EXPR( TYPE: " + this.type + ", EXPR: " + this.expr + " )";
+        return "TypecastExpr(" + this.type + "," + this.expr + " )";
     }
     @Override
     public List<ASTNode> children() {

@@ -12,7 +12,7 @@ public final class StrLiteral extends Expr{
 
     @Override
     public String toString(){
-        return "STR_LITERAL( " + this.str + " )";
+        return "StrLiteral( " + this.str + " )";
     }
     @Override
     public List<ASTNode> children() {
