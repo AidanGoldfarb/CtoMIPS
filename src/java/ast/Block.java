@@ -28,6 +28,7 @@ public final class Block extends Stmt {
         }
         prefix = "";
         if (this.stmts.size() > 0) {
+            if(this.vds.size() > 0){sb.append(",");}
             for (Stmt stmt : this.stmts) {
                 sb.append(prefix);
                 prefix = ",";

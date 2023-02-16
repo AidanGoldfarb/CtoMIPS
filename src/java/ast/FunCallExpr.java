@@ -16,10 +16,16 @@ public final class FunCallExpr extends Expr{
     public String toString(){
         StringBuilder sb = new StringBuilder();
         sb.append("FunCallExpr(" + this.name);
-        sb.append(", ");
-        for(Expr e: this.args){
-            sb.append(e + ",");
+        if(this.args.size() > 0) {
+            String prefix = "";
+            sb.append(", ");
+            for(Expr e: this.args){
+                sb.append(prefix);
+                prefix = ",";
+                sb.append(e + "\n");
+            }
         }
+
         return sb.toString() + ")";
     }
     @Override
