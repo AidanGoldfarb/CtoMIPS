@@ -14,7 +14,7 @@ public final class FieldAccessExpr extends Expr{
 
     @Override
     public String toString(){
-        return "FIELD_ACC_EXPR( STRUCT:" + this.struct + ", FIELD: " + this.field;
+        return "FieldAccessExpr("+this.struct + "," + this.field + ")";
     }
     @Override
     public List<ASTNode> children() {

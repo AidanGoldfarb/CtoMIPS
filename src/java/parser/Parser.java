@@ -522,6 +522,8 @@ public class Parser {
 
     //Contains funcall, arrayaccess, fieldaccess, varexp, (exp)
     private Expr parseI(){
+        //MAKE THIS ITERATIVE
+        //while(accept(TokenClass.IDENTIFIER,TokenClass.))
         print("I");
         TokenClass tk = token.tokenClass;
         //funcall | arrayaccess | fieldaccess | varexp
@@ -532,7 +534,7 @@ public class Parser {
                 return parseFuncall();
             }
             //arrayaccess
-            else if(lookAhead(1).tokenClass == TokenClass.LBRA){
+            else if(lookAhead(1).tokenClass == TokenClass.LSBR){
                 String id = parseIdentifier();
                 Expr index = parseArrayaccess();
                 print("exit I");
