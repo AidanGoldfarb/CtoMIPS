@@ -15,25 +15,6 @@ public class ASTPrinter {
             case null -> {
                 throw new IllegalStateException("Unexpected null value");
             }
-
-            case Block ignored -> {
-                writer.print("Block(");
-                // to complete
-                writer.print(")");
-            }
-
-            case FunDecl fd -> {
-                writer.print("FunDecl(");
-                visit(fd.type);
-                writer.print(","+fd.name+",");
-                for (VarDecl vd : fd.params) {
-                    visit(vd);
-                    writer.print(",");
-                }
-                visit(fd.block);
-                writer.print(")");
-            }
-
             case Program p -> {
                 writer.print("Program(");
                 String delimiter = "";
@@ -41,33 +22,13 @@ public class ASTPrinter {
                     writer.print(delimiter);
                     delimiter = ",";
                     visit(d);
+                    writer.print("\n");
                 }
                 writer.print(")");
                 writer.flush();
             }
-
-            case (VarDecl vd) -> {
-                writer.print("VarDecl(");
-                visit(vd.type);
-                writer.print(","+vd.name);
-                writer.print(")");
-            }
-
-            case (VarExpr v) -> {
-                writer.print("VarExpr(");
-                writer.print(v.name);
-                writer.print(")");
-            }
-
-            case (BaseType bt) -> {
-                // to complete ...
-            }
-
-            case (StructTypeDecl std) -> {
-                // to complete
-            }
             default -> {
-                writer.print("tbd");
+                writer.print(node);
             }
             // to complete ...
         }
