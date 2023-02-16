@@ -347,6 +347,7 @@ public class Parser {
         return new Block(vds,stmts);
     }
 
+    //contains ASSIGN
     private Expr parseExp(){
         print("parseExp");
         Expr lhs = parseB();
@@ -360,27 +361,37 @@ public class Parser {
         return lhs;
     }
 
+    //Contains Binop(OR)
     private Expr parseB(){
+        print("B");
         Expr lhs = parseC();
         if(accept(TokenClass.LOGOR)){
             expect(TokenClass.LOGOR);
             Expr rhs = parseExp();
+            print("exit B");
             return new BinOp(lhs,Op.OR,rhs);
         }
+        print("exit B");
         return lhs;
     }
 
+    //Contains Binop(AND)
     private Expr parseC(){
+        print("C");
         Expr lhs = parseD();
         if(accept(TokenClass.LOGAND)){
             expect(TokenClass.LOGAND);
             Expr rhs = parseExp();
+            print("exit C");
             return new BinOp(lhs,Op.AND,rhs);
         }
+        print("exit C");
         return lhs;
     }
 
+    //Contains Binop(EQ) and Binop(NEQ)
     private Expr parseD(){
+        print("D");
         Expr lhs = parseE();
         if(accept(TokenClass.EQ,TokenClass.NE)){
             Op op;
@@ -393,12 +404,16 @@ public class Parser {
                 op = Op.NE;
             }
             Expr rhs = parseExp();
+            print("exit D");
             return new BinOp(lhs,op,rhs);
         }
+        print("exit D");
         return lhs;
     }
 
+    //Contains Binop(LE,LE,...)
     private Expr parseE(){
+        print("E");
         Expr lhs = parseF();
         if(accept(TokenClass.LT,TokenClass.LE,TokenClass.GT,TokenClass.GE)){
             Op op;
@@ -419,12 +434,16 @@ public class Parser {
                 op = Op.LT;
             }
             Expr rhs = parseExp();
+            print("exit E");
             return new BinOp(lhs,op,rhs);
         }
+        print("exit E");
         return lhs;
     }
 
+    //Contains Binop(PLUS,MINUS)
     private Expr parseF(){
+        print("F");
         Expr lhs = parseG();
         if(accept(TokenClass.PLUS,TokenClass.MINUS)){
             Op op;
@@ -437,12 +456,16 @@ public class Parser {
                 op = Op.SUB;
             }
             Expr rhs = parseExp();
+            print("exit F");
             return new BinOp(lhs,op,rhs);
         }
+        print("exit F");
         return lhs;
     }
 
+    //Contains Binop(MUL,DIV)
     private Expr parseG(){
+        print("C");
         Expr lhs = parseH();
         if(accept(TokenClass.ASTERIX,TokenClass.DIV)){
             Op op;
@@ -455,74 +478,94 @@ public class Parser {
                 op = Op.DIV;
             }
             Expr rhs = parseExp();
+            print("exit G");
             return new BinOp(lhs,op,rhs);
         }
+        print("exit G");
         return lhs;
     }
 
+    //Contains ValueAt, AddressOf, Unary(PLUS,MINUS)
     private Expr parseH(){
+        print("H");
         //typecast
         if(accept(TokenClass.LPAR) && contains(first_type,lookAhead(1).tokenClass)){
+            print("exit H");
             return parseTypecast();
         }
         else if(accept(TokenClass.ASTERIX)){
+            print("exit H");
             return parseValueat();
         }
         else if(accept(TokenClass.AND)){
+            print("exit H");
             return parseAddressof();
         }
         else if(accept(TokenClass.PLUS)){
             //useless
             nextToken();
             Expr expr = parseExp();
+            print("exit H");
             return new BinOp(new IntLiteral(0),Op.ADD,expr);
         }
         else if(accept(TokenClass.MINUS)){
             nextToken();
             Expr expr = parseExp();
+            print("exit H");
             return new BinOp(new IntLiteral(0),Op.SUB,expr);
         }
         else{
+            print("exit H");
             return parseI();
         }
-
     }
 
+    //Contains funcall, arrayaccess, fieldaccess, varexp, (exp)
     private Expr parseI(){
+        print("I");
         TokenClass tk = token.tokenClass;
         //funcall | arrayaccess | fieldaccess | varexp
         if(tk == TokenClass.IDENTIFIER){
             //funcall
             if(lookAhead(1).tokenClass == TokenClass.LPAR) {
+                print("exit I");
                 return parseFuncall();
             }
             //arrayaccess
             else if(lookAhead(1).tokenClass == TokenClass.LBRA){
+                String id = parseIdentifier();
                 Expr index = parseArrayaccess();
-                return new ArrayAccessExpr(new VarExpr(token.data),index); //??
+                print("exit I");
+                return new ArrayAccessExpr(new VarExpr(id),index); //??
             }
             //fieldaccess
             else if(lookAhead(1).tokenClass == TokenClass.DOT){
+                String id = parseIdentifier();
                 String field = parseFieldaccess();
-                return new FieldAccessExpr(new VarExpr(token.data),field);
+                print("exit I");
+                return new FieldAccessExpr(new VarExpr(id),field);
             }
             else{
+                print("exit I");
                 return new VarExpr(parseIdentifier());
             }
         }
         else if(tk == TokenClass.INT_LITERAL){
             int data = Integer.parseInt(token.data);
             nextToken();
+            print("exit I");
             return new IntLiteral(data);
         }
         else if(tk == TokenClass.CHAR_LITERAL){
             char data = token.data.charAt(0);
             nextToken();
+            print("exit I");
             return new ChrLiteral(data);
         }
         else if(tk == TokenClass.STRING_LITERAL){
             String data = token.data;
             nextToken();
+            print("exit I");
             return new StrLiteral(data);
         }
         //(expr)
@@ -530,10 +573,12 @@ public class Parser {
             expect(TokenClass.LPAR);
             Expr expr = parseExp();
             expect(TokenClass.RPAR);
+            print("exit I");
             return expr;
         }
         else{
             error(TokenClass.EOF);
+            print("exit I");
             return null;
         }
     }

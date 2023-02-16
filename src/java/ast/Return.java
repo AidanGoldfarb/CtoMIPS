@@ -15,7 +15,7 @@ public final class Return extends Stmt {
             return "RETURN()";
         }
         else{
-            return "RETURN( " + expr +")";
+            return "RETURN(" + expr +")";
         }
     }
     @Override
