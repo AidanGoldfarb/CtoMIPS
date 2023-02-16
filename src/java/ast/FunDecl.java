@@ -18,19 +18,22 @@ public final class FunDecl extends Decl {
     @Override
     public String toString(){
         if(params.size() > 0){
-            return "FunDecl(" + this.type + "," +
-                    this.name + "," + params_to_string() + ","
+            return "\n\tFunDecl(" + this.type + "," +
+                    this.name + "\n\t\t," + params_to_string() + "\n\t\t\t,"
                     + this.block + ")";
         }
-        return "FunDecl(" + this.type + "," +
-                this.name + "," + this.block + ")";
+        return "\n\tFunDecl(" + this.type + "," +
+                this.name + "\n\t\t," + this.block + ")";
 
     }
 
     private String params_to_string(){
         StringBuilder sb = new StringBuilder();
+        String prefix = "";
         for(VarDecl vd: this.params){
-            sb.append(vd.toString() + ", ");
+            sb.append(prefix);
+            prefix = ",";
+            sb.append(vd.toString() + "\n");
         }
         return sb.toString();
     }
