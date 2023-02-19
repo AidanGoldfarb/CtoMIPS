@@ -520,75 +520,129 @@ public class Parser {
         }
     }
 
-    //Contains funcall, arrayaccess, fieldaccess, varexp, (exp)
     private Expr parseI(){
-        //MAKE THIS ITERATIVE
-        //while(accept(TokenClass.IDENTIFIER,TokenClass.))
-        print("I");
-        TokenClass tk = token.tokenClass;
-        //funcall | arrayaccess | fieldaccess | varexp
-        if(tk == TokenClass.IDENTIFIER){
-            //funcall
-            if(lookAhead(1).tokenClass == TokenClass.LPAR) {
-                print("exit I");
-                return parseFuncall();
-            }
-            //arrayaccess
-            else if(lookAhead(1).tokenClass == TokenClass.LSBR){
-                String id = parseIdentifier();
-                Expr index = parseArrayaccess();
-                print("exit I");
-                return new ArrayAccessExpr(new VarExpr(id),index); //??
-            }
-            //fieldaccess
-            else if(lookAhead(1).tokenClass == TokenClass.DOT){
-                String id = parseIdentifier();
-                String field = parseFieldaccess();
-                print("exit I");
-                return new FieldAccessExpr(new VarExpr(id),field);
-            }
-            else{
-                print("exit I");
-                return new VarExpr(parseIdentifier());
-            }
-        }
-        else if(tk == TokenClass.INT_LITERAL){
-            int data = Integer.parseInt(token.data);
-            nextToken();
-            print("exit I");
-            return new IntLiteral(data);
-        }
-        else if(tk == TokenClass.CHAR_LITERAL){
-            char data = token.data.charAt(0);
-            nextToken();
-            print("exit I");
-            return new ChrLiteral(data);
-        }
-        else if(tk == TokenClass.STRING_LITERAL){
+        print("parseI");
+        if(accept(TokenClass.INT_LITERAL)){
             String data = token.data;
             nextToken();
-            print("exit I");
+            return new IntLiteral(Integer.parseInt(data));
+        }
+        else if(accept(TokenClass.CHAR_LITERAL)){
+            String data = token.data;
+            nextToken();
+            return new ChrLiteral(data.charAt(0));
+        }
+        else if(accept(TokenClass.STRING_LITERAL)){
+            String data = token.data;
+            nextToken();
             return new StrLiteral(data);
         }
-        //(expr)
-        else if(tk == TokenClass.LPAR){
-            expect(TokenClass.LPAR);
-            Expr expr = parseExp();
-            expect(TokenClass.RPAR);
-            print("exit I");
-            return expr;
+
+        Expr res = null;
+        boolean in = false;
+        if(accept(TokenClass.IDENTIFIER)) {
+            String id = parseIdentifier();
+            res = new VarExpr(id);
+            while (accept(TokenClass.LSBR, TokenClass.DOT)) {
+                print("INNN");
+                in = true;
+                //arrayaccess
+                if (accept(TokenClass.LSBR)) {
+                    Expr index = parseArrayaccess();
+                    print("INDEX:" + index);
+                    res = new ArrayAccessExpr(res, index);
+                }
+                //fieldaccess
+                else if (accept(TokenClass.DOT)) {
+                    String field = parseFieldaccess();
+                    res = new FieldAccessExpr(res, field);
+                }
+            }
+            while (accept(TokenClass.LPAR)) {
+                in = true;
+                //funcall
+                if (accept(TokenClass.LPAR)) {
+                    res = new FunCallExpr(id, parseFuncallArgs());
+                }
+            }
+            if(!in){
+                res = new VarExpr(id);
+            }
         }
-        else{
-            error(TokenClass.EOF);
-            print("exit I");
-            return null;
-        }
+        return res;
     }
 
-    private FunCallExpr parseFuncall(){
+    //Contains funcall, arrayaccess, fieldaccess, varexp, (exp)
+//    private Expr parseII(){
+//        //MAKE THIS ITERATIVE
+//        print("I");
+//        TokenClass tk = token.tokenClass;
+//        //funcall | arrayaccess | fieldaccess | varexp
+//        if(tk == TokenClass.IDENTIFIER){
+//            //funcall
+//            if(lookAhead(1).tokenClass == TokenClass.LPAR) {
+//                print("exit I");
+//                Expr funcall = parseFuncall();
+//
+//                return parseFuncall();
+//            }
+//            //arrayaccess
+//            else if(lookAhead(1).tokenClass == TokenClass.LSBR){
+//                String id = parseIdentifier();
+//                Expr index = parseArrayaccess();
+//                print("exit I");
+//                return new ArrayAccessExpr(new VarExpr(id),index); //??
+//            }
+//            //fieldaccess
+//            else if(lookAhead(1).tokenClass == TokenClass.DOT){
+//                String id = parseIdentifier();
+//                String field = parseFieldaccess();
+//                Expr fieldaccess = new FieldAccessExpr(new VarExpr(id),field);
+//                print("exit I");
+//                return new FieldAccessExpr(new VarExpr(id),field);
+//            }
+//            else{
+//                print("exit I");
+//                return new VarExpr(parseIdentifier());
+//            }
+//        }
+//        else if(tk == TokenClass.INT_LITERAL){
+//            int data = Integer.parseInt(token.data);
+//            nextToken();
+//            print("exit I");
+//            return new IntLiteral(data);
+//        }
+//        else if(tk == TokenClass.CHAR_LITERAL){
+//            char data = token.data.charAt(0);
+//            nextToken();
+//            print("exit I");
+//            return new ChrLiteral(data);
+//        }
+//        else if(tk == TokenClass.STRING_LITERAL){
+//            String data = token.data;
+//            nextToken();
+//            print("exit I");
+//            return new StrLiteral(data);
+//        }
+//        //(expr)
+//        else if(tk == TokenClass.LPAR){
+//            expect(TokenClass.LPAR);
+//            Expr expr = parseExp();
+//            expect(TokenClass.RPAR);
+//            print("exit I");
+//            return expr;
+//        }
+//        else{
+//            error(TokenClass.EOF);
+//            print("exit I");
+//            return null;
+//        }
+//    }
+
+    private List<Expr> parseFuncallArgs(){
         print("parseFuncall");
         List<Expr> args = new ArrayList<>();
-        String name = parseIdentifier();
+        //String name = parseIdentifier();
         expect(TokenClass.LPAR);
         if(accept(first_exp)){
             args.add(parseExp());
@@ -599,7 +653,7 @@ public class Parser {
         }
         expect(TokenClass.RPAR);
         print("exit parseFuncall");
-        return new FunCallExpr(name,args);
+        return args;
     }
 
     private Expr parseArrayaccess(){
