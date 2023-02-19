@@ -18,7 +18,7 @@ public final class FunCallExpr extends Expr{
         sb.append("FunCallExpr(" + this.name);
         if(this.args.size() > 0) {
             String prefix = "";
-            sb.append(", ");
+            sb.append(",");
             for(Expr e: this.args){
                 sb.append(prefix);
                 prefix = ",";

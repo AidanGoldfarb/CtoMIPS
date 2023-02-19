@@ -12,7 +12,7 @@ public final class ChrLiteral extends Expr{
 
     @Override
     public String toString(){
-        return "ChrLiteral( " + this.c + " )";
+        return "ChrLiteral(" + this.c + ")";
     }
     @Override
     public List<ASTNode> children() {
