@@ -1,4 +1,4 @@
-//struct node_t { int* field1; char field2; void field3;};
+//struct node_t { int* field1; char field2; void** field3;};
 // struct node_t n;
 //struct node_t {
 //    struct node_inner ele;
@@ -41,4 +41,6 @@ void foo(){
 //   int a;
 //   a = +a+-1;
     //a = -a%(-2)/3*3;
+    //a = b[3].d[3].d[q.d[9]];
+    a = (char**)**b[3].d;
 }

@@ -4,7 +4,7 @@ import java.util.List;
 
 public final class Return extends Stmt {
 
-    private Expr expr;
+    private final Expr expr;
     public Return(Expr expr) {
         this.expr = expr;
     }
@@ -12,10 +12,10 @@ public final class Return extends Stmt {
     @Override
     public String toString(){
         if (this.expr == null){
-            return "RETURN()";
+            return "Return()";
         }
         else{
-            return "RETURN(" + expr +")";
+            return "Return(" + expr +")";
         }
     }
     @Override
