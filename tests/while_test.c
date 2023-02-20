@@ -3,7 +3,7 @@
 //struct node_t {
 //    struct node_inner ele;
 //};
-
+//
 void foo(){
 //    struct node_t n;
 //    return f(a,b,c) + b(q.s.d);
@@ -31,23 +31,22 @@ void foo(){
 //     f(a,b,c,(void*)*d);
 //     a = (int)**b;
 //     b = 5+sizeof(int****)/b;
-
-     //if(a){
+//
+//     if(a){
 //       if(((b+1))){
 //       }
 //       else
 //         return ********a;
 //     }
-//   int a;
 //   a = +a+-1;
-    //a = -a%(-2)/3*3;
-    //a = *(b[3].d[3]).d[q.d[9]];
-    //a = (char**)**b[3].d;
-    //a = (b)[0];
-    //a = (b.c).d;
-    a = *((*f())[0]);
-    a = (f(a,b).d.c.d[3].e);
-    //a = f().d;
-
-
+//    a = -a%(-2)/3*3;
+//    a = *(b[3].d[3]).d[q.d[9]];
+//    a = (char**)**b[3].d;
+//    a = (b)[0];
+//    a = (b.c).d;
+//    a = *((*f())[0]);
+//    a = (f(a,b).d.c.d[3].e);
+//    a = f().d;
+   return g(f(a,b,c)[0].d);
+   return g(f(a,b,c)[0].d);
 }

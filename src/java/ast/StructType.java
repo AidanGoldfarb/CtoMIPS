@@ -14,7 +14,7 @@ public final class StructType implements Type {
 
     @Override
     public String toString(){
-        return "StructType(" + name + ")";
+        return "StructType(" + this.name + ")";
     }
 
     @Override
