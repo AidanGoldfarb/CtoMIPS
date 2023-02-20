@@ -554,7 +554,7 @@ public class Parser {
         if(accept(TokenClass.IDENTIFIER)) {
             String id = parseIdentifier();
             res = new VarExpr(id);
-            while (accept(TokenClass.LSBR, TokenClass.DOT)) {
+            while (accept(TokenClass.LSBR, TokenClass.DOT, TokenClass.LPAR)) {
                 in = true;
                 //arrayaccess
                 if (accept(TokenClass.LSBR)) {
@@ -566,14 +566,17 @@ public class Parser {
                     String field = parseFieldaccess();
                     res = new FieldAccessExpr(res, field);
                 }
-            }
-            while (accept(TokenClass.LPAR)) {
-                in = true;
-                //funcall
-                if (accept(TokenClass.LPAR)) {
+                else if (accept(TokenClass.LPAR)){
                     res = new FunCallExpr(id, parseFuncallArgs());
                 }
             }
+//            while (accept(TokenClass.LPAR)) {
+//                in = true;
+//                //funcall
+//                if (accept(TokenClass.LPAR)) {
+//                    res = new FunCallExpr(id, parseFuncallArgs());
+//                }
+//            }
             if(!in){
                 res = new VarExpr(id);
             }
