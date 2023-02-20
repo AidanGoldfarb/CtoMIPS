@@ -469,15 +469,19 @@ public class Parser {
         return lhs;
     }
 
-    //Contains Binop(MUL,DIV)
+    //Contains Binop(MUL,DIV, REM)
     private Expr parseG(){
         print("C");
         Expr lhs = parseH();
-        if(accept(TokenClass.ASTERIX,TokenClass.DIV)){
+        if(accept(TokenClass.ASTERIX,TokenClass.DIV,TokenClass.REM)){
             Op op;
-            if (token.tokenClass == TokenClass.ASTERIX){
+            if (accept(TokenClass.ASTERIX)){
                 expect(TokenClass.ASTERIX);
                 op = Op.MUL;
+            }
+            else if (accept(TokenClass.REM)){
+                expect(TokenClass.REM);
+                op = Op.REM;
             }
             else{
                 expect(TokenClass.DIV);
@@ -670,16 +674,15 @@ public class Parser {
         else {
             TokenClass t = token.tokenClass;
             expect(first_type); //
-            switch(t){
-                case INT: roottype = BaseType.INT; break;
-                case CHAR: roottype = BaseType.CHAR; break;
-                case VOID: roottype =  BaseType.VOID; break;
-                default: print("*DEFAULT CASE*"); break;
+            switch (t) {
+                case INT -> roottype = BaseType.INT;
+                case CHAR -> roottype = BaseType.CHAR;
+                case VOID -> roottype = BaseType.VOID;
+                default -> print("*DEFAULT CASE*");
             }
         }
         while(accept(TokenClass.ASTERIX) && error == 0){
-            PointerType pt = new PointerType(roottype);
-            roottype = pt;
+            roottype = new PointerType(roottype);
             expect(TokenClass.ASTERIX);
         }
         print("exit parseType");
