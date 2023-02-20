@@ -583,6 +583,20 @@ public class Parser {
             expect(TokenClass.LPAR);
             res = parseExp();
             expect(TokenClass.RPAR);
+            while (accept(TokenClass.LSBR, TokenClass.DOT)) {
+                in = true;
+                //arrayaccess
+                if (accept(TokenClass.LSBR)) {
+                    Expr index = parseArrayaccess();
+                    res = new ArrayAccessExpr(res, index);
+                }
+                //fieldaccess
+                else if (accept(TokenClass.DOT)) {
+                    String field = parseFieldaccess();
+                    res = new FieldAccessExpr(res, field);
+                }
+            }
+
         }
         else if(accept(TokenClass.SIZEOF)){
             res = parseSizeof();
