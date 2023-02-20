@@ -11,6 +11,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
+/*
+   struct node_t { struct inner_t };
+ */
+
 
 /**
  * @author cdubach
@@ -40,21 +44,21 @@ public class Parser {
                                              TokenClass.PLUS, TokenClass.CHAR_LITERAL, TokenClass.STRING_LITERAL, TokenClass.ASTERIX,
                                              TokenClass.AND, TokenClass.SIZEOF};
 
-    private final TokenClass [] first_exptail = {TokenClass.ASSIGN, TokenClass.LT, TokenClass.GT, TokenClass.LE,
-                                                 TokenClass.GE, TokenClass.NE, TokenClass.PLUS, TokenClass.MINUS,
-                                                 TokenClass.DIV, TokenClass.ASSIGN, TokenClass.LOGOR, TokenClass.LOGAND,
-                                                 TokenClass.REM, TokenClass.EQ, TokenClass.ASTERIX};
-    private final TokenClass [] first_funcall = {TokenClass.IDENTIFIER};
+//    private final TokenClass [] first_exptail = {TokenClass.ASSIGN, TokenClass.LT, TokenClass.GT, TokenClass.LE,
+//                                                 TokenClass.GE, TokenClass.NE, TokenClass.PLUS, TokenClass.MINUS,
+//                                                 TokenClass.DIV, TokenClass.ASSIGN, TokenClass.LOGOR, TokenClass.LOGAND,
+//                                                 TokenClass.REM, TokenClass.EQ, TokenClass.ASTERIX};
+    //private final TokenClass [] first_funcall = {TokenClass.IDENTIFIER};
 //    private final TokenClass [] first_arrayaccess = {TokenClass.LPAR, TokenClass.IDENTIFIER, TokenClass.INT_LITERAL, TokenClass.MINUS,
 //                                                     TokenClass.PLUS, TokenClass.CHAR_LITERAL, TokenClass.STRING_LITERAL, TokenClass.ASTERIX,
 //                                                     TokenClass.AND, TokenClass.SIZEOF};
 //    private final TokenClass [] first_fieldaccess = {TokenClass.LPAR, TokenClass.IDENTIFIER, TokenClass.INT_LITERAL, TokenClass.MINUS,
 //                                                     TokenClass.PLUS, TokenClass.CHAR_LITERAL, TokenClass.STRING_LITERAL, TokenClass.ASTERIX,
 //                                                     TokenClass.AND, TokenClass.SIZEOF};
-    private final TokenClass [] first_valueat = {TokenClass.ASTERIX};
-    private final TokenClass [] first_addressof = {TokenClass.AND};
+//    private final TokenClass [] first_valueat = {TokenClass.ASTERIX};
+//    private final TokenClass [] first_addressof = {TokenClass.AND};
     private final TokenClass [] first_sizeof = {TokenClass.SIZEOF};
-    private final TokenClass [] first_typecast = {TokenClass.LPAR};
+    //private final TokenClass [] first_typecast = {TokenClass.LPAR};
 
 
     private Token token;
@@ -194,9 +198,11 @@ public class Parser {
 
         expect(TokenClass.EOF);
         print("\n");
+        print("Program(");
         for(Decl e: decls){
             System.out.println(e);
         }
+        print(")");
         print("\n");
         return new Program(decls);
     }
@@ -213,8 +219,7 @@ public class Parser {
     }
 
     private StructTypeDecl parseStructDecl(){
-        StructTypeDecl std;
-        ArrayList<VarDecl> vardecls = new ArrayList<VarDecl>();
+        ArrayList<VarDecl> vardecls = new ArrayList<>();
 
         expect(TokenClass.STRUCT);
         String id = parseIdentifier();
@@ -264,12 +269,13 @@ public class Parser {
         print("parseParams");
         List<VarDecl> params = new ArrayList<>();
         if(accept(first_params)){
-            parseType();
-            parseIdentifier();
+            Type t = parseType();
+            String id = parseIdentifier();
+            params.add(new VarDecl(t,id));
             while(accept(TokenClass.COMMA) && error == 0){
                 expect(TokenClass.COMMA);
-                Type t = parseType();
-                String id = parseIdentifier();
+                t = parseType();
+                id = parseIdentifier();
                 params.add(new VarDecl(t,id));
             }
         }
@@ -520,6 +526,7 @@ public class Parser {
         }
     }
 
+    //Contains funcall, arrayaccess, fieldaccess, varexp, (exp)
     private Expr parseI(){
         print("parseI");
         if(accept(TokenClass.INT_LITERAL)){
@@ -544,12 +551,10 @@ public class Parser {
             String id = parseIdentifier();
             res = new VarExpr(id);
             while (accept(TokenClass.LSBR, TokenClass.DOT)) {
-                print("INNN");
                 in = true;
                 //arrayaccess
                 if (accept(TokenClass.LSBR)) {
                     Expr index = parseArrayaccess();
-                    print("INDEX:" + index);
                     res = new ArrayAccessExpr(res, index);
                 }
                 //fieldaccess
@@ -569,75 +574,18 @@ public class Parser {
                 res = new VarExpr(id);
             }
         }
+        //(exp)
+        else if(accept(TokenClass.LPAR)){
+            expect(TokenClass.LPAR);
+            res = parseExp();
+            expect(TokenClass.RPAR);
+        }
+        else if(accept(TokenClass.SIZEOF)){
+            res = parseSizeof();
+        }
+        if(res == null) error();
         return res;
     }
-
-    //Contains funcall, arrayaccess, fieldaccess, varexp, (exp)
-//    private Expr parseII(){
-//        //MAKE THIS ITERATIVE
-//        print("I");
-//        TokenClass tk = token.tokenClass;
-//        //funcall | arrayaccess | fieldaccess | varexp
-//        if(tk == TokenClass.IDENTIFIER){
-//            //funcall
-//            if(lookAhead(1).tokenClass == TokenClass.LPAR) {
-//                print("exit I");
-//                Expr funcall = parseFuncall();
-//
-//                return parseFuncall();
-//            }
-//            //arrayaccess
-//            else if(lookAhead(1).tokenClass == TokenClass.LSBR){
-//                String id = parseIdentifier();
-//                Expr index = parseArrayaccess();
-//                print("exit I");
-//                return new ArrayAccessExpr(new VarExpr(id),index); //??
-//            }
-//            //fieldaccess
-//            else if(lookAhead(1).tokenClass == TokenClass.DOT){
-//                String id = parseIdentifier();
-//                String field = parseFieldaccess();
-//                Expr fieldaccess = new FieldAccessExpr(new VarExpr(id),field);
-//                print("exit I");
-//                return new FieldAccessExpr(new VarExpr(id),field);
-//            }
-//            else{
-//                print("exit I");
-//                return new VarExpr(parseIdentifier());
-//            }
-//        }
-//        else if(tk == TokenClass.INT_LITERAL){
-//            int data = Integer.parseInt(token.data);
-//            nextToken();
-//            print("exit I");
-//            return new IntLiteral(data);
-//        }
-//        else if(tk == TokenClass.CHAR_LITERAL){
-//            char data = token.data.charAt(0);
-//            nextToken();
-//            print("exit I");
-//            return new ChrLiteral(data);
-//        }
-//        else if(tk == TokenClass.STRING_LITERAL){
-//            String data = token.data;
-//            nextToken();
-//            print("exit I");
-//            return new StrLiteral(data);
-//        }
-//        //(expr)
-//        else if(tk == TokenClass.LPAR){
-//            expect(TokenClass.LPAR);
-//            Expr expr = parseExp();
-//            expect(TokenClass.RPAR);
-//            print("exit I");
-//            return expr;
-//        }
-//        else{
-//            error(TokenClass.EOF);
-//            print("exit I");
-//            return null;
-//        }
-//    }
 
     private List<Expr> parseFuncallArgs(){
         print("parseFuncall");
@@ -675,7 +623,7 @@ public class Parser {
 
     private ValueAtExpr parseValueat(){
         print("parseValueat");
-        expect(first_valueat);
+        expect(TokenClass.ASTERIX);
         Expr expr = parseExp();
         print("exit parseValueat");
         return new ValueAtExpr(expr);
@@ -683,7 +631,7 @@ public class Parser {
 
     private AddressOfExpr parseAddressof(){
         print("parseAddressof");
-        expect(first_addressof);
+        expect(TokenClass.AND);
         Expr expr = parseExp();
         print("exit parseAddressof");
         return new AddressOfExpr(expr);
