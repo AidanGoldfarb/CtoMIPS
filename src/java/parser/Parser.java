@@ -357,13 +357,11 @@ public class Parser {
     private Expr parseExp(){
         print("parseExp");
         Expr lhs = parseB();
-        if(accept(TokenClass.ASSIGN)){
+        while(accept(TokenClass.ASSIGN) && error == 0){
             expect(TokenClass.ASSIGN);
-            Expr rhs = parseExp();
-            print("exit parseExp");
-            return new Assign(lhs,rhs);
+            Expr rhs = parseB();
+            lhs = new Assign(lhs,rhs);
         }
-        print("exit parseExp");
         return lhs;
     }
 
@@ -371,25 +369,26 @@ public class Parser {
     private Expr parseB(){
         print("B");
         Expr lhs = parseC();
-        if(accept(TokenClass.LOGOR)){
+        while(accept(TokenClass.LOGOR) && error == 0){
             expect(TokenClass.LOGOR);
-            Expr rhs = parseExp();
+            Expr rhs = parseC();
             print("exit B");
-            return new BinOp(lhs,Op.OR,rhs);
+            lhs = new BinOp(lhs,Op.OR,rhs);
         }
         print("exit B");
         return lhs;
+
     }
 
     //Contains Binop(AND)
     private Expr parseC(){
         print("C");
         Expr lhs = parseD();
-        if(accept(TokenClass.LOGAND)){
+        while(accept(TokenClass.LOGAND) && error == 0){
             expect(TokenClass.LOGAND);
-            Expr rhs = parseExp();
+            Expr rhs = parseD();
             print("exit C");
-            return new BinOp(lhs,Op.AND,rhs);
+            lhs = new BinOp(lhs,Op.AND,rhs);
         }
         print("exit C");
         return lhs;
@@ -399,7 +398,7 @@ public class Parser {
     private Expr parseD(){
         print("D");
         Expr lhs = parseE();
-        if(accept(TokenClass.EQ,TokenClass.NE)){
+        while(accept(TokenClass.EQ,TokenClass.NE) && error == 0){
             Op op;
             if (token.tokenClass == TokenClass.EQ){
                 expect(TokenClass.EQ);
@@ -409,9 +408,9 @@ public class Parser {
                 expect(TokenClass.NE);
                 op = Op.NE;
             }
-            Expr rhs = parseExp();
+            Expr rhs = parseE();
             print("exit D");
-            return new BinOp(lhs,op,rhs);
+            lhs = new BinOp(lhs,op,rhs);
         }
         print("exit D");
         return lhs;
@@ -421,7 +420,7 @@ public class Parser {
     private Expr parseE(){
         print("E");
         Expr lhs = parseF();
-        if(accept(TokenClass.LT,TokenClass.LE,TokenClass.GT,TokenClass.GE)){
+        while(accept(TokenClass.LT,TokenClass.LE,TokenClass.GT,TokenClass.GE) && error == 0){
             Op op;
             if (token.tokenClass == TokenClass.LT){
                 expect(TokenClass.LT);
@@ -439,9 +438,8 @@ public class Parser {
                 expect(TokenClass.GE);
                 op = Op.LT;
             }
-            Expr rhs = parseExp();
-            print("exit E");
-            return new BinOp(lhs,op,rhs);
+            Expr rhs = parseF();
+            lhs = new BinOp(lhs,op,rhs);
         }
         print("exit E");
         return lhs;
@@ -451,7 +449,7 @@ public class Parser {
     private Expr parseF(){
         print("F");
         Expr lhs = parseG();
-        if(accept(TokenClass.PLUS,TokenClass.MINUS)){
+        while(accept(TokenClass.PLUS,TokenClass.MINUS) && error == 0){
             Op op;
             if (token.tokenClass == TokenClass.PLUS){
                 expect(TokenClass.PLUS);
@@ -461,9 +459,9 @@ public class Parser {
                 expect(TokenClass.MINUS);
                 op = Op.SUB;
             }
-            Expr rhs = parseExp();
+            Expr rhs = parseG();
             print("exit F");
-            return new BinOp(lhs,op,rhs);
+            lhs = new BinOp(lhs,op,rhs);
         }
         print("exit F");
         return lhs;
@@ -473,7 +471,8 @@ public class Parser {
     private Expr parseG(){
         print("C");
         Expr lhs = parseH();
-        if(accept(TokenClass.ASTERIX,TokenClass.DIV,TokenClass.REM)){
+        System.out.println("LHS: " + lhs);
+        while(accept(TokenClass.ASTERIX,TokenClass.DIV,TokenClass.REM) && error == 0){
             Op op;
             if (accept(TokenClass.ASTERIX)){
                 expect(TokenClass.ASTERIX);
@@ -487,9 +486,9 @@ public class Parser {
                 expect(TokenClass.DIV);
                 op = Op.DIV;
             }
-            Expr rhs = parseExp();
+            Expr rhs = parseH();
             print("exit G");
-            return new BinOp(lhs,op,rhs);
+            lhs = new BinOp(lhs,op,rhs);
         }
         print("exit G");
         return lhs;
@@ -554,7 +553,7 @@ public class Parser {
         if(accept(TokenClass.IDENTIFIER)) {
             String id = parseIdentifier();
             res = new VarExpr(id);
-            while (accept(TokenClass.LSBR, TokenClass.DOT, TokenClass.LPAR)) {
+            while (accept(TokenClass.LSBR, TokenClass.DOT, TokenClass.LPAR) && error == 0) {
                 in = true;
                 //arrayaccess
                 if (accept(TokenClass.LSBR)) {
@@ -586,7 +585,7 @@ public class Parser {
             expect(TokenClass.LPAR);
             res = parseExp();
             expect(TokenClass.RPAR);
-            while (accept(TokenClass.LSBR, TokenClass.DOT)) {
+            while (accept(TokenClass.LSBR, TokenClass.DOT) && error == 0) {
                 in = true;
                 //arrayaccess
                 if (accept(TokenClass.LSBR)) {
