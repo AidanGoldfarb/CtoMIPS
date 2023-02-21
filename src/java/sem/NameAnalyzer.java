@@ -2,6 +2,11 @@ package sem;
 
 import ast.*;
 
+import java.util.Collections;
+import java.util.List;
+
+import java.util.ArrayList;
+
 public class NameAnalyzer extends BaseSemanticAnalyzer {
 
 	Scope scope;
@@ -40,6 +45,7 @@ public class NameAnalyzer extends BaseSemanticAnalyzer {
 			}
 
 			case Program p -> {
+				addBuiltIns();
 				for(ASTNode child: p.children()){
 					visit(child);
 				}
@@ -159,6 +165,33 @@ public class NameAnalyzer extends BaseSemanticAnalyzer {
 			}
 		};
 
+	}
+
+	private void addBuiltIns() {
+		List<VarDecl> ps = Collections.singletonList(new VarDecl( new PointerType(BaseType.CHAR),"s"));
+		List<VarDecl> pi = Collections.singletonList(new VarDecl(BaseType.INT,"i"));
+		List<VarDecl> pc = Collections.singletonList(new VarDecl(BaseType.CHAR,"c"));
+		List<VarDecl> mc = Collections.singletonList(new VarDecl(BaseType.INT,"size"));
+
+		FunDecl print_s_d = new FunDecl(BaseType.VOID, "print_s",ps,new Block(null,null));
+		FunDecl print_i_d = new FunDecl(BaseType.VOID, "print_i",pi,new Block(null,null));
+		FunDecl print_c_d = new FunDecl(BaseType.VOID, "print_c",pc,new Block(null,null));
+		FunDecl read_c_d = new FunDecl(BaseType.VOID, "read_c",null,new Block(null,null));
+		FunDecl read_i_d = new FunDecl(BaseType.VOID, "read_",null,new Block(null,null));
+		FunDecl mcmalloc_d = new FunDecl(new PointerType(BaseType.VOID), "mcmalloc",mc,new Block(null,null));
+
+		Symbol print_s = new FunSymbol(print_s_d);
+		Symbol print_i = new FunSymbol(print_i_d);
+		Symbol print_c = new FunSymbol(print_c_d);
+		Symbol read_c = new FunSymbol(read_c_d);
+		Symbol read_i = new FunSymbol(read_i_d);
+		Symbol mcmalloc = new FunSymbol(mcmalloc_d);
+		scope.put(print_s);
+		scope.put(print_i);
+		scope.put(print_c);
+		scope.put(read_c);
+		scope.put(read_i);
+		scope.put(mcmalloc);
 	}
 
 	private <T> void println(T t){

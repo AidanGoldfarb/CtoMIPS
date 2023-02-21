@@ -44,11 +44,24 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 			case (Type t) -> {
 				yield t;
 			}
-			default -> {
-				yield null; //tbd
-			}
 
 			// to complete ...
+			case AddressOfExpr addressOfExpr -> null;
+			case ArrayAccessExpr arrayAccessExpr -> null;
+			case Assign assign -> null;
+			case BinOp binOp -> null;
+			case ChrLiteral chrLiteral -> null;
+			case FieldAccessExpr fieldAccessExpr -> null;
+			case FunCallExpr funCallExpr -> null;
+			case IntLiteral intLiteral -> null;
+			case SizeOfExpr sizeOfExpr -> null;
+			case StrLiteral strLiteral -> null;
+			case TypecastExpr typecastExpr -> null;
+			case ValueAtExpr valueAtExpr -> null;
+			case ExprStmt exprStmt -> null;
+			case If anIf -> null;
+			case Return aReturn -> null;
+			case While aWhile -> null;
 		};
 
 	}

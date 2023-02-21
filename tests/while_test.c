@@ -1,15 +1,26 @@
-//struct node_t { int* field1; char field2; void** field3;};
+struct node_t { int* field1; char field2; void** field3;};
 // struct node_t n;
 //struct node_t {
 //    struct node_inner ele;
 //};
+int a;
 struct b {int c;};
 void foo(){
+   a = 5;
+//SEMANTIC
 //    int a;
 //    int a;
       //int a;
-      int a;
-      a = d.c;
+//      int a;
+//      a = d.c;
+//    int a;
+//    a = bar();
+
+
+
+
+
+
 //    struct node_t n;
 //    return f(a,b,c) + b(q.s.d);
 //    a = f(b[0][1].b.c[0]) + 1;
