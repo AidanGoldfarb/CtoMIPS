@@ -4,8 +4,8 @@ import java.util.List;
 
 public final class While extends Stmt {
 
-    private Expr expr;
-    private Stmt stmt;
+    public Expr expr;
+    public Stmt stmt;
 
     public While(Expr expr, Stmt stmt) {
         this.expr = expr;

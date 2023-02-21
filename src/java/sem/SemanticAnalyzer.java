@@ -6,7 +6,7 @@ public class SemanticAnalyzer {
 
 		int errors = 0;
 
-		NameAnalyzer na = new NameAnalyzer();
+		NameAnalyzer na = new NameAnalyzer(new Scope());
 		na.visit(prog);
 		errors += na.getErrorCount();
 

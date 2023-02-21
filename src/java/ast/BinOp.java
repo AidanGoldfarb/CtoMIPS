@@ -4,9 +4,9 @@ import java.util.List;
 
 public final class BinOp extends Expr{
 
-    private Expr lhs;
+    public Expr lhs;
     private Op op;
-    private Expr rhs;
+    public Expr rhs;
 
     public BinOp(Expr lhs, Op op, Expr rhs){
         this.lhs = lhs;

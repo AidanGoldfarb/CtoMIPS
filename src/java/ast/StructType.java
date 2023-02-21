@@ -5,7 +5,7 @@ import java.util.List;
 
 public final class StructType implements Type {
 
-    private String name;
+    public String name;
 
     public StructType(String name){
         this.name = name;

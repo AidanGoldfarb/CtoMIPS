@@ -5,8 +5,12 @@ import java.util.Arrays;
 import java.util.List;
 
 public final class FunDecl extends Decl {
+
+    public final Type type;
+    public final String name;
     public final List<VarDecl> params;
     public final Block block;
+
 
     public FunDecl(Type type, String name, List<VarDecl> params, Block block) {
 	    this.type = type;

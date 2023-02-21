@@ -4,8 +4,8 @@ import java.util.List;
 
 public final class FieldAccessExpr extends Expr{
 
-    private Expr struct;
-    private String field;
+    public Expr struct;
+    public String field;
 
     public FieldAccessExpr(Expr struct, String field){
         this.struct = struct;

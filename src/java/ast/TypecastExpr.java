@@ -5,7 +5,7 @@ import java.util.List;
 public final class TypecastExpr extends Expr{
 
     private Type type;
-    private Expr expr;
+    public Expr expr;
 
     public TypecastExpr(Type type, Expr expr){
         this.type = type;

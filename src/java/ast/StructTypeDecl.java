@@ -5,8 +5,8 @@ import java.util.List;
 
 public final class StructTypeDecl extends Decl {
 
-    private StructType st;
-    private ArrayList<VarDecl> vardecls;
+    public StructType st;
+    public ArrayList<VarDecl> vardecls;
 
 
     @Override
@@ -26,6 +26,7 @@ public final class StructTypeDecl extends Decl {
     public StructTypeDecl(StructType st, ArrayList<VarDecl> vardelcs){
         this.st = st;
         this.vardecls = vardelcs;
+        super.name = st.name;
     }
     public List<ASTNode> children() {
 
