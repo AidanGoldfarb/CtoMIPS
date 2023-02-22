@@ -5,8 +5,10 @@
 //};
 //int a;
 //struct b {int c;};
+//-5%4;
 void foo(){
-//      int a[90];
+      //int a[9][4];
+      (void)a+b;
 //     //a = +(&+--*--+++-*&*&*&*&*&**&**&a) + &-*&b.a;
 ////SEMANTIC
 //    int a;
