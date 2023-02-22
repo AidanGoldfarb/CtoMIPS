@@ -30,6 +30,10 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 			}
 
 			case (VarDecl vd) -> {
+				if(vd.type == BaseType.VOID){
+					error("cannot declair var \'" + vd +"\' as \'void\'");
+				}
+
 				yield vd.type;
 			}
 
@@ -82,10 +86,10 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 				//need to add fundecl in name analyzer?
 				yield BaseType.INT; //wrong
 			}
-			case IntLiteral intLiteral -> { yield BaseType.INT; }
-			case SizeOfExpr sizeOfExpr -> { yield BaseType.INT; }
+			case IntLiteral intLiteral -> BaseType.INT;
+			case SizeOfExpr sizeOfExpr -> BaseType.INT;
 			case StrLiteral strLiteral -> {
-				yield new ArrayType(BaseType.CHAR , strLiteral.len);
+				yield new ArrayType(BaseType.CHAR , strLiteral.len+1);
 			}
 			case TypecastExpr te -> {yield te.type;}
 			case ValueAtExpr vae -> {

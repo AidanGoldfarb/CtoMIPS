@@ -11,21 +11,19 @@
 //    int b;
 //};
 //
-int d;
+//int d;
 //
-int f(int a, int b, int c){
-    return a+b+c+d;
-}
-
+//int f(int a, int b, int c){
+//    int d;
+//    return a+b+c+d;
+//}
+//struct b { int c;};
 void foo(){
-    int a;
-    int b;
-    int c;
-    int e;
+    a = (int)(void)b;
 //    a = 5;
 //    b = 6;
 //    c = 7;
-     d = f(a,b,c,e);
+
 
 //      int a[9][4];
 ////     //a = +(&+--*--+++-*&*&*&*&*&**&**&a) + &-*&b.a;

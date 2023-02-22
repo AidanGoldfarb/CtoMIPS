@@ -128,7 +128,7 @@ public class NameAnalyzer extends BaseSemanticAnalyzer {
 				//ensure function exists
 				Symbol s = scope.lookup(fce.name);
 				if(s == null){
-					error("function " + fce.name + " not defined");
+					error("function \'" + fce.name + "\' not defined");
 				}
 				//ensure args exist
 				for(ASTNode arg: fce.args){
