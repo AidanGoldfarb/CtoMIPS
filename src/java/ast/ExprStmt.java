@@ -5,7 +5,7 @@ import java.util.List;
 
 public final class ExprStmt extends Stmt {
 
-    private Expr expr;
+    public Expr expr;
     public ExprStmt(Expr expr) {
         this.expr = expr;
     }

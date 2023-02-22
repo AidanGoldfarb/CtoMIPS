@@ -1,6 +1,6 @@
 package ast;
 
 public sealed interface Type extends ASTNode
-        permits BaseType, PointerType, StructType {
+        permits ArrayType, BaseType, PointerType, StructType {
 
 }

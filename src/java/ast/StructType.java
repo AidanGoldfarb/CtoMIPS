@@ -7,6 +7,8 @@ public final class StructType implements Type {
 
     public String name;
 
+    public StructTypeDecl std; //name analyzer
+
     public StructType(String name){
         this.name = name;
     }

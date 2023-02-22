@@ -5,9 +5,11 @@ import java.util.List;
 public final class StrLiteral extends Expr{
 
     private String str;
+    public int len;
 
     public StrLiteral(String str){
         this.str = str;
+        this.len = str.length();
     }
 
     @Override

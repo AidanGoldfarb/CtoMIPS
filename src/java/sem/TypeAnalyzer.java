@@ -23,17 +23,18 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 
 			case Program p -> {
 				// to complete
+				for(ASTNode child: p.children()){
+					visit(child);
+				}
 				yield BaseType.NONE;
 			}
 
 			case (VarDecl vd) -> {
-				// to complete
-				yield BaseType.NONE;
+				yield vd.type;
 			}
 
 			case (VarExpr v) -> {
-				// to complete
-				yield BaseType.UNKNOWN; // to change
+				yield visit(v.vd);
 			}
 
 			case (StructTypeDecl std) -> {
@@ -46,22 +47,72 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 			}
 
 			// to complete ...
-			case AddressOfExpr addressOfExpr -> null;
-			case ArrayAccessExpr arrayAccessExpr -> null;
-			case Assign assign -> null;
-			case BinOp binOp -> null;
-			case ChrLiteral chrLiteral -> null;
-			case FieldAccessExpr fieldAccessExpr -> null;
-			case FunCallExpr funCallExpr -> null;
-			case IntLiteral intLiteral -> null;
-			case SizeOfExpr sizeOfExpr -> null;
-			case StrLiteral strLiteral -> null;
-			case TypecastExpr typecastExpr -> null;
-			case ValueAtExpr valueAtExpr -> null;
-			case ExprStmt exprStmt -> null;
-			case If anIf -> null;
-			case Return aReturn -> null;
-			case While aWhile -> null;
+			case AddressOfExpr aoe -> {
+				yield visit(aoe.expr);
+			}
+			case ArrayAccessExpr aae -> {
+				Type t = visit(aae.arr);
+				visit(aae.indx);
+				yield t;
+			}
+			case Assign assign -> {
+				Type lhs = visit(assign.lhs);
+				Type rhs = visit(assign.rhs);
+				if(lhs != rhs){
+					error(lhs + " != " + rhs);
+				}
+				yield BaseType.NONE;
+			}
+			case BinOp binOp -> {
+				Type lhs = visit(binOp.lhs); //must it be a int or char?
+				Type rhs = visit(binOp.rhs);
+				if(lhs != rhs){
+					error(lhs + " != " + rhs);
+				}
+				yield lhs;
+
+			}
+			case ChrLiteral chrLiteral -> {yield BaseType.CHAR;}
+			case FieldAccessExpr fae -> {
+				Type t = visit(fae.struct);
+				//what to do here...
+				yield BaseType.INT; //wrong
+			}
+			case FunCallExpr funCallExpr -> {
+				//need to add fundecl in name analyzer?
+				yield BaseType.INT; //wrong
+			}
+			case IntLiteral intLiteral -> { yield BaseType.INT; }
+			case SizeOfExpr sizeOfExpr -> { yield BaseType.INT; }
+			case StrLiteral strLiteral -> {
+				yield new ArrayType(BaseType.CHAR , strLiteral.len);
+			}
+			case TypecastExpr te -> {yield te.type;}
+			case ValueAtExpr vae -> {
+				yield visit(vae.expr);
+			}
+			case ExprStmt es -> {
+				yield visit(es.expr);
+			}
+			case If anIf -> {
+				visit(anIf.expr);
+				visit(anIf.istmt);
+				if(anIf.estmt != null){
+					visit(anIf.estmt);
+				}
+				yield BaseType.NONE;
+			}
+			case Return aReturn -> {
+				if(aReturn.expr != null){
+					visit(aReturn.expr);
+				}
+				yield BaseType.NONE;
+			}
+			case While aWhile -> {
+				visit(aWhile.expr);
+				visit(aWhile.stmt);
+				yield BaseType.NONE;
+			}
 		};
 
 	}
