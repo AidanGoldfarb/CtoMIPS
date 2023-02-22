@@ -1,0 +1,2 @@
+java --enable-preview -cp bin Main -sem tests/while_test.c
+

@@ -39,8 +39,16 @@ public class NameAnalyzer extends BaseSemanticAnalyzer {
 					error("Function already defined");
 				}
 				else{
-					scope.put(new FunSymbol(fd));
+					Scope oldScope = scope;
+					scope = new Scope(oldScope);
+					if(fd.params.size() != 0) {
+						for (VarDecl param : fd.params) {
+							visit(param);
+						}
+					}
 					visit(fd.block);
+					scope = oldScope;
+					scope.put(new FunSymbol(fd));
 				}
 			}
 
@@ -54,7 +62,7 @@ public class NameAnalyzer extends BaseSemanticAnalyzer {
 			case (VarDecl vd) -> {
 				Symbol s = scope.lookupCurrent(vd.name); //current bc of shadowing
 				if( s != null){
-					error("Variable" + vd.name + " redefined");
+					error("Variable \'" + vd.name + "\' redefined");
 				}
 				else{
 					scope.put(new VarSymbol(vd));
@@ -66,18 +74,18 @@ public class NameAnalyzer extends BaseSemanticAnalyzer {
 				switch (s){
 					case VarSymbol vs -> v.vd = vs.vd;
 					case StructSymbol ss -> v.vd = ss.std;
-					case null, default -> error("Use before decl: " + v.name);
+					case null, default -> error("Use before decl: \'" + v.name + "\'");
 				}
 			}
 
 			case (StructTypeDecl std) -> {
 				Symbol s = scope.lookup(std.name); //only global?
 				if(s != null){
-					error("Struct " + std.name +  " redefined");
+					error("Struct \'" + std.name +  "\' redefined");
 				}
 				//ensure no repeated names (needs some thinking)
 				Scope oldScope = scope;
-				Scope scope = new Scope(); //no parents allowed
+				scope = new Scope(oldScope); //no parents allowed
 				for(VarDecl vd: std.vardecls){
 					visit(vd);
 				}
