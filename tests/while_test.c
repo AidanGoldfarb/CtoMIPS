@@ -5,12 +5,10 @@
 //};
 //int a;
 //struct b {int c;};
-//-5%4;
 void foo(){
-      //int a[9][4];
-      (void)a+b;
-//     //a = +(&+--*--+++-*&*&*&*&*&**&**&a) + &-*&b.a;
-////SEMANTIC
+//      int a[9][4];
+////     //a = +(&+--*--+++-*&*&*&*&*&**&**&a) + &-*&b.a;
+//////SEMANTIC
 //    int a;
 //    int a;
 //      int a;
@@ -26,6 +24,7 @@ void foo(){
 //
 //    struct node_t n;
 //    return f(a,b,c) + b(q.s.d);
+//    a + --b;
 //    a = f(b[0][1].b.c[0]) + 1;
 //    a=b;
 //    a = f(a,b.c.d.e[0].d,c);

@@ -502,64 +502,36 @@ public class Parser {
     private Expr parseH(){
         print("H");
         //typecast
-        while(accept(TokenClass.LPAR) && contains(first_type,lookAhead(1).tokenClass)){
+        if(accept(TokenClass.LPAR) && contains(first_type,lookAhead(1).tokenClass)){
             print("exit H");
             return parseTypecast();
         }
-        while(accept(TokenClass.ASTERIX)){
+        else if(accept(TokenClass.ASTERIX)){
             print("exit H");
             return parseValueat();
         }
-        while(accept(TokenClass.AND)){
+        else if(accept(TokenClass.AND)){
             print("exit H");
             return parseAddressof();
         }
-        while(accept(TokenClass.PLUS)){
+        else if(accept(TokenClass.PLUS)){
             //useless
             nextToken();
-            Expr expr = parseI();
+            Expr expr = parseExp();
             print("exit H");
             return new BinOp(new IntLiteral(0),Op.ADD,expr);
         }
-        while(accept(TokenClass.MINUS)){
+        else if(accept(TokenClass.MINUS)){
             nextToken();
-            Expr expr = parseI();
+            Expr expr = parseExp();
             print("exit H");
             return new BinOp(new IntLiteral(0),Op.SUB,expr);
         }
-        print("exit H");
-        return parseI();
-//        print("H");
-//        //typecast
-//        if(accept(TokenClass.LPAR) && contains(first_type,lookAhead(1).tokenClass)){
-//            print("exit H");
-//            return parseTypecast();
-//        }
-//        else if(accept(TokenClass.ASTERIX)){
-//            print("exit H");
-//            return parseValueat();
-//        }
-//        else if(accept(TokenClass.AND)){
-//            print("exit H");
-//            return parseAddressof();
-//        }
-//        else if(accept(TokenClass.PLUS)){
-//            //useless
-//            nextToken();
-//            Expr expr = parseExp();
-//            print("exit H");
-//            return new BinOp(new IntLiteral(0),Op.ADD,expr);
-//        }
-//        else if(accept(TokenClass.MINUS)){
-//            nextToken();
-//            Expr expr = parseExp();
-//            print("exit H");
-//            return new BinOp(new IntLiteral(0),Op.SUB,expr);
-//        }
-//        else{
-//            print("exit H");
-//            return parseI();
-//        }
+        else{
+            print("exit H");
+            return parseI();
+        }
+
     }
 
     //Contains funcall, arrayaccess, fieldaccess, varexp, (exp)
@@ -677,7 +649,7 @@ public class Parser {
     private ValueAtExpr parseValueat(){
         print("parseValueat");
         expect(TokenClass.ASTERIX);
-        Expr expr = parseI();
+        Expr expr = parseExp();
         print("exit parseValueat");
         return new ValueAtExpr(expr);
     }
@@ -685,7 +657,7 @@ public class Parser {
     private AddressOfExpr parseAddressof(){
         print("parseAddressof");
         expect(TokenClass.AND);
-        Expr expr = parseI();
+        Expr expr = parseExp();
         print("exit parseAddressof");
         return new AddressOfExpr(expr);
     }
@@ -706,7 +678,7 @@ public class Parser {
         expect(TokenClass.LPAR); //LPAR
         Type t = parseType();
         expect(TokenClass.RPAR);
-        Expr expr = parseI();
+        Expr expr = parseExp();
         print("exit parseTypecast");
         return new TypecastExpr(t,expr);
     }
