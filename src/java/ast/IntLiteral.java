@@ -4,7 +4,7 @@ import java.util.List;
 
 public final class IntLiteral extends Expr{
 
-    private int val;
+    public int val;
 
     public IntLiteral(int val){
         this.val = val;

@@ -12,6 +12,10 @@ public final class ArrayType implements Type {
     }
 
     @Override
+    public String toString(){
+        return "ArrayType(" + this.t + "," + this.len + ")";
+    }
+    @Override
     public List<ASTNode> children() {
         return null;
     }

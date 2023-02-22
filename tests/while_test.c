@@ -1,26 +1,27 @@
-struct node_t { int* field1; char field2; void** field3;};
+//struct node_t { int* field1; char field2; void** field3;};
 // struct node_t n;
 //struct node_t {
-//    struct node_inner ele;
+//    struct node_inner ele[5];
 //};
-int a;
-struct b {int c;};
+//int a;
+//struct b {int c;};
 void foo(){
-   a = 5;
-//SEMANTIC
+//      int a[90];
+//     //a = +(&+--*--+++-*&*&*&*&*&**&**&a) + &-*&b.a;
+////SEMANTIC
 //    int a;
 //    int a;
-      //int a;
 //      int a;
-//      a = d.c;
+//      int a;
+//      //a = d.c;
 //    int a;
-//    a = bar();
-
-
-
-
-
-
+//    //a = bar();
+//
+//
+//
+//
+//
+//
 //    struct node_t n;
 //    return f(a,b,c) + b(q.s.d);
 //    a = f(b[0][1].b.c[0]) + 1;
@@ -54,7 +55,7 @@ void foo(){
 //       else
 //         return ********a;
 //     }
-//   a = +a+-1;
+//    a = +a+-1;
 //    a = -a%(-2)/3*3;
 //    a = *(b[3].d[3]).d[q.d[9]];
 //    a = (char**)**b[3].d;

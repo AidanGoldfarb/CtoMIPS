@@ -243,9 +243,13 @@ public class Parser {
         String id = parseIdentifier();
         //int a[3][2]...
         while(accept(TokenClass.LSBR) && error == 0){
-            expect(TokenClass.LSBR);
-            expect(TokenClass.INT_LITERAL);
-            expect(TokenClass.RSBR);
+            Expr len = parseArrayaccess();//expect(TokenClass.INT_LITERAL);
+            if(!(len instanceof IntLiteral)){
+                error(TokenClass.INT_LITERAL);
+            }
+            else{
+                t = new ArrayType(t,((IntLiteral)len).val);
+            }
         }
         expect(TokenClass.SC);
         print("exit parseVardecl");
