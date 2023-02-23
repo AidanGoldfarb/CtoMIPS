@@ -11,9 +11,7 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 	Map<String,FunDecl> func_sym_table = new HashMap<>(); //<fun name, fun decl>
 	public Type visit(ASTNode node) {
 		return switch(node) {
-			case null -> {
-				throw new IllegalStateException("Unexpected null value");
-			}
+			case null -> throw new IllegalStateException("Unexpected null value");
 
 			case Block b -> {
 				for (ASTNode c : b.children())
@@ -40,7 +38,7 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 					case BaseType bT -> {
 						switch (bT){
 							case VOID -> {
-								error("cannot declair var \'" + vd +"\' as \'void\'");
+								error("cannot declair var '" + vd +"' as 'void'");
 								yield BaseType.VOID;
 							}
 							default -> {yield bT;}
@@ -49,7 +47,7 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 					//check that the type exists
 					case StructType structType -> {
 						if(!struct_sym_table.containsKey(structType)){
-							error("Struct \'" + structType + "\' undefined");
+							error("Struct '" + structType + "' undefined");
 						}
 						yield vd.type;
 					}
