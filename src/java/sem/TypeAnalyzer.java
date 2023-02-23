@@ -2,9 +2,6 @@ package sem;
 
 import ast.*;
 
-import java.util.Iterator;
-import java.util.Set;
-
 import java.util.Map;
 import java.util.HashMap;
 
@@ -127,6 +124,10 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 			case Assign assign -> {
 				Type lhs = visit(assign.lhs);
 				Type rhs = visit(assign.rhs);
+
+				if(!is_valid_lvalue(assign.lhs)){
+					error("Invalid lvalue: '" + assign.lhs + "'");
+				}
 				if(!lhs.equals(rhs)){
 					error(lhs + " != " + rhs);
 				}
@@ -262,6 +263,16 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 			}
 		};
 
+	}
+
+	private boolean is_valid_lvalue(Expr lhs) {
+		switch (lhs){
+			case VarExpr ve: return true;
+			case ArrayAccessExpr aae: return true;
+			case ValueAtExpr vae: return true;
+			case FieldAccessExpr fae: return true;
+			default: return false;
+		}
 	}
 
 

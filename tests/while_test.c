@@ -20,7 +20,8 @@
 //struct b { int d; };
 //struct c { int d; };
 void foo(){
-
+      int b;
+      3 = b;
       //a = *b;
 //      char a;
 //      a = f(3,1,2);
