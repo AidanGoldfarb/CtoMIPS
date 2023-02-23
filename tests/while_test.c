@@ -20,11 +20,16 @@
 //struct foos { int x; };
 //struct bar { struct foos f; };
 
-struct b { int d; };
-//struct c { int d; };
+//struct b { int d; };
+//struct c { struct b d; };
 struct b foo(){
-    struct b sdecl;
-    return sdecl;
+    int a;
+//      struct b b_strct;
+//      struct c c_strct;
+//
+//      c.d = b;
+//    struct b sdecl;
+//    return sdecl;
 //    {
 //        {
 //            return 'b';

@@ -296,7 +296,7 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 				while(rtn == null && !done){
 					done = !(b.children().size() > 0);
 					for(ASTNode child: b.children()){
-						System.out.println("child: " +child);
+						//System.out.println("child: " +child);
 						if(child instanceof Block){
 							rtn = get_return_from_block((Block) child);
 							b = (Block) child;
@@ -305,6 +305,8 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 								done = true;
 							}
 						}
+						done = true;
+						no_return(fd);
 					}
 				}
 				if(rtn != null){
@@ -364,6 +366,11 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 			case StructType structType -> {
 			}
 		}
+	}
+
+	private void no_return(FunDecl fd) {
+		error("No return statement in function '" + fd.name
+				+ "' which expects return type '" + fd.type +"'");
 	}
 
 	private Return get_return_from_block(Block b){
