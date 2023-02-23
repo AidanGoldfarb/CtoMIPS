@@ -20,15 +20,24 @@ public class NameAnalyzer extends BaseSemanticAnalyzer {
 			}
 
 			case Block b -> {
-				Scope oldScope = scope;
-				scope = new Scope(oldScope); //new scope with old as parent
+//				Scope oldScope = scope;
+//				scope = new Scope(oldScope); //new scope with old as parent
 
 				// visit children
 				for(ASTNode child: b.children()){
-					visit(child);
+					if(child instanceof Block){
+						Scope oldScope = scope;
+						scope = new Scope(oldScope);
+						visit(child);
+						scope = oldScope;
+					}
+					else{
+						visit(child);
+					}
+
 				}
 
-				scope = oldScope;
+				//scope = oldScope;
 			}
 
 			case FunDecl fd -> {
@@ -44,6 +53,7 @@ public class NameAnalyzer extends BaseSemanticAnalyzer {
 							visit(param);
 						}
 					}
+					System.out.println(scope.symbolTable.size());
 					visit(fd.block);
 					scope = oldScope;
 					scope.put(new FunSymbol(fd));

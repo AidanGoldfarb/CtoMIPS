@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class Scope {
 	private Scope outer;
-	private Map<String, Symbol> symbolTable;
+	public Map<String, Symbol> symbolTable;
 	
 	public Scope(Scope outer) { 
 		this.outer = outer;

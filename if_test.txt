@@ -1,0 +1,4 @@
+Program(
+	FunDecl(VOID,foo
+		,Block(ExprStmt(BinOp(BinOp(IntLiteral(0),SUB,VarExpr(a)),REM,VarExpr(b)))))
+)
