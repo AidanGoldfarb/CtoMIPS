@@ -22,10 +22,19 @@
 
 //struct b { int d; };
 //struct c { struct b d; };
-int foo;
-char foo(){
-    char a;
-    return a;
+//int foo;
+//int bar(){int c; return c;}
+//int baz(){}
+int foo(){
+
+    int a;
+    if(a){
+        return bar();
+    }
+    else{
+        return baz();
+    }
+
 //      struct b b_strct;
 //      struct c c_strct;
 //

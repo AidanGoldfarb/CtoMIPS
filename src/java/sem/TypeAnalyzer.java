@@ -26,8 +26,6 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 
 			case Program p -> {
 				add_buildins();
-//				System.out.println(func_sym_table.size());
-//				System.exit(0);
 				// to complete
 				for(ASTNode child: p.children()){
 					try{
@@ -269,7 +267,7 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 				if(aReturn.expr != null){
 					visit(aReturn.expr);
 				}
-				yield BaseType.NONE;
+				yield BaseType.VOID;
 			}
 			case While aWhile -> {
 				Type t = visit(aWhile.expr);
@@ -306,13 +304,18 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 							rtn = get_return_from_block((Block) child);
 							b = (Block) child;
 							if(rtn != null){
-								System.out.println("FOUND nst RETURRN: " + rtn);
-								done = true;
+								if(!is_valid_return(rtn,fd)){
+									error("Returning incorrect type '" + rtn + "' from function '" + fd.name +
+											"' which expects return type '" + fdrt + "'");
+								}
 							}
 						}
-						done = true;
-						no_return(fd);
+
+//						done = true;
+//						no_return(fd);
 					}
+					done = true;
+					no_return(fd);
 				}
 				if(rtn != null){
 					Type rt = visit(rtn.expr);
@@ -373,7 +376,21 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 		}
 	}
 
+	private boolean is_valid_return(Return r, FunDecl fd){
+		if(r.expr == null){
+			if(fd.type == BaseType.VOID){
+				return true;
+			}
+			return false;
+		}
+		Type rt = visit(r.expr);
+		return rt.equals(fd.type);
+	}
+
 	private void no_return(FunDecl fd) {
+		if(fd.type == BaseType.VOID){
+			return;
+		}
 		error("No return statement in function '" + fd.name
 				+ "' which expects return type '" + fd.type +"'");
 	}
