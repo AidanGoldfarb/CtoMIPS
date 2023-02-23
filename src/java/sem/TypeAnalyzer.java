@@ -30,7 +30,12 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 //				System.exit(0);
 				// to complete
 				for(ASTNode child: p.children()){
-					visit(child);
+					try{
+						visit(child);
+					}catch (Exception e){
+						System.out.println("Halting due to error");
+					}
+
 				}
 				yield BaseType.NONE;
 			}

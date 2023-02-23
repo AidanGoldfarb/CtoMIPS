@@ -21,7 +21,7 @@
 //struct c { int d; };
 void foo(){
       int b;
-      b = read_i();
+      b = read_fake();
       //a = *b;
 //      char a;
 //      a = f(3,1,2);
