@@ -20,9 +20,18 @@
 //struct foos { int x; };
 //struct bar { struct foos f; };
 
-//struct b { int d; };
+struct b { int d; };
 //struct c { int d; };
-void foo(){
+struct b foo(){
+    struct b sdecl;
+    return sdecl;
+//    {
+//        {
+//            return 'b';
+//        }
+//        return 5;
+//    }
+
 }
 //     int a;
 //     {

@@ -178,10 +178,14 @@ public class Parser {
             }
             //fundecl
             else if(contains(first_fundecl,token.tokenClass) &&
-                    lookAhead(2).tokenClass == TokenClass.LPAR){
+                    (lookAhead(2).tokenClass == TokenClass.LPAR ||
+                            lookAhead(3).tokenClass == TokenClass.LPAR)){
                 decls.add(parseFundecl());
-                //parseFundecl();
             }
+//            else if(contains(first_fundecl,token.tokenClass) &&
+//                    lookAhead(2).tokenClass == TokenClass.LPAR){
+//                decls.add(parseFundecl());
+//            }
             else if(contains(first_vardecl,token.tokenClass)){
                 decls.add(parseVardecl());
                 //parseVardecl();

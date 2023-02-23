@@ -37,6 +37,8 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 					}
 
 				}
+				//second pass
+				visit_snd(p);
 				yield BaseType.NONE;
 			}
 
@@ -247,7 +249,10 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 				yield visit(es.expr);
 			}
 			case If anIf -> {
-				visit(anIf.expr);
+				Type t = visit(anIf.expr);
+				if(!isInt(t)){
+					error("invalid cond in if");
+				}
 				visit(anIf.istmt);
 				if(anIf.estmt != null){
 					visit(anIf.estmt);
@@ -255,18 +260,122 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 				yield BaseType.NONE;
 			}
 			case Return aReturn -> {
+				//ensure it is correct type here?
 				if(aReturn.expr != null){
 					visit(aReturn.expr);
 				}
 				yield BaseType.NONE;
 			}
 			case While aWhile -> {
-				visit(aWhile.expr);
+				Type t = visit(aWhile.expr);
+				if(!isInt(t)){
+					error("invalid cond in while");
+				}
 				visit(aWhile.stmt);
 				yield BaseType.NONE;
 			}
 		};
 
+	}
+
+	private void visit_snd(ASTNode node) {
+		switch (node){
+
+			case Program p -> {
+				for(ASTNode child: p.children()){
+					visit_snd(child);
+				}
+			}
+			case FunDecl fd -> {
+				Type fdrt = fd.type;
+				Block b = fd.block;
+				Return rtn = get_return_from_block(b);
+
+				boolean done = false;
+				//must be nested
+				while(rtn == null && !done){
+					done = !(b.children().size() > 0);
+					for(ASTNode child: b.children()){
+						System.out.println("child: " +child);
+						if(child instanceof Block){
+							rtn = get_return_from_block((Block) child);
+							b = (Block) child;
+							if(rtn != null){
+								System.out.println("FOUND nst RETURRN: " + rtn);
+								done = true;
+							}
+						}
+					}
+				}
+				if(rtn != null){
+					Type rt = visit(rtn.expr);
+					if(!rt.equals(fdrt)){
+						error("Returning incorrect type '" + rt + "' from function '" + fd.name +
+								"' which expects return type '" + fdrt + "'");
+					}
+				}
+			}
+			case StructTypeDecl structTypeDecl -> {
+			}
+			case VarDecl varDecl -> {
+			}
+			case AddressOfExpr addressOfExpr -> {
+			}
+			case ArrayAccessExpr arrayAccessExpr -> {
+			}
+			case Assign assign -> {
+			}
+			case BinOp binOp -> {
+			}
+			case ChrLiteral chrLiteral -> {
+			}
+			case FieldAccessExpr fieldAccessExpr -> {
+			}
+			case FunCallExpr funCallExpr -> {
+			}
+			case IntLiteral intLiteral -> {
+			}
+			case SizeOfExpr sizeOfExpr -> {
+			}
+			case StrLiteral strLiteral -> {
+			}
+			case TypecastExpr typecastExpr -> {
+			}
+			case ValueAtExpr valueAtExpr -> {
+			}
+			case VarExpr varExpr -> {
+			}
+			case Block block -> {
+			}
+			case ExprStmt exprStmt -> {
+			}
+			case If anIf -> {
+			}
+			case Return aReturn -> {
+			}
+			case While aWhile -> {
+			}
+			case ArrayType arrayType -> {
+			}
+			case BaseType baseType -> {
+			}
+			case PointerType pointerType -> {
+			}
+			case StructType structType -> {
+			}
+		}
+	}
+
+	private Return get_return_from_block(Block b){
+		for(ASTNode child: b.children()){
+			if(child instanceof Block){
+				return get_return_from_block((Block) child);
+			}
+			if(child instanceof Return){
+				return (Return) child;
+			}
+		}
+		return null;
 	}
 
 	private boolean is_valid_lvalue(Expr lhs) {
@@ -303,5 +412,15 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 		func_sym_table.put("mcmalloc_d", mcmalloc_d);
 	}
 
-
+	private boolean isInt(Type t){
+		switch (t){
+			case BaseType bt-> {
+				switch (bt){
+					case INT -> { return true; }
+					default -> {error("invalid cond in while"); return false;}
+				}
+			}
+			default -> {error("invalid cond in while"); return false; }
+		}
+	}
 }

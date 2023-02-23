@@ -166,6 +166,7 @@ public class NameAnalyzer extends BaseSemanticAnalyzer {
 				}
 			}
 			case Return ar -> {
+
 				if(ar.expr != null){
 					visit(ar.expr);
 				}
