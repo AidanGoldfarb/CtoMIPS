@@ -2,13 +2,11 @@ package sem;
 
 import ast.*;
 
-import java.util.Collections;
-import java.util.List;
-
-import java.util.ArrayList;
+import java.util.*;
 
 public class NameAnalyzer extends BaseSemanticAnalyzer {
 
+	//Map<StructType,StructTypeDecl> func_sym_table = new HashMap<>(); //<fun type, fun decl>
 	Scope scope;
 
 	public NameAnalyzer(Scope scope){
@@ -73,8 +71,9 @@ public class NameAnalyzer extends BaseSemanticAnalyzer {
 				Symbol s = scope.lookup(v.name); //can use a var defined in a higher scope
 				switch (s){
 					case VarSymbol vs -> v.vd = vs.vd;
-					case StructSymbol ss -> v.vd = ss.std;
-					case null, default -> error("Use before decl: \'" + v.name + "\'");
+					case null, default -> {
+						error("Use before decl: \'" + v.name + "\'");
+					}
 				}
 			}
 
@@ -83,6 +82,7 @@ public class NameAnalyzer extends BaseSemanticAnalyzer {
 				if(s != null){
 					error("Struct \'" + std.name +  "\' redefined");
 				}
+				std.st.std = std; //update struct type field
 				//ensure no repeated names (needs some thinking)
 				Scope oldScope = scope;
 				scope = new Scope(oldScope); //no parents allowed

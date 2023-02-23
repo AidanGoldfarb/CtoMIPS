@@ -13,13 +13,22 @@
 //
 //int d;
 //
-//int f(int a, int b, int c){
+//char f(int a, int b, int c){
 //    int d;
 //    return a+b+c+d;
 //}
-//struct b { int c;};
+//struct b { int d; };
+//struct c { int d; };
 void foo(){
-    a = (int)(void)b;
+
+      //a = *b;
+//      char a;
+//      a = f(3,1,2);
+    //struct b decl;
+//    int a;
+     //a = decl.d;
+//    int a;
+//    a = 2;
 //    a = 5;
 //    b = 6;
 //    c = 7;

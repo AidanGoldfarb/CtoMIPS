@@ -2,8 +2,16 @@ package sem;
 
 import ast.*;
 
+import java.util.Iterator;
+import java.util.Set;
+
+import java.util.Map;
+import java.util.HashMap;
+
 public class TypeAnalyzer extends BaseSemanticAnalyzer {
 
+	Map<StructType,StructTypeDecl> struct_sym_table = new HashMap<>(); //<struct type, struct def>
+	Map<String,FunDecl> func_sym_table = new HashMap<>(); //<fun name, fun decl>
 	public Type visit(ASTNode node) {
 		return switch(node) {
 			case null -> {
@@ -12,12 +20,13 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 
 			case Block b -> {
 				for (ASTNode c : b.children())
-					visit(b);
+					visit(c);
 				yield BaseType.NONE;
 			}
 
 			case FunDecl fd -> {
-				// to complete
+				func_sym_table.put(fd.name,fd); //redecl handed in name analyzer
+				visit(fd.block);
 				yield BaseType.NONE;
 			}
 
@@ -30,20 +39,41 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 			}
 
 			case (VarDecl vd) -> {
-				if(vd.type == BaseType.VOID){
-					error("cannot declair var \'" + vd +"\' as \'void\'");
+				switch (vd.type){
+					case BaseType bT -> {
+						switch (bT){
+							case VOID -> {
+								error("cannot declair var \'" + vd +"\' as \'void\'");
+								yield BaseType.VOID;
+							}
+							default -> {yield bT;}
+						}
+					}
+					//check that the type exists
+					case StructType structType -> {
+						if(!struct_sym_table.containsKey(structType)){
+							error("Struct \'" + structType + "\' undefined");
+						}
+						yield vd.type;
+					}
+					default -> {yield vd.type;}
 				}
-
-				yield vd.type;
 			}
 
 			case (VarExpr v) -> {
-				yield visit(v.vd);
+				//exists bc geterror count doesnt work.
+				if(v.vd == null){
+					//error("\'"+ v + "\' not defined");
+					yield v.type;
+				}
+				else{
+					yield visit(v.vd);
+				}
 			}
 
 			case (StructTypeDecl std) -> {
-				// to complete
-				yield BaseType.UNKNOWN; // to change
+				struct_sym_table.put(std.st,std);
+				yield BaseType.NONE; // to change
 			}
 
 			case (Type t) -> {
@@ -52,39 +82,143 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 
 			// to complete ...
 			case AddressOfExpr aoe -> {
-				yield visit(aoe.expr);
+				Type t = visit(aoe.expr);
+				//System.out.println("ADDYOF: " + t);
+				yield new PointerType(t);
 			}
 			case ArrayAccessExpr aae -> {
-				Type t = visit(aae.arr);
-				visit(aae.indx);
-				yield t;
+				Type arr_type = visit(aae.arr);
+				Type inx_type = visit(aae.indx); //must be int
+				switch (inx_type){
+					case BaseType bt -> {
+						switch (bt){
+							case INT -> {}
+							default -> error("Array index is non-scaler");
+						}
+					}
+					default -> {
+						error("Array index is non-scaler");
+						yield BaseType.UNKNOWN;
+					}
+				}
+				switch (arr_type){
+					case ArrayType arrayType -> {
+						yield arrayType.t;
+					}
+					case BaseType baseType -> {
+						//invalid
+						error("Attempt to index non-array object");
+						yield BaseType.UNKNOWN;
+					}
+					case PointerType pt -> {
+						yield pt.type;
+					}
+					case StructType structType -> {
+						//invalid
+						error("Attempt to index non-array object");
+						yield BaseType.UNKNOWN;
+					}
+					default -> {
+						error("unexpected array type");
+						yield BaseType.UNKNOWN;
+					}
+				}
 			}
 			case Assign assign -> {
 				Type lhs = visit(assign.lhs);
 				Type rhs = visit(assign.rhs);
-				if(lhs != rhs){
+				if(!lhs.equals(rhs)){
 					error(lhs + " != " + rhs);
 				}
 				yield BaseType.NONE;
 			}
 			case BinOp binOp -> {
-				Type lhs = visit(binOp.lhs); //must it be a int or char?
+				Type lhs = visit(binOp.lhs);
 				Type rhs = visit(binOp.rhs);
-				if(lhs != rhs){
-					error(lhs + " != " + rhs);
+				if(binOp.op == Op.NE || binOp.op == Op.EQ){
+					//can be int or char
+					if(lhs != BaseType.INT && lhs != BaseType.CHAR){
+						error(lhs + " not of type INT | CHAR");
+					}
+					if(rhs != BaseType.INT && rhs != BaseType.CHAR){
+						error(rhs + " not of type INT | CHAR");
+					}
+					yield BaseType.INT;
 				}
-				yield lhs;
+				else{
+					if(lhs != rhs){
+						error(lhs + " != " + rhs);
+						yield BaseType.UNKNOWN;
+					}
+					if(lhs != BaseType.INT){
+						error(lhs + " != INT");
+						yield BaseType.UNKNOWN;
+					}
+					yield lhs;
+				}
 
 			}
 			case ChrLiteral chrLiteral -> {yield BaseType.CHAR;}
 			case FieldAccessExpr fae -> {
+				String fieldname = fae.field;
 				Type t = visit(fae.struct);
-				//what to do here...
+				switch (t){
+					case ArrayType arrayType -> {
+						error("attempting to field access an array");
+						yield t;
+					}
+					case BaseType baseType -> {
+						error("attempting to field access an basetype");
+						yield t;
+					}
+					case PointerType pointerType -> {
+						error("attempting to field access an pointertype");
+						yield t;
+					}
+					case StructType st -> {
+						//check if exists
+						boolean legal = false;
+						StructTypeDecl std = struct_sym_table.get(st); //
+						for(VarDecl vd: std.vardecls){
+							if(vd.name.equals(fieldname)){
+								legal = true;
+								if(legal){
+									t = vd.type;
+									break;
+								}
+							}
+						}
+						if(!legal){
+							error("field \'" + fieldname + "\' does not exist in struct \'" + st + "\'");
+							yield t;
+						}
+						else{
+							yield t;
+						}
+					}
+					case null -> {yield BaseType.UNKNOWN;}
+				}
 				yield BaseType.INT; //wrong
 			}
-			case FunCallExpr funCallExpr -> {
-				//need to add fundecl in name analyzer?
-				yield BaseType.INT; //wrong
+			case FunCallExpr fce -> {
+				//fun not exist handled in name analyzer
+				//need to check args and ret type
+
+				//number of args first
+				if (fce.args.size() != func_sym_table.get(fce.name).params.size()){
+					error("Invalid number of args supplied to \'" + fce.name + "\'");
+				}
+				//arg type equality
+				int index = 0;
+				for(Expr arg: fce.args){
+					Type param_t = visit(arg);
+					Type arg_t = visit(func_sym_table.get(fce.name).params.get(index));
+					if(param_t != arg_t){
+						error("Incorrect arg type supplied to \'" + fce.name + "\'");
+					}
+					index++;
+				}
+				yield func_sym_table.get(fce.name).type;
 			}
 			case IntLiteral intLiteral -> BaseType.INT;
 			case SizeOfExpr sizeOfExpr -> BaseType.INT;
@@ -93,7 +227,16 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 			}
 			case TypecastExpr te -> {yield te.type;}
 			case ValueAtExpr vae -> {
-				yield visit(vae.expr);
+				Type t = visit(vae.expr);
+				switch (t){
+					case PointerType pt-> {
+						yield pt.type;
+					}
+					default -> {
+						error("attempt to dereference non-pointer type");
+						yield BaseType.UNKNOWN;
+					}
+				}
 			}
 			case ExprStmt es -> {
 				yield visit(es.expr);

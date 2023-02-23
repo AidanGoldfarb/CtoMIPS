@@ -499,48 +499,6 @@ public class Parser {
 
     //Contains ValueAt, AddressOf, Unary(PLUS,MINUS)
     private Expr parseH(){
-//        print("H");
-//        Expr expr = null;
-//        while((accept(TokenClass.LPAR) && contains(first_type,lookAhead(1).tokenClass))
-//                || accept(TokenClass.ASTERIX,TokenClass.AND,TokenClass.PLUS,TokenClass.MINUS)){
-//            //typecast
-//            if(accept(TokenClass.LPAR) && contains(first_type,lookAhead(1).tokenClass)){
-//                expect(TokenClass.LPAR);
-//                Type t = parseType();
-//                expect(TokenClass.RPAR);
-//                expr = parseH();
-//                expr = new TypecastExpr(t,expr);
-//            }
-//            //valueat
-//            else if(accept(TokenClass.ASTERIX)){
-//                expect(TokenClass.ASTERIX);
-//                expr = parseH();
-//                expr = new ValueAtExpr(expr);
-//            }
-//            //addressof
-//            else if(accept(TokenClass.AND)){
-//                expect(TokenClass.AND);
-//                expr = parseH();
-//                expr = new AddressOfExpr(expr);
-//            }
-//            //unary +
-//            else if(accept(TokenClass.PLUS)){
-//                expect(TokenClass.PLUS);
-//                expr = parseH();
-//                expr = new BinOp(new IntLiteral(0),Op.ADD,expr);
-//            }
-//            //unary -
-//            else if(accept(TokenClass.MINUS)){
-//                expect(TokenClass.MINUS);
-//                expr = parseH();
-//                print("EXPR: " + expr);
-//                expr = new BinOp(new IntLiteral(0),Op.SUB,expr);
-//            }
-//        }
-//        if(expr == null){
-//            return parseI();
-//        }
-//        return expr;
         print("H");
         //typecast
         if(accept(TokenClass.LPAR) && contains(first_type,lookAhead(1).tokenClass)){
