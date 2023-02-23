@@ -22,8 +22,10 @@
 
 //struct b { int d; };
 //struct c { struct b d; };
-struct b foo(){
-    int a;
+int foo;
+char foo(){
+    char a;
+    return a;
 //      struct b b_strct;
 //      struct c c_strct;
 //

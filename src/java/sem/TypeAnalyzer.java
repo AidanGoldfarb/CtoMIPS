@@ -38,7 +38,12 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 
 				}
 				//second pass
-				visit_snd(p);
+				try{
+					visit_snd(p);
+				}catch (Exception e){
+					System.out.println("Halting due to error");
+				}
+
 				yield BaseType.NONE;
 			}
 
