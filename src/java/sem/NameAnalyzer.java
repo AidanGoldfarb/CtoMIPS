@@ -180,13 +180,15 @@ public class NameAnalyzer extends BaseSemanticAnalyzer {
 		List<VarDecl> pi = Collections.singletonList(new VarDecl(BaseType.INT,"i"));
 		List<VarDecl> pc = Collections.singletonList(new VarDecl(BaseType.CHAR,"c"));
 		List<VarDecl> mc = Collections.singletonList(new VarDecl(BaseType.INT,"size"));
+		List<VarDecl> empty = new ArrayList<>();
+		List<Stmt> empty2 = new ArrayList<>();
 
-		FunDecl print_s_d = new FunDecl(BaseType.VOID, "print_s",ps,new Block(null,null));
-		FunDecl print_i_d = new FunDecl(BaseType.VOID, "print_i",pi,new Block(null,null));
-		FunDecl print_c_d = new FunDecl(BaseType.VOID, "print_c",pc,new Block(null,null));
-		FunDecl read_c_d = new FunDecl(BaseType.VOID, "read_c",null,new Block(null,null));
-		FunDecl read_i_d = new FunDecl(BaseType.VOID, "read_",null,new Block(null,null));
-		FunDecl mcmalloc_d = new FunDecl(new PointerType(BaseType.VOID), "mcmalloc",mc,new Block(null,null));
+		FunDecl print_s_d = new FunDecl(BaseType.VOID, "print_s",ps,new Block(empty,empty2));
+		FunDecl print_i_d = new FunDecl(BaseType.VOID, "print_i",pi,new Block(empty,empty2));
+		FunDecl print_c_d = new FunDecl(BaseType.VOID, "print_c",pc,new Block(empty,empty2));
+		FunDecl read_c_d = new FunDecl(BaseType.CHAR, "read_c",empty,new Block(empty,empty2));
+		FunDecl read_i_d = new FunDecl(BaseType.INT, "read_i",empty,new Block(empty,empty2));
+		FunDecl mcmalloc_d = new FunDecl(new PointerType(BaseType.VOID), "mcmalloc",mc,new Block(empty,empty2));
 
 		Symbol print_s = new FunSymbol(print_s_d);
 		Symbol print_i = new FunSymbol(print_i_d);

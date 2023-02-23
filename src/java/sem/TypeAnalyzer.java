@@ -2,8 +2,7 @@ package sem;
 
 import ast.*;
 
-import java.util.Map;
-import java.util.HashMap;
+import java.util.*;
 
 public class TypeAnalyzer extends BaseSemanticAnalyzer {
 
@@ -26,6 +25,9 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 			}
 
 			case Program p -> {
+				add_buildins();
+//				System.out.println(func_sym_table.size());
+//				System.exit(0);
 				// to complete
 				for(ASTNode child: p.children()){
 					visit(child);
@@ -202,7 +204,6 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 			case FunCallExpr fce -> {
 				//fun not exist handled in name analyzer
 				//need to check args and ret type
-
 				//number of args first
 				if (fce.args.size() != func_sym_table.get(fce.name).params.size()){
 					error("Invalid number of args supplied to \'" + fce.name + "\'");
@@ -271,6 +272,30 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 			case FieldAccessExpr fae: return true;
 			default: return false;
 		}
+	}
+
+	private void add_buildins(){
+		//Map<String,FunDecl> func_sym_table = new HashMap<>();
+		List<VarDecl> ps = Collections.singletonList(new VarDecl( new PointerType(BaseType.CHAR),"s"));
+		List<VarDecl> pi = Collections.singletonList(new VarDecl(BaseType.INT,"i"));
+		List<VarDecl> pc = Collections.singletonList(new VarDecl(BaseType.CHAR,"c"));
+		List<VarDecl> mc = Collections.singletonList(new VarDecl(BaseType.INT,"size"));
+		List<VarDecl> empty = new ArrayList<>();
+		List<Stmt> empty2 = new ArrayList<>();
+
+		FunDecl print_s_d = new FunDecl(BaseType.VOID, "print_s",ps,new Block(empty,empty2));
+		FunDecl print_i_d = new FunDecl(BaseType.VOID, "print_i",pi,new Block(empty,empty2));
+		FunDecl print_c_d = new FunDecl(BaseType.VOID, "print_c",pc,new Block(empty,empty2));
+		FunDecl read_c_d = new FunDecl(BaseType.CHAR, "read_c",empty,new Block(empty,empty2));
+		FunDecl read_i_d = new FunDecl(BaseType.INT, "read_i",empty,new Block(empty,empty2));
+		FunDecl mcmalloc_d = new FunDecl(new PointerType(BaseType.VOID), "mcmalloc",mc,new Block(empty,empty2));
+
+		func_sym_table.put("print_s", print_s_d);
+		func_sym_table.put("print_i", print_i_d);
+		func_sym_table.put("print_c", print_c_d);
+		func_sym_table.put("read_c", read_c_d);
+		func_sym_table.put("read_i", read_i_d);
+		func_sym_table.put("mcmalloc_d", mcmalloc_d);
 	}
 
 
