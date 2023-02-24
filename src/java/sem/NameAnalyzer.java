@@ -53,9 +53,10 @@ public class NameAnalyzer extends BaseSemanticAnalyzer {
 							visit(param);
 						}
 					}
+					scope.put(new FunSymbol(fd));
 					visit(fd.block);
 					scope = oldScope;
-					scope.put(new FunSymbol(fd));
+					//scope.put(new FunSymbol(fd));
 				}
 			}
 
@@ -68,7 +69,6 @@ public class NameAnalyzer extends BaseSemanticAnalyzer {
 
 			case (VarDecl vd) -> {
 				Symbol s = scope.lookupCurrent(vd.name); //current bc of shadowing
-				println(s);
 				if( s != null){
 					error("Variable \'" + vd.name + "\' redefined");
 				}

@@ -49,7 +49,6 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 			}
 
 			case (VarDecl vd) -> {
-				System.out.println("here");
 				switch (vd.type){
 					case BaseType bT -> {
 						switch (bT){
