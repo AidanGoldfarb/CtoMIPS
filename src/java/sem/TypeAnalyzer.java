@@ -163,8 +163,11 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 					if(lhs != BaseType.INT && lhs != BaseType.CHAR){
 						error(lhs + " not of type INT | CHAR");
 					}
-					if(rhs != BaseType.INT && rhs != BaseType.CHAR){
+					else if(rhs != BaseType.INT && rhs != BaseType.CHAR){
 						error(rhs + " not of type INT | CHAR");
+					}
+					else if(!lhs.equals(rhs)){
+						error("invalid cond: lhs != rhs");
 					}
 					yield BaseType.INT;
 				}
@@ -173,7 +176,7 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 						error(lhs + " != " + rhs);
 						yield BaseType.UNKNOWN;
 					}
-					if(lhs != BaseType.INT){
+					else if(lhs != BaseType.INT){
 						error(lhs + " != INT");
 						yield BaseType.UNKNOWN;
 					}

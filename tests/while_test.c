@@ -31,9 +31,12 @@ struct mystruct{ int x;};
 //struct nm fun(){} //lookahead3 == (
 //struct nm* fun(){} //lookahead2 == *
 //int baz(){int c; {return (int)'b';} }
+
 int bar(){
-    //a = 5;
-    return bar();
+    char c;
+    int a;
+    if(a != c){}
+    return 0;
 }
 //    int a;
 //    return (struct b)a;
