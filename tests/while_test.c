@@ -21,18 +21,20 @@
 //struct bar { struct foos f; };
 
 //struct b { int d; };
-struct c { struct b d; };
-//int foo;
-struct c bar(){struct c c; return c;}
-struct c baz(){struct c c; return c;}
+//struct c { struct b d; };
+////int foo;
+//struct c bar(){struct c c; return c;}
+//struct c baz(){struct c c; return c;}
 struct c foo(){
-    int a;
-    if(a){
-        return bar();
-    }
-    else{
-        return baz();
-    }
+    char *a;
+    print_s(a);
+//    int a;
+//    if(a){
+//        return bar();
+//    }
+//    else{
+//        return baz();
+//    }
 }
 //      struct b b_strct;
 //      struct c c_strct;

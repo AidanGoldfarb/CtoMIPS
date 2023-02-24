@@ -222,8 +222,9 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 				for(Expr arg: fce.args){
 					Type param_t = visit(arg);
 					Type arg_t = visit(func_sym_table.get(fce.name).params.get(index));
-					if(param_t != arg_t){
-						error("Incorrect arg type supplied to \'" + fce.name + "\'");
+					if(!param_t.equals(arg_t)){
+						error("Incorrect arg type supplied to \'" + fce.name + "\'." +
+								"Expected + '" + arg_t +"' got '" + param_t +"'");
 					}
 					index++;
 				}
