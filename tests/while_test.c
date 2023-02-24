@@ -32,7 +32,11 @@ struct b { int d; };
 
 struct b**** foo(){
     struct b**** a;
+    int* b;
+    int* c;
+    if(b == c){
     return a;
+    }
     //struct c* b;
 //    a = baz();
 //    b = baz();
