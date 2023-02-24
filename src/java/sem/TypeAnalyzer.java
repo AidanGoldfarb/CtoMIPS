@@ -156,7 +156,7 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 					yield BaseType.INT;
 				}
 				else{
-					if(lhs != rhs){
+					if(!lhs.equals(rhs)){
 						error(lhs + " != " + rhs);
 						yield BaseType.UNKNOWN;
 					}
