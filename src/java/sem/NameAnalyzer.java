@@ -53,7 +53,6 @@ public class NameAnalyzer extends BaseSemanticAnalyzer {
 							visit(param);
 						}
 					}
-					System.out.println(scope.symbolTable.size());
 					visit(fd.block);
 					scope = oldScope;
 					scope.put(new FunSymbol(fd));

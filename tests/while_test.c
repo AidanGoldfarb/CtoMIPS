@@ -21,12 +21,11 @@
 //struct bar { struct foos f; };
 
 //struct b { int d; };
-//struct c { struct b d; };
+struct c { struct b d; };
 //int foo;
-//int bar(){int c; return c;}
-//int baz(){}
-int foo(){
-
+struct c bar(){struct c c; return c;}
+struct c baz(){struct c c; return c;}
+struct c foo(){
     int a;
     if(a){
         return bar();
@@ -34,7 +33,7 @@ int foo(){
     else{
         return baz();
     }
-
+}
 //      struct b b_strct;
 //      struct c c_strct;
 //
@@ -48,7 +47,6 @@ int foo(){
 //        return 5;
 //    }
 
-}
 //     int a;
 //     {
 //        int b;

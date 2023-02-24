@@ -90,7 +90,6 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 			// to complete ...
 			case AddressOfExpr aoe -> {
 				Type t = visit(aoe.expr);
-				//System.out.println("ADDYOF: " + t);
 				yield new PointerType(t);
 			}
 			case ArrayAccessExpr aae -> {
@@ -283,7 +282,6 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 
 	private void visit_snd(ASTNode node) {
 		switch (node){
-
 			case Program p -> {
 				for(ASTNode child: p.children()){
 					visit_snd(child);
@@ -292,38 +290,7 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 			case FunDecl fd -> {
 				Type fdrt = fd.type;
 				Block b = fd.block;
-				Return rtn = get_return_from_block(b);
-
-				boolean done = false;
-				//must be nested
-				while(rtn == null && !done){
-					done = !(b.children().size() > 0);
-					for(ASTNode child: b.children()){
-						//System.out.println("child: " +child);
-						if(child instanceof Block){
-							rtn = get_return_from_block((Block) child);
-							b = (Block) child;
-							if(rtn != null){
-								if(!is_valid_return(rtn,fd)){
-									error("Returning incorrect type '" + rtn + "' from function '" + fd.name +
-											"' which expects return type '" + fdrt + "'");
-								}
-							}
-						}
-
-//						done = true;
-//						no_return(fd);
-					}
-					done = true;
-					no_return(fd);
-				}
-				if(rtn != null){
-					Type rt = visit(rtn.expr);
-					if(!rt.equals(fdrt)){
-						error("Returning incorrect type '" + rt + "' from function '" + fd.name +
-								"' which expects return type '" + fdrt + "'");
-					}
-				}
+				explore_stmt(b,fdrt);
 			}
 			case StructTypeDecl structTypeDecl -> {
 			}
@@ -376,15 +343,66 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 		}
 	}
 
-	private boolean is_valid_return(Return r, FunDecl fd){
+	//given a block b, explores all statements to check for return
+	private void explore_stmt(Stmt stmt, Type goal) {
+			switch (stmt){
+				case Block block -> {
+					for(Stmt instmt: block.stmts){
+						explore_stmt(instmt, goal);
+					}
+
+				}
+				case ExprStmt exprStmt -> {
+					//do nothing
+				}
+				case If anIf -> {
+					explore_if(anIf,goal);
+				}
+				case Return aReturn -> {
+					Type rt;
+					if(aReturn.expr != null){
+						rt = visit(aReturn.expr);
+					}
+					else{
+						rt = BaseType.VOID;
+					}
+					if(!rt.equals(goal)){
+						error("incorrect return type");
+					}
+				}
+				case While aWhile -> {
+					explore_while(aWhile, goal);
+				}
+			}
+	}
+
+	public void explore_if(If anIf, Type goal){
+		//just check istmt
+		explore_stmt(anIf.istmt,goal);
+		if(anIf.estmt!=null){
+			explore_stmt(anIf.estmt,goal);
+		}
+	}
+	public void explore_while(While aWhile, Type goal){
+		explore_stmt(aWhile.stmt,goal);
+	}
+
+	private void valid_return_check(Return r, FunDecl fd){
 		if(r.expr == null){
 			if(fd.type == BaseType.VOID){
-				return true;
+				return;
 			}
-			return false;
+			error("No return statement in function '" + fd.name
+					+ "' which expects return type '" + fd.type +"'");
 		}
 		Type rt = visit(r.expr);
-		return rt.equals(fd.type);
+		 if(!rt.equals(fd.type)){
+			 error("No return statement in function '" + fd.name
+					 + "' which expects return type '" + fd.type +"'");
+		 }
+		 else{
+			 return;
+		 }
 	}
 
 	private void no_return(FunDecl fd) {
