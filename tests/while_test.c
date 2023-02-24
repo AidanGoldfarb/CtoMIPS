@@ -20,7 +20,7 @@
 //struct foos { int x; };
 //struct bar { struct foos f; };
 
-struct b { int d; };
+
 //struct c { struct b d; };
 ////int foo;
 //struct c bar(){struct c c; return c;}
@@ -29,14 +29,12 @@ struct b { int d; };
 //int**** fun(){} //lookahead1 == *
 //struct nm fun(){} //lookahead3 == (
 //struct nm****** fun(){} //lookahead2 == *
-
-struct b foo(){
+//int baz(){int c; {return (int)'b';} }
+void bar(){
+    int** a;
+    a = (int**)a;
 //    int a;
 //    return (struct b)a;
-      int a;
-      int b;
-      int c;
-      a=b=c;
 //    struct b**** a;
 //    int* b;
 //    int* c;

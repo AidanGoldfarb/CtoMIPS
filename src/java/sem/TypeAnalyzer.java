@@ -138,7 +138,13 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 				if(!is_valid_lvalue(assign.lhs)){
 					error("Invalid lvalue: '" + assign.lhs + "'");
 				}
-				if(!lhs.equals(rhs)){
+				else if(lhs == BaseType.VOID || lhs instanceof ArrayType){
+					error("cannot assign to VOID | ArrayType");
+				}
+				else if(rhs == BaseType.VOID || rhs instanceof ArrayType){
+					error("cannot assign from VOID | ArrayType");
+				}
+				else if(!lhs.equals(rhs)){
 					error(lhs + " != " + rhs);
 				}
 				yield lhs;
@@ -236,7 +242,36 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 			case StrLiteral strLiteral -> {
 				yield new ArrayType(BaseType.CHAR , strLiteral.len+1);
 			}
-			case TypecastExpr te -> {yield te.type;}
+			case TypecastExpr te -> {
+				Type from_type = visit(te.expr);
+				Type to_type = te.type;
+				if(from_type == BaseType.CHAR){
+					if(to_type != BaseType.INT){
+						error("invalid typecast: CHAR to non INT");
+					}
+				}
+				else if(from_type instanceof ArrayType){
+					if(!(to_type instanceof PointerType)){
+						error("invalid typecase: Array to non PTR");
+					}
+					else{
+						if(!ptr_array_same_depth((ArrayType)from_type,(PointerType)to_type)){
+							error("invalid typecast, PTR depth or type");
+						}
+					}
+				}
+				else if(from_type instanceof PointerType){
+					if(!(to_type instanceof PointerType)){
+						error("invalid typecast: PTR to non PTR");
+					}
+					else{
+						if(!from_type.equals(to_type)){
+							error("invalid typecast, PTR depth or type");
+						}
+					}
+				}
+				yield to_type;
+			}
 			case ValueAtExpr vae -> {
 				Type t = visit(vae.expr);
 				switch (t){
@@ -282,6 +317,19 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 
 	}
 
+	private boolean ptr_array_same_depth(ArrayType fromType, PointerType toType) {
+		int fst = 0;
+		int snd = 0;
+		while(fromType.t instanceof ArrayType){
+			fst++;
+			fromType = (ArrayType) fromType.t;
+		}
+		while(toType.type instanceof PointerType){
+			snd++;
+			toType = (PointerType) toType.type;
+		}
+		return fst==snd;
+	}
 	private void ensure_type_exists(Type type) {
 		switch (type){
 			case ArrayType arrayType -> {
@@ -315,7 +363,10 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 			case FunDecl fd -> {
 				Type fdrt = fd.type;
 				Block b = fd.block;
-				explore_stmt(b,fdrt);
+				boolean found = explore_stmt(b,fdrt);
+				if(!found && fd.type != BaseType.VOID){
+					error("Incorrect return type");
+				}
 			}
 			case StructTypeDecl structTypeDecl -> {
 			}
@@ -369,36 +420,39 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 	}
 
 	//given a block b, explores all statements to check for return
-	private void explore_stmt(Stmt stmt, Type goal) {
-			switch (stmt){
-				case Block block -> {
-					for(Stmt instmt: block.stmts){
-						explore_stmt(instmt, goal);
-					}
+	private boolean explore_stmt(Stmt stmt, Type goal) {
+		boolean found = false;
+		switch (stmt){
+			case Block block -> {
+				for(Stmt instmt: block.stmts){
+					found = explore_stmt(instmt, goal);
+				}
 
+			}
+			case ExprStmt exprStmt -> {
+				//do nothing
+			}
+			case If anIf -> {
+				explore_if(anIf,goal);
+			}
+			case Return aReturn -> {
+				found = true;
+				Type rt;
+				if(aReturn.expr != null){
+					rt = visit(aReturn.expr);
 				}
-				case ExprStmt exprStmt -> {
-					//do nothing
+				else{
+					rt = BaseType.VOID;
 				}
-				case If anIf -> {
-					explore_if(anIf,goal);
-				}
-				case Return aReturn -> {
-					Type rt;
-					if(aReturn.expr != null){
-						rt = visit(aReturn.expr);
-					}
-					else{
-						rt = BaseType.VOID;
-					}
-					if(!rt.equals(goal)){
-						error("incorrect return type");
-					}
-				}
-				case While aWhile -> {
-					explore_while(aWhile, goal);
+				if(!rt.equals(goal)){
+					error("incorrect return type");
 				}
 			}
+			case While aWhile -> {
+				explore_while(aWhile, goal);
+			}
+		}
+		return found;
 	}
 
 	public void explore_if(If anIf, Type goal){
