@@ -20,13 +20,19 @@
 //struct foos { int x; };
 //struct bar { struct foos f; };
 
-//struct b { int d; };
+struct b { int d; };
 //struct c { struct b d; };
 ////int foo;
 //struct c bar(){struct c c; return c;}
 //struct c baz(){struct c c; return c;}
-void foo(){
-    struct c*** a;
+//int fun(){} //lookahead2 == (
+//int**** fun(){} //lookahead1 == *
+//struct nm fun(){} //lookahead3 == (
+//struct nm****** fun(){} //lookahead2 == *
+
+struct b**** foo(){
+    struct b**** a;
+    return a;
     //struct c* b;
 //    a = baz();
 //    b = baz();

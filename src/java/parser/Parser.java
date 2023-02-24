@@ -177,9 +177,11 @@ public class Parser {
                 //parseStructDecl();
             }
             //fundecl
-            else if(contains(first_fundecl,token.tokenClass) &&
-                    (lookAhead(2).tokenClass == TokenClass.LPAR ||
-                            lookAhead(3).tokenClass == TokenClass.LPAR)){
+            else if(contains(first_fundecl,token.tokenClass)
+                            && (lookAhead(2).tokenClass == TokenClass.LPAR
+                            || lookAhead(1).tokenClass == TokenClass.ASTERIX
+                            || lookAhead(3).tokenClass == TokenClass.LPAR
+                            || lookAhead(2).tokenClass == TokenClass.ASTERIX)){
                 decls.add(parseFundecl());
             }
 //            else if(contains(first_fundecl,token.tokenClass) &&

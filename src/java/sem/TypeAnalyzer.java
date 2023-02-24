@@ -19,6 +19,7 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 			}
 
 			case FunDecl fd -> {
+				ensure_type_exists(fd.type);
 				func_sym_table.put(fd.name,fd); //redecl handed in name analyzer
 				visit(fd.block);
 				yield BaseType.NONE;
@@ -279,6 +280,29 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 			}
 		};
 
+	}
+
+	private void ensure_type_exists(Type type) {
+		switch (type){
+			case ArrayType arrayType -> {
+				ensure_type_exists(arrayType.t);
+			}
+			case BaseType baseType -> {
+				//do nothing
+			}
+			case PointerType pointerType -> {
+				explore_ptr(pointerType);
+			}
+			case StructType structType -> {
+				if(!struct_sym_table.containsKey(structType)){
+					error("Struct does not exist");
+				}
+			}
+		}
+	}
+
+	private void explore_ptr(PointerType pointerType) {
+		ensure_type_exists(pointerType.type);
 	}
 
 	private void visit_snd(ASTNode node) {
