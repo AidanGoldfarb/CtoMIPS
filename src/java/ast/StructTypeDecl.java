@@ -27,7 +27,7 @@ public final class StructTypeDecl extends Decl {
     public StructTypeDecl(StructType st, ArrayList<VarDecl> vardelcs){
         this.st = st;
         this.vardecls = vardelcs;
-        super.name = st.name;
+        super.name = "struct " + st.name;
     }
     public List<ASTNode> children() {
 

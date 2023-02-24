@@ -18,7 +18,10 @@
 //    return a+b+c+d;
 //}
 //struct foos { int x; };
-struct bar { struct foos f; };
+struct mystruct{ int x;};
+struct mystruct{ int x;};
+//int mystruct;
+
 
 
 //struct c { struct c b; };

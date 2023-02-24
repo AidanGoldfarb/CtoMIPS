@@ -68,6 +68,7 @@ public class NameAnalyzer extends BaseSemanticAnalyzer {
 
 			case (VarDecl vd) -> {
 				Symbol s = scope.lookupCurrent(vd.name); //current bc of shadowing
+				println(s);
 				if( s != null){
 					error("Variable \'" + vd.name + "\' redefined");
 				}
