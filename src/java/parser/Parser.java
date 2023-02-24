@@ -6,10 +6,7 @@ import lexer.Token;
 import lexer.Token.TokenClass;
 import lexer.Tokeniser;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 
 /*
    struct node_t { struct inner_t };
@@ -246,6 +243,7 @@ public class Parser {
         print("parseVardecl");
         //type
         Type t = parseType();
+        Type base = t;
         String id = parseIdentifier();
         //int a[3][2]...
         while(accept(TokenClass.LSBR) && error == 0){
@@ -257,9 +255,24 @@ public class Parser {
                 t = new ArrayType(t,((IntLiteral)len).val);
             }
         }
+        t = invert(t,base);
         expect(TokenClass.SC);
         print("exit parseVardecl");
         return new VarDecl(t,id);
+    }
+
+    private Type invert(Type arr, Type base){
+        ArrayList<Integer> lst = new ArrayList<>();
+        while(arr instanceof ArrayType){
+            //arr = (ArrayType)arr;
+            lst.add(((ArrayType) arr).len);
+            arr = ((ArrayType) arr).t;
+        }
+        Type t = base;
+        for(Integer i: lst){
+            t = new ArrayType(t,i);
+        }
+        return t;
     }
 
     private FunDecl parseFundecl(){

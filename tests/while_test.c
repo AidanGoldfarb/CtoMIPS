@@ -33,10 +33,8 @@ struct mystruct{ int x;};
 //int baz(){int c; {return (int)'b';} }
 
 int bar(){
-    char c;
-    int a;
-    if(a != c){}
-    return 0;
+    int a[3][4][5];
+    return a[2][2];
 }
 //    int a;
 //    return (struct b)a;
