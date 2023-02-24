@@ -724,7 +724,7 @@ public class Parser {
         if(accept(TokenClass.STRUCT)){
             expect(TokenClass.STRUCT);
             String id = parseIdentifier();
-            return new StructType(id);
+            roottype = new StructType(id);
         }
         else {
             TokenClass t = token.tokenClass;

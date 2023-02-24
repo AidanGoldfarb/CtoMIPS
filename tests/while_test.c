@@ -25,9 +25,12 @@
 ////int foo;
 //struct c bar(){struct c c; return c;}
 //struct c baz(){struct c c; return c;}
-struct c foo(){
-    char *a;
-    print_s(a);
+void foo(){
+    struct c*** a;
+    //struct c* b;
+//    a = baz();
+//    b = baz();
+//    if (a != b) a = 'b';
 //    int a;
 //    if(a){
 //        return bar();

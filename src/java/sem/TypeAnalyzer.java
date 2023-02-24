@@ -465,10 +465,10 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 			case BaseType bt-> {
 				switch (bt){
 					case INT -> { return true; }
-					default -> {error("invalid cond in while"); return false;}
+					default -> {error("invalid cond"); return false;}
 				}
 			}
-			default -> {error("invalid cond in while"); return false; }
+			default -> {error("invalid cond"); return false; }
 		}
 	}
 }
