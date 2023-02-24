@@ -8,6 +8,8 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 
 	Map<StructType,StructTypeDecl> struct_sym_table = new HashMap<>(); //<struct type, struct def>
 	Map<String,FunDecl> func_sym_table = new HashMap<>(); //<fun name, fun decl>
+
+	List<Boolean> ret_found = new ArrayList<>();
 	public Type visit(ASTNode node) {
 		return switch(node) {
 			case null -> throw new IllegalStateException("Unexpected null value");
@@ -363,7 +365,9 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 			case FunDecl fd -> {
 				Type fdrt = fd.type;
 				Block b = fd.block;
-				boolean found = explore_stmt(b,fdrt);
+				explore_stmt(b,fdrt);
+				boolean found = this.ret_found.contains(true);
+				this.ret_found = new ArrayList<>(); //.clear() doesnt work
 				if(!found && fd.type != BaseType.VOID){
 					error("Incorrect return type");
 				}
@@ -420,12 +424,11 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 	}
 
 	//given a block b, explores all statements to check for return
-	private boolean explore_stmt(Stmt stmt, Type goal) {
-		boolean found = false;
+	private void explore_stmt(Stmt stmt, Type goal) {
 		switch (stmt){
 			case Block block -> {
 				for(Stmt instmt: block.stmts){
-					found = explore_stmt(instmt, goal);
+					explore_stmt(instmt, goal);
 				}
 
 			}
@@ -436,7 +439,7 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 				explore_if(anIf,goal);
 			}
 			case Return aReturn -> {
-				found = true;
+				this.ret_found.add(true);
 				Type rt;
 				if(aReturn.expr != null){
 					rt = visit(aReturn.expr);
@@ -452,7 +455,6 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 				explore_while(aWhile, goal);
 			}
 		}
-		return found;
 	}
 
 	public void explore_if(If anIf, Type goal){

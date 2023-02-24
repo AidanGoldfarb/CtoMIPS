@@ -30,9 +30,15 @@
 //struct nm fun(){} //lookahead3 == (
 //struct nm****** fun(){} //lookahead2 == *
 //int baz(){int c; {return (int)'b';} }
-void bar(){
-    int** a;
-    a = (int**)a;
+int bar(){
+    int i;
+    if (i > 0){
+        return 1;
+    }
+    else{
+        return i;
+    }
+}
 //    int a;
 //    return (struct b)a;
 //    struct b**** a;
@@ -52,7 +58,6 @@ void bar(){
 //    else{
 //        return baz();
 //    }
-}
 //      struct b b_strct;
 //      struct c c_strct;
 //
