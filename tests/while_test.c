@@ -18,27 +18,27 @@
 //    return a+b+c+d;
 //}
 //struct foos { int x; };
-//struct bar { struct foos f; };
+struct bar { struct foos f; };
 
 
-//struct c { struct b d; };
+//struct c { struct c b; };
 ////int foo;
 //struct c bar(){struct c c; return c;}
 //struct c baz(){struct c c; return c;}
 //int fun(){} //lookahead2 == (
 //int**** fun(){} //lookahead1 == *
 //struct nm fun(){} //lookahead3 == (
-//struct nm****** fun(){} //lookahead2 == *
+//struct nm* fun(){} //lookahead2 == *
 //int baz(){int c; {return (int)'b';} }
-int bar(){
-    int i;
-    if (i > 0){
-        return 1;
-    }
-    else{
-        return i;
-    }
-}
+//int bar(){
+//    int i;
+//    if (i > 0){
+//        return 1;
+//    }
+//    else{
+//        return i;
+//    }
+//}
 //    int a;
 //    return (struct b)a;
 //    struct b**** a;

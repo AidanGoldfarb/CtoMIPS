@@ -49,6 +49,7 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 			}
 
 			case (VarDecl vd) -> {
+				System.out.println("here");
 				switch (vd.type){
 					case BaseType bT -> {
 						switch (bT){
@@ -82,6 +83,10 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 			}
 
 			case (StructTypeDecl std) -> {
+				//ensure decl vars are valid
+				for(ASTNode child: std.vardecls){
+					visit(child);
+				}
 				struct_sym_table.put(std.st,std);
 				yield BaseType.NONE; // to change
 			}
