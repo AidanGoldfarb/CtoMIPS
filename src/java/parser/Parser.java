@@ -369,7 +369,7 @@ public class Parser {
         Expr lhs = parseB();
         while(accept(TokenClass.ASSIGN) && error == 0){
             expect(TokenClass.ASSIGN);
-            Expr rhs = parseB();
+            Expr rhs = parseExp(); //change to parseB() for LtR
             lhs = new Assign(lhs,rhs);
         }
         return lhs;

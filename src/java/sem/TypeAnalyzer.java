@@ -141,7 +141,7 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 				if(!lhs.equals(rhs)){
 					error(lhs + " != " + rhs);
 				}
-				yield BaseType.NONE;
+				yield lhs;
 			}
 			case BinOp binOp -> {
 				Type lhs = visit(binOp.lhs);

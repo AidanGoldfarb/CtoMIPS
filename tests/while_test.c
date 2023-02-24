@@ -30,13 +30,19 @@ struct b { int d; };
 //struct nm fun(){} //lookahead3 == (
 //struct nm****** fun(){} //lookahead2 == *
 
-struct b**** foo(){
-    struct b**** a;
-    int* b;
-    int* c;
-    if(b == c){
-    return a;
-    }
+struct b foo(){
+//    int a;
+//    return (struct b)a;
+      int a;
+      int b;
+      int c;
+      a=b=c;
+//    struct b**** a;
+//    int* b;
+//    int* c;
+//    if(b == c){
+//    return a;
+//    }
     //struct c* b;
 //    a = baz();
 //    b = baz();
