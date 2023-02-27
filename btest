@@ -1,1 +1,1 @@
-ant build && java --enable-preview -cp bin Main -sem tests/while_test.c
+ant build && java --enable-preview -cp bin Main -gen  tests/while_test.c while_output.asm

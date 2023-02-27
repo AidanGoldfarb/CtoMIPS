@@ -18,7 +18,7 @@
 //    return a+b+c+d;
 //}
 //struct foos { int x; };
-struct mystruct{ int x;};
+//struct mystruct{ int x;};
 
 
 
@@ -31,10 +31,10 @@ struct mystruct{ int x;};
 //struct nm fun(){} //lookahead3 == (
 //struct nm* fun(){} //lookahead2 == *
 //int baz(){int c; {return (int)'b';} }
-
-int bar(){
-    int a[3][4][5];
-    return a[2][2];
+//struct s1{int a;};
+//struct s2{struct s1* field;};
+void main(){
+    print_i(555);
 }
 //    int a;
 //    return (struct b)a;

@@ -1,8 +1,7 @@
 package gen;
 
 import ast.*;
-import gen.asm.AssemblyProgram;
-import gen.asm.Register;
+import gen.asm.*;
 
 
 /**
@@ -15,7 +14,27 @@ public class ExprCodeGen extends CodeGen {
     }
 
     public Register visit(Expr e) {
-        // TODO: to complete
-        return null;
+        switch (e){
+            case FunCallExpr funCallExpr -> {
+                if(funCallExpr.name.equals("print_i")){
+                    int val = ((IntLiteral)funCallExpr.args.get(0)).val;
+                    AssemblyProgram.Section section = new AssemblyProgram.Section(AssemblyProgram.Section.Type.TEXT);
+                    section.emit(OpCode.LI ,gen.asm.Register.Arch.a0,val);
+                    section.emit(OpCode.LI ,gen.asm.Register.Arch.v0,1);
+                    section.emit(OpCode.SYSCALL);
+                    asmProg.emitSection(section);
+                    return null;
+                    //li $a0 val
+                    //li $v0 1
+                    //syscall
+                }
+                else{
+                    return null;
+                }
+            }
+            default -> {
+                return null;
+            }
+        }
     }
 }
