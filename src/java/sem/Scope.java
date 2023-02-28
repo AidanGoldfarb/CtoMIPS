@@ -28,6 +28,10 @@ public class Scope {
 			return this.outer.lookup(name);
 		}
 	}
+
+	public Scope getOuter(){
+		return this.outer;
+	}
 	
 	public Symbol lookupCurrent(String name) {
 		return this.symbolTable.get(name);

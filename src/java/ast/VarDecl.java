@@ -1,10 +1,17 @@
 package ast;
 
+import gen.asm.Label;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public final class VarDecl extends Decl {
+
+    public boolean global; //for analyzer
+    public int fpOffset; //if local
+
+    public Label label; //if global
 
     public VarDecl(Type type, String name) {
 	    this.type = type;

@@ -73,6 +73,12 @@ public class NameAnalyzer extends BaseSemanticAnalyzer {
 					error("Variable \'" + vd.name + "\' redefined");
 				}
 				else{
+					if(scope.getOuter() == null){ //global
+						vd.global = true;
+					}
+					else{ //
+						vd.global = false;
+					}
 					scope.put(new VarSymbol(vd));
 				}
 			}

@@ -122,6 +122,9 @@ public final class AssemblyProgram {
             items.add(directive);
         }
 
+        public void emit(StaticAllocationDirective sad){
+            items.add(sad);
+        }
         public void print(final PrintWriter writer) {
             switch(type) {
                 case DATA : writer.println(".data"); break;
@@ -133,6 +136,11 @@ public final class AssemblyProgram {
                         case Label label -> writer.println(label + ":");
                         case Directive directive -> writer.println(directive);
                         case Instruction instruction -> writer.println(instruction);
+                        case StaticAllocationDirective sad -> {
+                            writer.print(sad.label+":\t");
+                            writer.print(sad.dir+" ");
+                            writer.println(sad.size);
+                        }
                     }}
             );
         }
