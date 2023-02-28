@@ -18,7 +18,7 @@ public class ExprCodeGen extends CodeGen {
             case FunCallExpr funCallExpr -> {
                 if(funCallExpr.name.equals("print_i")){
                     int val = ((IntLiteral)funCallExpr.args.get(0)).val;
-                    AssemblyProgram.Section section = new AssemblyProgram.Section(AssemblyProgram.Section.Type.TEXT);
+                    AssemblyProgram.Section section = asmProg.getCurrentSection();//new AssemblyProgram.Section(AssemblyProgram.Section.Type.TEXT);
                     section.emit(OpCode.LI ,gen.asm.Register.Arch.a0,val);
                     section.emit(OpCode.LI ,gen.asm.Register.Arch.v0,1);
                     section.emit(OpCode.SYSCALL);
@@ -31,6 +31,106 @@ public class ExprCodeGen extends CodeGen {
                 else{
                     return null;
                 }
+            }
+            case BinOp bo -> {
+                Register lhsReg = visit(bo.lhs);
+                Register dst = Register.Virtual.create();
+                AssemblyProgram.Section section = asmProg.getCurrentSection();
+                assert section.type == AssemblyProgram.Section.Type.TEXT;
+                switch (bo.op){
+                    case ADD -> {
+                        Register rhsReg = visit(bo.rhs);
+                        section.emit(OpCode.ADD,dst,lhsReg,rhsReg);
+                    }
+                    case SUB -> {
+                        Register rhsReg = visit(bo.rhs);
+                        section.emit(OpCode.SUB,dst,lhsReg,rhsReg);
+                    }
+                    case MUL -> {
+                        Register rhsReg = visit(bo.rhs);
+                        section.emit(OpCode.MUL,dst,lhsReg,rhsReg);
+                    }
+                    case DIV -> {
+                        Register rhsReg = visit(bo.rhs);
+                        section.emit(OpCode.DIV,lhsReg,rhsReg);
+                        section.emit(OpCode.LW, dst, Register.Arch.lo,0);
+                    }
+                    case GT -> {
+                        Register rhsReg = visit(bo.rhs);
+                        section.emit(OpCode.SLT,dst,rhsReg,lhsReg); //flip
+                    }
+                    case LT -> {
+                        Register rhsReg = visit(bo.rhs);
+                        section.emit(OpCode.SLT,dst,lhsReg,rhsReg);
+                    }
+                    case GE -> {
+                        //!(b>a)
+                        Register rhsReg = visit(bo.rhs);
+                        section.emit(OpCode.SLT,dst,lhsReg,rhsReg); //b>a
+                        section.emit(OpCode.XOR,dst,dst,dst); //flip
+                    }
+                    case LE -> {
+                        //!(b<a)
+                        Register rhsReg = visit(bo.rhs);
+                        section.emit(OpCode.SLT,dst,rhsReg,lhsReg); //b<a
+                        section.emit(OpCode.XOR,dst,dst,dst); //flip
+                    }
+                    case NE -> {
+                        // a xor b
+                        Register rhsReg = visit(bo.rhs);
+                        section.emit(OpCode.XOR,dst,lhsReg,rhsReg);
+                    }
+                    case EQ -> {
+                        //a xnor b
+                        Register rhsReg = visit(bo.rhs);
+                        section.emit(OpCode.XOR,dst,lhsReg,rhsReg); //a xor b
+                        section.emit(OpCode.XOR,dst,dst,dst); //flip
+                    }
+                    case OR -> { //needs to short circuit
+                        //if LHS is 1, dont eval rhs
+                        Label trueLabel = Label.create("true");
+                        Label endLabel = Label.create("end");
+                        Register zeroReg = Register.Virtual.create();
+                        section.emit(OpCode.LI,zeroReg,0);
+
+                        section.emit(OpCode.BNE,lhsReg,zeroReg,trueLabel);
+                        Register rhsReg = visit(bo.rhs);
+                        section.emit(OpCode.BNE,rhsReg,zeroReg,trueLabel);
+
+                        section.emit(OpCode.LI,dst,0);
+                        section.emit(OpCode.J,endLabel);
+
+                        section.emit(trueLabel);
+                        section.emit(OpCode.LI,dst,1);
+
+                        section.emit(endLabel);
+                    }
+                    case AND -> { //need to short circuit
+                        //if LHS is 0, dont eval rhs
+                        Label falseLabel = Label.create("false");
+                        Label endLabel = Label.create("end");
+                        Register oneReg = Register.Virtual.create();
+                        section.emit(OpCode.LI,oneReg,1);
+
+                        section.emit(OpCode.BNE,lhsReg,oneReg,falseLabel);
+                        Register rhsReg = visit(bo.rhs);
+                        section.emit(OpCode.BNE,rhsReg,oneReg,falseLabel);
+
+                        section.emit(OpCode.LI,dst,1);
+                        section.emit(OpCode.J,endLabel);
+
+                        section.emit(falseLabel);
+                        section.emit(OpCode.LI,dst,0);
+
+                        section.emit(endLabel);
+                    }
+                    case REM -> {
+                        Register rhsReg = visit(bo.rhs);
+                        section.emit(OpCode.DIV,lhsReg,rhsReg);
+                        section.emit(OpCode.LW, dst, Register.Arch.hi,0);
+                    }
+                }
+                return dst;
             }
             default -> {
                 return null;

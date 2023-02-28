@@ -116,6 +116,9 @@ public abstract class Register {
         public static final Arch fp = new Arch(30,"fp");
         public static final Arch ra = new Arch(31,"ra");
 
+        public static final Arch lo = new Arch(32,"lo");
+        public static final Arch hi = new Arch(33, "hi");
+
         private final int num;
         private final String name;
 
