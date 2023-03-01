@@ -10,6 +10,8 @@ import gen.asm.StaticAllocationDirective;
 
 public class MemAllocCodeGen extends CodeGen {
 
+    private static final int WORD_SIZE = 4;
+
     public MemAllocCodeGen(AssemblyProgram asmProg) {
         this.asmProg = asmProg;
     }
@@ -24,15 +26,32 @@ public class MemAllocCodeGen extends CodeGen {
                 if(vd.global){
                     Label label = Label.create(vd.name);
                     int size = getSize(vd.type);
+                    int padding = size % WORD_SIZE;
                     //emit
                     section.emit(new StaticAllocationDirective(label,new Directive("space"),size));
+                    if(padding > 0){
+                        section.emit(new StaticAllocationDirective(Label.create("pad"),new Directive("space"),padding));
+                    }
                 }
                 else{
                     vd.fpOffset = this.fpOffset;
                     this.fpOffset -= getSize(vd.type);
                 }
             }
-            case default -> {System.out.println("NOT IMPLEMENTED");}
+            case FunDecl fd -> {
+                visit(fd.block);
+            }
+            case Block b -> {
+                for(VarDecl vd: b.vds){
+                    visit(vd);
+                }
+            }
+            case Program p -> {
+                for(Decl decl: p.decls){
+                    visit(decl);
+                }
+            }
+            case default -> {System.out.println(n);}
         }
     }
 
@@ -60,10 +79,19 @@ public class MemAllocCodeGen extends CodeGen {
                 return 4;
             }
             case StructType structType -> {
-                int sz = 0;
-                return sz; //TODO padStruct();)
+                return getStructSize(structType);
             }
             default -> {assert false; return 0;}
         }
+    }
+
+    private int getStructSize(StructType structType) {
+        int size = 0;
+        for(VarDecl vd: structType.std.vardecls){
+            int cur = getSize(vd.type);
+            size += cur;
+            size += cur % WORD_SIZE; //align each member
+        }
+        return size;
     }
 }

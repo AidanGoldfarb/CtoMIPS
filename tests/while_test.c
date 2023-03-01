@@ -22,7 +22,7 @@
 
 
 
-//struct c { struct c b; };
+struct strct { int a; char b; int c; };
 ////int foo;
 //struct c bar(){struct c c; return c;}
 //struct c baz(){struct c c; return c;}
@@ -33,8 +33,9 @@
 //int baz(){int c; {return (int)'b';} }
 //struct s1{int a;};
 //struct s2{struct s1* field;};
+struct strct a;
 void main(){
-    print_i(555);
+
 }
 //    int a;
 //    return (struct b)a;

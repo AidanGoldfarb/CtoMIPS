@@ -64,6 +64,7 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 						if(!struct_sym_table.containsKey(structType)){
 							error("Struct '" + structType + "' undefined");
 						}
+						structType.std = struct_sym_table.get(structType);
 						yield vd.type;
 					}
 					default -> {yield vd.type;}

@@ -110,6 +110,7 @@ public final class NaiveRegAlloc implements AssemblyPass {
                         case (Comment comment) -> newSection.emit(comment);
                         case (Label label) -> newSection.emit(label);
                         case (Directive directive) -> newSection.emit(directive);
+                        case (StaticAllocationDirective sad) -> newSection.emit(sad);
                         case (Instruction insn) -> {
                             if (insn == Instruction.Nullary.pushRegisters) {
                                 newSection.emit("Original instruction: pushRegisters");
