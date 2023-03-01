@@ -14,11 +14,12 @@ public class ExprCodeGen extends CodeGen {
     }
 
     public Register visit(Expr e) {
+        AssemblyProgram.Section section = asmProg.getCurrentSection();
         switch (e){
             case FunCallExpr funCallExpr -> {
                 if(funCallExpr.name.equals("print_i")){
                     int val = ((IntLiteral)funCallExpr.args.get(0)).val;
-                    AssemblyProgram.Section section = asmProg.getCurrentSection();//new AssemblyProgram.Section(AssemblyProgram.Section.Type.TEXT);
+                    //AssemblyProgram.Section section = asmProg.getCurrentSection();//new AssemblyProgram.Section(AssemblyProgram.Section.Type.TEXT);
                     section.emit(OpCode.LI ,gen.asm.Register.Arch.a0,val);
                     section.emit(OpCode.LI ,gen.asm.Register.Arch.v0,1);
                     section.emit(OpCode.SYSCALL);
@@ -35,7 +36,6 @@ public class ExprCodeGen extends CodeGen {
             case BinOp bo -> {
                 Register lhsReg = visit(bo.lhs);
                 Register dst = Register.Virtual.create();
-                AssemblyProgram.Section section = asmProg.getCurrentSection();
                 assert section.type == AssemblyProgram.Section.Type.TEXT;
                 switch (bo.op){
                     case ADD -> {
@@ -53,7 +53,7 @@ public class ExprCodeGen extends CodeGen {
                     case DIV -> {
                         Register rhsReg = visit(bo.rhs);
                         section.emit(OpCode.DIV,lhsReg,rhsReg);
-                        section.emit(OpCode.LW, dst, Register.Arch.lo,0);
+                        section.emit(OpCode.MFLO, dst);
                     }
                     case GT -> {
                         Register rhsReg = visit(bo.rhs);
@@ -127,12 +127,37 @@ public class ExprCodeGen extends CodeGen {
                     case REM -> {
                         Register rhsReg = visit(bo.rhs);
                         section.emit(OpCode.DIV,lhsReg,rhsReg);
-                        section.emit(OpCode.LW, dst, Register.Arch.hi,0);
+                        section.emit(OpCode.MFHI, dst);
                     }
                 }
                 return dst;
             }
+            case Assign assign -> {
+                Register lhsReg = visit(assign.lhs);
+                Register rhsReg = visit(assign.rhs);
+                section.emit(OpCode.SW,rhsReg,lhsReg,0);
+                return lhsReg;
+            }
+            case IntLiteral il -> {
+                Register optimize_me_out = Register.Virtual.create();
+                section.emit(OpCode.LI,optimize_me_out,il.val);
+                return optimize_me_out;
+            }
+            case ChrLiteral cl -> {
+                Register optimize_me_out = Register.Virtual.create();
+                section.emit(OpCode.LI,optimize_me_out,cl.c);
+                return optimize_me_out;
+            }
+            case StrLiteral sl -> {
+                //should be in data section with label, not sure if done here
+                return null;
+
+            }
+            case VarExpr ve -> {
+                return (new AddrCodeGen(this.asmProg)).visit(ve);
+            }
             default -> {
+                System.out.println("not implemented (ECG): " + e);
                 return null;
             }
         }

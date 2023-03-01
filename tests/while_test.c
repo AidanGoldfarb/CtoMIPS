@@ -22,7 +22,7 @@
 
 
 
-struct strct { int a; char b; int c; };
+//struct s { int a; char b; int c; char d[2]; };
 ////int foo;
 //struct c bar(){struct c c; return c;}
 //struct c baz(){struct c c; return c;}
@@ -33,8 +33,21 @@ struct strct { int a; char b; int c; };
 //int baz(){int c; {return (int)'b';} }
 //struct s1{int a;};
 //struct s2{struct s1* field;};
-struct strct a;
+//struct s a[5];
+//struct s b;
+//struct s c;
 void main(){
+    int a;
+    int b;
+    a = b + 1;
+//    struct strct b;
+//
+//    b.a = 6;
+//    b.b = 'b';
+//    b.c = 7;
+//    b.d[0] = 'a';
+//    b.d[1] = 'b';
+
 
 }
 //    int a;

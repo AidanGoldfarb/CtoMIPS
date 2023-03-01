@@ -65,9 +65,17 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 							error("Struct '" + structType + "' undefined");
 						}
 						else{
+
 							structType.std = struct_sym_table.get(structType);
 						}
 						yield vd.type;
+					}
+					case ArrayType aT -> {
+						//explore inside
+						VarDecl cpy = new VarDecl(vd.type,vd.name); //just for type
+						cpy.type = aT.t;
+						visit(cpy);
+						yield aT;
 					}
 					default -> {yield vd.type;}
 				}

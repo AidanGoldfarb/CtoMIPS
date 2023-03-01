@@ -2,6 +2,7 @@ package gen;
 
 import ast.*;
 import gen.asm.AssemblyProgram;
+import gen.asm.OpCode;
 import gen.asm.Register;
 
 /**
@@ -14,8 +15,32 @@ public class AddrCodeGen extends CodeGen {
     }
 
     public Register visit(Expr e) {
-        // TODO: to complete
-        return null;
+        AssemblyProgram.Section section = asmProg.getCurrentSection();
+        Register res = Register.Virtual.create();
+        switch (e){
+            case ArrayAccessExpr arrayAccessExpr -> {
+                //
+            }
+            case FieldAccessExpr fieldAccessExpr -> {
+                //
+            }
+            case ValueAtExpr valueAtExpr -> {
+                //
+            }
+            case VarExpr v -> {
+                if(v.vd.global){
+                    section.emit(OpCode.LA,res,v.vd.label);
+                }
+                else{
+                    section.emit(OpCode.ADDI,res,Register.Arch.fp,v.vd.fpOffset);
+                }
+            }
+            default -> {
+                System.out.println("no address for: " + e);
+                assert false;
+            }
+        }
+        return res;
     }
 
 }

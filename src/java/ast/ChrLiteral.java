@@ -4,7 +4,7 @@ import java.util.List;
 
 public final class ChrLiteral extends Expr{
 
-    private char c;
+    public char c;
 
     public ChrLiteral(char c){
         this.c = c;
