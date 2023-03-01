@@ -26,7 +26,7 @@ public class MemAllocCodeGen extends CodeGen {
                 if(vd.global){
                     Label label = Label.create(vd.name);
                     int size = getSize(vd.type);
-                    int padding = size % WORD_SIZE;
+                    int padding = padding(size);
                     //emit
                     section.emit(new StaticAllocationDirective(label,new Directive("space"),size));
                     if(padding > 0){
@@ -51,7 +51,7 @@ public class MemAllocCodeGen extends CodeGen {
                     visit(decl);
                 }
             }
-            case default -> {System.out.println(n);}
+            case default -> {System.out.println("not implemented: " + n);}
         }
     }
 
@@ -90,8 +90,12 @@ public class MemAllocCodeGen extends CodeGen {
         for(VarDecl vd: structType.std.vardecls){
             int cur = getSize(vd.type);
             size += cur;
-            size += cur % WORD_SIZE; //align each member
+            size += padding(cur); //align each member
         }
         return size;
+    }
+
+    private int padding(int sz){
+        return (WORD_SIZE - (sz % WORD_SIZE)) % WORD_SIZE;
     }
 }
