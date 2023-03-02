@@ -37,9 +37,11 @@
 //struct s b;
 //struct s c;
 void main(){
+//    int ptr[2];
+//    ptr[0] = 1;
     int a;
-    int b;
-    a = b + 1;
+    a = 9;
+    print_i(a);
 //    struct strct b;
 //
 //    b.a = 6;

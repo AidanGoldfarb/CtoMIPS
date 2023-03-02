@@ -55,6 +55,13 @@ public final class CodeGenerator {
         ProgramCodeGen progGen = new ProgramCodeGen(asmProgWithVirtualRegs);
         progGen.generate(astProgram);
 
+        try {
+            PrintWriter writer = new PrintWriter("while_pre.asm");
+            asmProgWithVirtualRegs.print(writer);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
         // run the register allocator which remove the virtual registers (unless there is no register allocator)
         AssemblyProgram asmProgAfterRegAlloc = registerAllocator.apply(asmProgWithVirtualRegs);
 

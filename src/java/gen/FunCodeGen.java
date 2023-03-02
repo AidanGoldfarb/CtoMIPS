@@ -2,6 +2,7 @@ package gen;
 
 import ast.*;
 import gen.asm.AssemblyProgram;
+import gen.asm.OpCode;
 
 /**
  * A visitor that produces code for a single function declaration
@@ -22,10 +23,12 @@ public class FunCodeGen extends CodeGen {
         // 1) emit the prolog
 
         // 2) emit the body of the function
+        this.asmProg.getCurrentSection().emit(OpCode.PUSH_REGISTERS);
         StmtCodeGen scd = new StmtCodeGen(asmProg);
         scd.visit(fd.block);
-
+        this.asmProg.getCurrentSection().emit(OpCode.POP_REGISTERS);
         // 3) emit the epilog
+
     }
 
 

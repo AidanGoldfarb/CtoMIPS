@@ -15,15 +15,18 @@ public class ExprCodeGen extends CodeGen {
 
     public Register visit(Expr e) {
         AssemblyProgram.Section section = asmProg.getCurrentSection();
+        Register dst = Register.Virtual.create();
         switch (e){
-            case FunCallExpr funCallExpr -> {
-                if(funCallExpr.name.equals("print_i")){
-                    int val = ((IntLiteral)funCallExpr.args.get(0)).val;
-                    //AssemblyProgram.Section section = asmProg.getCurrentSection();//new AssemblyProgram.Section(AssemblyProgram.Section.Type.TEXT);
-                    section.emit(OpCode.LI ,gen.asm.Register.Arch.a0,val);
+            case FunCallExpr fce -> {
+                if(fce.name.equals("print_i")){
+                    //int val = ((IntLiteral)funCallExpr.args.get(0)).val;
+                    System.out.println(fce.args.get(0));
+                    Register val = visit(fce.args.get(0));
+
+//                    section.emit(OpCode.SW ,gen.asm.Register.Arch.a0,val,0);
+                    section.emit(OpCode.LI ,gen.asm.Register.Arch.a0,0);
                     section.emit(OpCode.LI ,gen.asm.Register.Arch.v0,1);
                     section.emit(OpCode.SYSCALL);
-                    asmProg.emitSection(section);
                     return null;
                     //li $a0 val
                     //li $v0 1
@@ -35,7 +38,6 @@ public class ExprCodeGen extends CodeGen {
             }
             case BinOp bo -> {
                 Register lhsReg = visit(bo.lhs);
-                Register dst = Register.Virtual.create();
                 assert section.type == AssemblyProgram.Section.Type.TEXT;
                 switch (bo.op){
                     case ADD -> {
@@ -156,10 +158,17 @@ public class ExprCodeGen extends CodeGen {
             case VarExpr ve -> {
                 return (new AddrCodeGen(this.asmProg)).visit(ve);
             }
+            case ArrayAccessExpr aae -> {
+                Register arrReg = visit(aae.arr);
+                Register indexReg = visit(aae.indx);
+                //emit arrReg + indexReg
+                section.emit(OpCode.ADD,dst,arrReg,indexReg); //je pense?
+            }
             default -> {
                 System.out.println("not implemented (ECG): " + e);
                 return null;
             }
         }
+        return dst;
     }
 }

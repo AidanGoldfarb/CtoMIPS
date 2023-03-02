@@ -18,8 +18,11 @@ public class AddrCodeGen extends CodeGen {
         AssemblyProgram.Section section = asmProg.getCurrentSection();
         Register res = Register.Virtual.create();
         switch (e){
-            case ArrayAccessExpr arrayAccessExpr -> {
-                //
+            case ArrayAccessExpr aae -> {
+                //passed by reference, same as a pointer
+                //Register indexReg = (new ExprCodeGen(this.asmProg)).visit(aae.indx);
+                //res = (new ExprCodeGen(this.asmProg)).visit(aae.arr);
+                assert false;
             }
             case FieldAccessExpr fieldAccessExpr -> {
                 //

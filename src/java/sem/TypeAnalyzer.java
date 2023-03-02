@@ -13,20 +13,17 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 	public Type visit(ASTNode node) {
 		return switch(node) {
 			case null -> throw new IllegalStateException("Unexpected null value");
-
 			case Block b -> {
 				for (ASTNode c : b.children())
 					visit(c);
 				yield BaseType.NONE;
 			}
-
 			case FunDecl fd -> {
 				ensure_type_exists(fd.type);
 				func_sym_table.put(fd.name,fd); //redecl handed in name analyzer
 				visit(fd.block);
 				yield BaseType.NONE;
 			}
-
 			case Program p -> {
 				add_buildins();
 				// to complete
@@ -47,8 +44,7 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 
 				yield BaseType.NONE;
 			}
-
-			case (VarDecl vd) -> {
+			case VarDecl vd -> {
 				switch (vd.type){
 					case BaseType bT -> {
 						switch (bT){
@@ -80,19 +76,18 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 					default -> {yield vd.type;}
 				}
 			}
-
-			case (VarExpr v) -> {
+			case VarExpr v -> {
 				//exists bc geterror count doesnt work.
 				if(v.vd == null){
 					//error("\'"+ v + "\' not defined");
 					yield v.type;
 				}
 				else{
+					//System.out.println("not null: " + v.vd);
 					yield visit(v.vd);
 				}
 			}
-
-			case (StructTypeDecl std) -> {
+			case StructTypeDecl std -> {
 				//ensure decl vars are valid
 				for(ASTNode child: std.vardecls){
 					visit(child);
@@ -100,12 +95,9 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 				struct_sym_table.put(std.st,std);
 				yield BaseType.NONE; // to change
 			}
-
-			case (Type t) -> {
+			case Type t -> {
 				yield t;
 			}
-
-			// to complete ...
 			case AddressOfExpr aoe -> {
 				Type t = visit(aoe.expr);
 				yield new PointerType(t);
@@ -129,7 +121,7 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 					case ArrayType arrayType -> {
 						yield arrayType.t;
 					}
-					case BaseType baseType -> {
+					case BaseType ignored -> {
 						//invalid
 						error("Attempt to index non-array object");
 						yield BaseType.UNKNOWN;
@@ -137,7 +129,7 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 					case PointerType pt -> {
 						yield pt.type;
 					}
-					case StructType structType -> {
+					case StructType ignored -> {
 						//invalid
 						error("Attempt to index non-array object");
 						yield BaseType.UNKNOWN;
@@ -227,11 +219,8 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 						}
 						if(!legal){
 							error("field \'" + fieldname + "\' does not exist in struct \'" + st + "\'");
-							yield t;
 						}
-						else{
-							yield t;
-						}
+						yield t;
 					}
 					case null -> {yield BaseType.UNKNOWN;}
 				}
