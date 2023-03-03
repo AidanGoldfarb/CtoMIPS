@@ -36,12 +36,15 @@
 //struct s a[5];
 //struct s b;
 //struct s c;
+int a;
 void main(){
 //    int ptr[2];
 //    ptr[0] = 1;
-    int a;
-    a = 9;
-    print_i(a+5);
+    //int a;
+    //int b;
+    a = 5;
+    //b = a+6;
+    print_i(a);
 //    struct strct b;
 //
 //    b.a = 6;

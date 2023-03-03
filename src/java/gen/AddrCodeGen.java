@@ -5,6 +5,8 @@ import gen.asm.AssemblyProgram;
 import gen.asm.OpCode;
 import gen.asm.Register;
 
+import java.awt.dnd.InvalidDnDOperationException;
+
 /**
  * Generates code to calculate the address of an expression and return the result in a register.
  */
@@ -16,7 +18,7 @@ public class AddrCodeGen extends CodeGen {
 
     public Register visit(Expr e) {
         AssemblyProgram.Section section = asmProg.getCurrentSection();
-        Register res = Register.Virtual.create();
+
         switch (e){
             case ArrayAccessExpr aae -> {
                 //passed by reference, same as a pointer
@@ -31,19 +33,21 @@ public class AddrCodeGen extends CodeGen {
                 //
             }
             case VarExpr v -> {
+                Register res = Register.Virtual.create();
                 if(v.vd.global){
                     section.emit(OpCode.LA,res,v.vd.label);
                 }
                 else{
                     section.emit(OpCode.ADDI,res,Register.Arch.fp,v.vd.fpOffset);
                 }
+                return res;
             }
             default -> {
                 System.out.println("no address for: " + e);
                 assert false;
             }
         }
-        return res;
+        return null;
     }
 
 }

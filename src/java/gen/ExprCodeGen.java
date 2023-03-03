@@ -20,11 +20,11 @@ public class ExprCodeGen extends CodeGen {
             case FunCallExpr fce -> {
                 if(fce.name.equals("print_i")){
                     //int val = ((IntLiteral)funCallExpr.args.get(0)).val;
-                    System.out.println(fce.args.get(0));
+                    //System.out.println(fce.args.get(0));
                     Register val = visit(fce.args.get(0));
 
-//                    section.emit(OpCode.SW ,gen.asm.Register.Arch.a0,val,0);
-                    section.emit(OpCode.LW ,gen.asm.Register.Arch.a0,val,0);
+                    //section.emit(OpCode.LW,val,val,0);
+                    section.emit(OpCode.MOVE ,gen.asm.Register.Arch.a0,val);
                     section.emit(OpCode.LI ,gen.asm.Register.Arch.v0,1);
                     section.emit(OpCode.SYSCALL);
                     return null;
@@ -135,9 +135,10 @@ public class ExprCodeGen extends CodeGen {
                 return dst;
             }
             case Assign assign -> {
-                Register lhsReg = visit(assign.lhs);
+                Register lhsReg = (new AddrCodeGen(this.asmProg)).visit(assign.lhs);
                 Register rhsReg = visit(assign.rhs);
                 section.emit(OpCode.SW,rhsReg,lhsReg,0);
+                //section.emit(OpCode.MOVE,rhsReg,lhsReg);
                 return lhsReg;
             }
             case IntLiteral il -> {
@@ -153,16 +154,19 @@ public class ExprCodeGen extends CodeGen {
             case StrLiteral sl -> {
                 //should be in data section with label, not sure if done here
                 return null;
-
             }
             case VarExpr ve -> {
-                return (new AddrCodeGen(this.asmProg)).visit(ve);
+                //return (new AddrCodeGen(this.asmProg)).visit(ve);
+                Register val = Register.Virtual.create();
+                Register adr = (new AddrCodeGen(this.asmProg)).visit(ve);
+                section.emit(OpCode.LW,val,adr,0);
+                return val;
             }
             case ArrayAccessExpr aae -> {
                 Register arrReg = visit(aae.arr);
                 Register indexReg = visit(aae.indx);
                 //emit arrReg + indexReg
-                section.emit(OpCode.ADD,dst,arrReg,indexReg); //je pense?
+                section.emit(OpCode.ADD,dst,arrReg,indexReg); //use offset instead?
             }
             default -> {
                 System.out.println("not implemented (ECG): " + e);

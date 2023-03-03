@@ -25,6 +25,7 @@ public class MemAllocCodeGen extends CodeGen {
             case VarDecl vd -> {
                 if(vd.global){
                     Label label = Label.create(vd.name);
+                    vd.label = label;
                     int size = getSize(vd.type);
                     int padding = padding(size);
                     //emit
@@ -36,7 +37,6 @@ public class MemAllocCodeGen extends CodeGen {
                 else{
                     this.fpOffset -= getSize(vd.type);
                     vd.fpOffset = this.fpOffset;
-
 
                 }
             }
