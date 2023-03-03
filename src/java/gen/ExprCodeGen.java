@@ -24,7 +24,7 @@ public class ExprCodeGen extends CodeGen {
                     Register val = visit(fce.args.get(0));
 
 //                    section.emit(OpCode.SW ,gen.asm.Register.Arch.a0,val,0);
-                    section.emit(OpCode.LI ,gen.asm.Register.Arch.a0,0);
+                    section.emit(OpCode.LW ,gen.asm.Register.Arch.a0,val,0);
                     section.emit(OpCode.LI ,gen.asm.Register.Arch.v0,1);
                     section.emit(OpCode.SYSCALL);
                     return null;

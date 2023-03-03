@@ -34,8 +34,10 @@ public class MemAllocCodeGen extends CodeGen {
                     }
                 }
                 else{
-                    vd.fpOffset = this.fpOffset;
                     this.fpOffset -= getSize(vd.type);
+                    vd.fpOffset = this.fpOffset;
+
+
                 }
             }
             case FunDecl fd -> {

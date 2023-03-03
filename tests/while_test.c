@@ -41,7 +41,7 @@ void main(){
 //    ptr[0] = 1;
     int a;
     a = 9;
-    print_i(a);
+    print_i(a+5);
 //    struct strct b;
 //
 //    b.a = 6;
