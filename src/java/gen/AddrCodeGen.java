@@ -21,10 +21,16 @@ public class AddrCodeGen extends CodeGen {
 
         switch (e){
             case ArrayAccessExpr aae -> {
+                Register res = Register.Virtual.create();
+                Register sz = Register.Virtual.create();
+                section.emit(OpCode.LI,sz,aae.ele_sz);
+
                 //passed by reference, same as a pointer
-                //Register indexReg = (new ExprCodeGen(this.asmProg)).visit(aae.indx);
-                //res = (new ExprCodeGen(this.asmProg)).visit(aae.arr);
-                assert false;
+                Register indexReg = (new ExprCodeGen(this.asmProg)).visit(aae.indx); //times sizeof type
+                section.emit(OpCode.MUL,indexReg,indexReg,sz);
+                Register arr = visit(aae.arr); //an addr
+                section.emit(OpCode.ADD,res,arr,indexReg);
+                return res;
             }
             case FieldAccessExpr fieldAccessExpr -> {
                 //

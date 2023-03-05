@@ -9,6 +9,7 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 	Map<StructType,StructTypeDecl> struct_sym_table = new HashMap<>(); //<struct type, struct def>
 	Map<String,FunDecl> func_sym_table = new HashMap<>(); //<fun name, fun decl>
 
+	private static final int WORD_SIZE = 4;
 	List<Boolean> ret_found = new ArrayList<>();
 	public Type visit(ASTNode node) {
 		return switch(node) {
@@ -105,6 +106,8 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 			case ArrayAccessExpr aae -> {
 				Type arr_type = visit(aae.arr);
 				Type inx_type = visit(aae.indx); //must be int
+				aae.type = arr_type;
+				aae.ele_sz = getArrElSize(arr_type);
 				switch (inx_type){
 					case BaseType bt -> {
 						switch (bt){
@@ -558,4 +561,62 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 			default -> {error("invalid cond"); return false; }
 		}
 	}
+
+
+	public int getSize(Type type){
+		//in bytes
+		switch (type){
+			case ArrayType arrayType -> {
+				return arrayType.len * getSize(arrayType.t);
+			}
+			case BaseType baseType -> {
+				switch (baseType){
+					case INT -> {
+						return 4;
+					}
+					case CHAR -> {
+						return 1;
+					}
+					default -> {
+						assert false;
+						return 0;
+					}
+				}
+			}
+			case PointerType pointerType -> {
+				return 4;
+			}
+			case StructType structType -> {
+				return getStructSize(structType);
+			}
+			default -> {assert false; return 0;}
+		}
+	}
+
+	private int getStructSize(StructType structType) {
+		int size = 0;
+		for(VarDecl vd: structType.std.vardecls){
+			int cur = getSize(vd.type);
+			size += cur;
+			size += padding(cur); //align each member
+		}
+		return size;
+	}
+
+	private int getArrElSize(Type arrType) {
+		//in bytes
+		switch (arrType){
+			case ArrayType arrayType -> {
+				return getSize(arrayType.t);
+			}
+			case PointerType pointerType -> {
+				return getSize(pointerType.type);
+			}
+			default -> {assert false; return -1;}
+		}
+	}
+	private int padding(int sz){
+		return (WORD_SIZE - (sz % WORD_SIZE)) % WORD_SIZE;
+	}
+
 }

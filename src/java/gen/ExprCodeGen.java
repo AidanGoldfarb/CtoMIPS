@@ -163,16 +163,20 @@ public class ExprCodeGen extends CodeGen {
                 return val;
             }
             case ArrayAccessExpr aae -> {
-                Register arrReg = visit(aae.arr);
-                Register indexReg = visit(aae.indx);
-                //emit arrReg + indexReg
-                section.emit(OpCode.ADD,dst,arrReg,indexReg); //use offset instead?
+                Register val = Register.Virtual.create();
+                Register adr = (new AddrCodeGen(this.asmProg)).visit(aae);
+                section.emit(OpCode.LW,val,adr,0);
+                return val;
+//                Register arrReg = (new AddrCodeGen(this.asmProg)).visit(aae.arr);//visit(aae.arr);
+//                Register indexReg = visit(aae.indx);
+//                //emit arrReg + indexReg
+//                section.emit(OpCode.ADD,dst,arrReg,indexReg); //use offset instead?
             }
             default -> {
                 System.out.println("not implemented (ECG): " + e);
                 return null;
             }
         }
-        return dst;
+        //return dst;
     }
 }
