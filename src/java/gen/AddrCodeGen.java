@@ -32,11 +32,14 @@ public class AddrCodeGen extends CodeGen {
                 section.emit(OpCode.ADD,res,arr,indexReg);
                 return res;
             }
-            case FieldAccessExpr fieldAccessExpr -> {
-                //
-            }
-            case ValueAtExpr valueAtExpr -> {
-                //
+//            case FieldAccessExpr fae -> {
+//
+//            }
+//            case ValueAtExpr valueAtExpr -> {
+//                //
+//            }
+            case AddressOfExpr aoe -> {
+                return visit(aoe.expr);
             }
             case VarExpr v -> {
                 Register res = Register.Virtual.create();

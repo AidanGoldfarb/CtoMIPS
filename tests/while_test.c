@@ -38,17 +38,23 @@
 //struct s c;
 //int a;
 void main(){
-   int ptr[5];
+   int a;
+   //int b;
+   int* ptr;
+   a = 55;
+   ptr = &a;
+   a = *ptr;
+   print_i(a);
    //ptr[0] = 6;
    //ptr[1] = 7;
    //ptr[2] = 8;
-   ptr[3] = 9;
+   //ptr[3] = 9;
    //ptr[4] = 10;
 //   print_i(ptr[0]);
 //   print_i(ptr[1]);
 //   print_i(ptr[2]);
 //   print_i(ptr[3]);
-   print_i(ptr[3]);
+   //print_i(ptr[3]);
     //int a;
     //int b;
     //a = 5;

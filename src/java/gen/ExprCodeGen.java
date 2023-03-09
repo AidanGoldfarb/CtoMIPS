@@ -167,10 +167,22 @@ public class ExprCodeGen extends CodeGen {
                 Register adr = (new AddrCodeGen(this.asmProg)).visit(aae);
                 section.emit(OpCode.LW,val,adr,0);
                 return val;
-//                Register arrReg = (new AddrCodeGen(this.asmProg)).visit(aae.arr);//visit(aae.arr);
-//                Register indexReg = visit(aae.indx);
-//                //emit arrReg + indexReg
-//                section.emit(OpCode.ADD,dst,arrReg,indexReg); //use offset instead?
+            }
+//            case FieldAccessExpr fae -> {
+//                //return value;
+//                Register val = Register.Virtual.create();
+//                Register adr = (new AddrCodeGen(this.asmProg)).visit(fae);
+//                section.emit(OpCode.LW,val,adr,0);
+//                return val;
+//            }
+            case ValueAtExpr vae -> {
+                Register val = Register.Virtual.create();
+                Register adr = visit(vae.expr);//(new AddrCodeGen(this.asmProg)).visit(vae.expr);
+                section.emit(OpCode.LW,val,adr,0);
+                return val;
+            }
+            case AddressOfExpr aoe -> {
+                return (new AddrCodeGen(this.asmProg)).visit(aoe);
             }
             default -> {
                 System.out.println("not implemented (ECG): " + e);
