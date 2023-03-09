@@ -18,7 +18,6 @@ public class NameAnalyzer extends BaseSemanticAnalyzer {
 			case null -> {
 				throw new IllegalStateException("Unexpected null value");
 			}
-
 			case Block b -> {
 //				Scope oldScope = scope;
 //				scope = new Scope(oldScope); //new scope with old as parent
@@ -39,7 +38,6 @@ public class NameAnalyzer extends BaseSemanticAnalyzer {
 
 				//scope = oldScope;
 			}
-
 			case FunDecl fd -> {
 				Symbol s = scope.lookup(fd.name); //function decl are only global?
 				if(s != null){
@@ -59,14 +57,12 @@ public class NameAnalyzer extends BaseSemanticAnalyzer {
 					//scope.put(new FunSymbol(fd));
 				}
 			}
-
 			case Program p -> {
 				addBuiltIns();
 				for(ASTNode child: p.children()){
 					visit(child);
 				}
 			}
-
 			case (VarDecl vd) -> {
 				Symbol s = scope.lookupCurrent(vd.name); //current bc of shadowing
 				if( s != null){
@@ -82,7 +78,6 @@ public class NameAnalyzer extends BaseSemanticAnalyzer {
 					scope.put(new VarSymbol(vd));
 				}
 			}
-
 			case (VarExpr v) -> {
 				Symbol s = scope.lookup(v.name); //can use a var defined in a higher scope
 				switch (s){
@@ -92,7 +87,6 @@ public class NameAnalyzer extends BaseSemanticAnalyzer {
 					}
 				}
 			}
-
 			case (StructTypeDecl std) -> {
 				Symbol s = scope.lookup(std.name); //only global?
 				if(s != null){
@@ -108,21 +102,16 @@ public class NameAnalyzer extends BaseSemanticAnalyzer {
 				scope = oldScope;
 				scope.put(new StructSymbol(std));
 			}
-
 			case (Assign a) -> {
 				visit(a.lhs);
 				visit(a.rhs);
 			}
-
 			case (Type t) -> {}
-
 			case (ExprStmt es) -> {
 				for(ASTNode child: es.children()){
 					visit(child);
 				}
 			}
-
-			// to complete ...
 			case AddressOfExpr aoe -> {
 				visit(aoe.expr);
 			}
@@ -136,7 +125,6 @@ public class NameAnalyzer extends BaseSemanticAnalyzer {
 			}
 			case FieldAccessExpr fae -> {
 				visit(fae.struct); //ensure struct is defined
-
 				//ensure the string is part of struct, need to get the name to lookup
 
 			}

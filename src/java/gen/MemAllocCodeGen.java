@@ -53,7 +53,8 @@ public class MemAllocCodeGen extends CodeGen {
                     visit(decl);
                 }
             }
-            case default -> {System.out.println("not implemented: " + n);}
+            case StructTypeDecl std -> {}
+            case default -> {System.out.println("MACG: not implemented: " + n);}
         }
     }
 

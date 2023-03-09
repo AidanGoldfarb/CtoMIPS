@@ -209,6 +209,7 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 					}
 					case StructType st -> {
 						//check if exists
+						fae.st = st;
 						boolean legal = false;
 						StructTypeDecl std = struct_sym_table.get(st); //
 						for(VarDecl vd: std.vardecls){

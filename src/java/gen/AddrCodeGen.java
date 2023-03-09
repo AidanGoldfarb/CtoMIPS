@@ -11,7 +11,7 @@ import java.awt.dnd.InvalidDnDOperationException;
  * Generates code to calculate the address of an expression and return the result in a register.
  */
 public class AddrCodeGen extends CodeGen {
-
+    private static final int WORD_SIZE = 4;
     public AddrCodeGen(AssemblyProgram asmProg) {
         this.asmProg = asmProg;
     }
@@ -32,9 +32,14 @@ public class AddrCodeGen extends CodeGen {
                 section.emit(OpCode.ADD,res,arr,indexReg);
                 return res;
             }
-//            case FieldAccessExpr fae -> {
-//
-//            }
+            case FieldAccessExpr fae -> {
+                Register offset_reg = Register.Virtual.create();
+                Register adr = (new AddrCodeGen(this.asmProg)).visit(fae.struct);
+                int offset = find_offset(fae.st,fae.field);
+                section.emit(OpCode.LI,offset_reg,offset);
+                section.emit(OpCode.ADD,adr,adr,offset_reg);
+                return adr;
+            }
 //            case ValueAtExpr valueAtExpr -> {
 //                //
 //            }
@@ -57,6 +62,60 @@ public class AddrCodeGen extends CodeGen {
             }
         }
         return null;
+    }
+
+    private int find_offset(StructType st, String field) {
+        int offset = 0;
+        for(VarDecl vd: st.std.vardecls){
+            if(field.equals(vd.name)){
+                return offset;
+            }
+            offset+=getSize(vd.type);
+        }
+        assert false;
+        return -1;
+    }
+
+    public int getSize(Type type){
+        //in bytes
+        switch (type){
+            case ArrayType arrayType -> {
+                return arrayType.len * getSize(arrayType.t);
+            }
+            case BaseType baseType -> {
+                switch (baseType){
+                    case INT -> {
+                        return 4;
+                    }
+                    case CHAR -> {
+                        return 1;
+                    }
+                    default -> {
+                        assert false;
+                        return 0;
+                    }
+                }
+            }
+            case PointerType pointerType -> {
+                return 4;
+            }
+            case StructType structType -> {
+                return getStructSize(structType);
+            }
+            default -> {assert false; return 0;}
+        }
+    }
+    private int getStructSize(StructType structType) {
+        int size = 0;
+        for(VarDecl vd: structType.std.vardecls){
+            int cur = getSize(vd.type);
+            size += cur;
+            size += padding(cur); //align each member
+        }
+        return size;
+    }
+    private int padding(int sz){
+        return (WORD_SIZE - (sz % WORD_SIZE)) % WORD_SIZE;
     }
 
 }

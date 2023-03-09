@@ -168,13 +168,13 @@ public class ExprCodeGen extends CodeGen {
                 section.emit(OpCode.LW,val,adr,0);
                 return val;
             }
-//            case FieldAccessExpr fae -> {
-//                //return value;
-//                Register val = Register.Virtual.create();
-//                Register adr = (new AddrCodeGen(this.asmProg)).visit(fae);
-//                section.emit(OpCode.LW,val,adr,0);
-//                return val;
-//            }
+            case FieldAccessExpr fae -> {
+                //return value;
+                Register val = Register.Virtual.create();
+                Register adr = (new AddrCodeGen(this.asmProg)).visit(fae);
+                section.emit(OpCode.LW,val,adr,0);
+                return val;
+            }
             case ValueAtExpr vae -> {
                 Register val = Register.Virtual.create();
                 Register adr = visit(vae.expr);//(new AddrCodeGen(this.asmProg)).visit(vae.expr);
@@ -191,4 +191,5 @@ public class ExprCodeGen extends CodeGen {
         }
         //return dst;
     }
+
 }
