@@ -25,6 +25,7 @@ public final class AssemblyProgram {
      */
     public static final class Section {
 
+
         /**
          * An enumeration of section types.
          */

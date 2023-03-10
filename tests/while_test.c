@@ -31,19 +31,24 @@
 //struct nm fun(){} //lookahead3 == (
 //struct nm* fun(){} //lookahead2 == *
 //int baz(){int c; {return (int)'b';} }
-struct s1{int i;int b;};
+//struct s0{int a;}
+//struct s1{struct s0 b;};
 //struct s2{struct s1* field;};
 //struct s a[5];
 //struct s b;
 //struct s c;
 //int a;
+//struct s1 fst;
+//struct s1 snd;
+//struct s0 thrd;
 void main(){
-   struct s1 fst;
-   struct s1 snd;
-   fst.i=55;
-   fst.b=66;
-   snd=fst;
-   print_i(snd.i);
+
+    if(0){
+        print_i(1);
+    }
+    else{
+        print_i(2);
+    }
 
 //   int ptr [4];
 //   ptr[0] = 6;
