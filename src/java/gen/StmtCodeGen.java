@@ -55,7 +55,31 @@ public class StmtCodeGen extends CodeGen {
             }
             case ast.Return aReturn -> {
             }
+
+            /*
+            loop:
+            # body of the loop goes here
+
+            # check the condition
+            beq $t1, $zero, exit  # exit the loop if the condition is false
+
+            # branch back to the beginning of the loop
+            j loop
+
+            exit:
+            # code after the loop goes here
+             */
             case ast.While aWhile -> {
+                Label loop = Label.create("loop");
+                Label exitwhile = Label.create("exitwhile");
+
+                section.emit(loop);
+                Register exprReg = (new ExprCodeGen(this.asmProg)).visit(aWhile.expr);
+                visit(aWhile.stmt);
+
+                section.emit(OpCode.BEQ,exprReg,Register.Arch.zero,exitwhile);
+                section.emit(OpCode.J,loop);
+                section.emit(exitwhile);
             }
         }
     }

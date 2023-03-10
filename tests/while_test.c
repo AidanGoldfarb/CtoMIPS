@@ -42,12 +42,11 @@
 //struct s1 snd;
 //struct s0 thrd;
 void main(){
-
-    if(0){
-        print_i(1);
-    }
-    else{
-        print_i(2);
+    int a;
+    a = 5;
+    while(a){
+        print_i(a);
+        a = a-1;
     }
 
 //   int ptr [4];
