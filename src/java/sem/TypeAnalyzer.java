@@ -13,17 +13,276 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 	List<Boolean> ret_found = new ArrayList<>();
 	public Type visit(ASTNode node) {
 		return switch(node) {
-			case null -> throw new IllegalStateException("Unexpected null value");
-			case Block b -> {
-				for (ASTNode c : b.children())
-					visit(c);
-				yield BaseType.NONE;
+			case Decl decl -> {
+				yield switch (decl){
+					case FunDecl fd -> {
+						ensure_type_exists(fd.type);
+						func_sym_table.put(fd.name,fd); //redecl handed in name analyzer
+						visit(fd.block);
+						yield BaseType.NONE;
+					}
+					case StructTypeDecl std -> {
+						//ensure decl vars are valid
+						for(ASTNode child: std.vardecls){
+							visit(child);
+						}
+						struct_sym_table.put(std.st,std);
+						yield BaseType.NONE; // to change
+					}
+					case VarDecl vd -> {
+						switch (vd.type){
+							case BaseType bT -> {
+								switch (bT){
+									case VOID -> {
+										error("cannot declair var '" + vd +"' as 'void'");
+										yield BaseType.VOID;
+									}
+									default -> {yield bT;}
+								}
+							}
+							//check that the type exists
+							case StructType structType -> {
+								if(!struct_sym_table.containsKey(structType)){
+									error("Struct '" + structType + "' undefined");
+								}
+								else{
+
+									structType.std = struct_sym_table.get(structType);
+								}
+								yield vd.type;
+							}
+							case ArrayType aT -> {
+								//explore inside
+								VarDecl cpy = new VarDecl(vd.type,vd.name); //just for type
+								cpy.type = aT.t;
+								visit(cpy);
+								yield aT;
+							}
+							default -> {yield vd.type;}
+						}
+					}
+				};
+
 			}
-			case FunDecl fd -> {
-				ensure_type_exists(fd.type);
-				func_sym_table.put(fd.name,fd); //redecl handed in name analyzer
-				visit(fd.block);
-				yield BaseType.NONE;
+			case Expr expr -> {
+				Type tout = switch (expr){
+					case AddressOfExpr aoe -> {
+						Type t = visit(aoe.expr);
+						yield new PointerType(t);
+					}
+					case ArrayAccessExpr aae -> {
+						Type arr_type = visit(aae.arr);
+						Type inx_type = visit(aae.indx); //must be int
+						aae.type = arr_type;
+						aae.ele_sz = getArrElSize(arr_type);
+						switch (inx_type){
+							case BaseType bt -> {
+								switch (bt){
+									case INT -> {}
+									default -> error("Array index is non-scaler");
+								}
+							}
+							default -> {
+								error("Array index is non-scaler");
+								yield BaseType.UNKNOWN;
+							}
+						}
+						switch (arr_type){
+							case ArrayType arrayType -> {
+								yield arrayType.t;
+							}
+							case BaseType ignored -> {
+								//invalid
+								error("Attempt to index non-array object");
+								yield BaseType.UNKNOWN;
+							}
+							case PointerType pt -> {
+								yield pt.type;
+							}
+							case StructType ignored -> {
+								//invalid
+								error("Attempt to index non-array object");
+								yield BaseType.UNKNOWN;
+							}
+							default -> {
+								error("unexpected array type");
+								yield BaseType.UNKNOWN;
+							}
+						}
+					}
+					case Assign assign -> {
+						Type lhs = visit(assign.lhs);
+						Type rhs = visit(assign.rhs);
+
+						if(!is_valid_lvalue(assign.lhs)){
+							error("Invalid lvalue: '" + assign.lhs + "'");
+						}
+						else if(lhs == BaseType.VOID || lhs instanceof ArrayType){
+							error("cannot assign to VOID | ArrayType");
+						}
+						else if(rhs == BaseType.VOID || rhs instanceof ArrayType){
+							error("cannot assign from VOID | ArrayType");
+						}
+						else if(!lhs.equals(rhs)){
+							error(lhs + " != " + rhs);
+						}
+						yield lhs;
+					}
+					case BinOp binOp -> {
+						Type lhs = visit(binOp.lhs);
+						Type rhs = visit(binOp.rhs);
+						if(binOp.op == Op.NE || binOp.op == Op.EQ){
+							//can be int or char
+							if(lhs != BaseType.INT && lhs != BaseType.CHAR){
+								error(lhs + " not of type INT | CHAR");
+							}
+							else if(rhs != BaseType.INT && rhs != BaseType.CHAR){
+								error(rhs + " not of type INT | CHAR");
+							}
+							else if(!lhs.equals(rhs)){
+								error("invalid cond: lhs != rhs");
+							}
+							yield BaseType.INT;
+						}
+						else{
+							if(!lhs.equals(rhs)){
+								error(lhs + " != " + rhs);
+								yield BaseType.UNKNOWN;
+							}
+							else if(lhs != BaseType.INT){
+								error(lhs + " != INT");
+								yield BaseType.UNKNOWN;
+							}
+							yield lhs;
+						}
+					}
+					case ChrLiteral chrLiteral -> {
+						yield BaseType.CHAR;
+					}
+					case FieldAccessExpr fae -> {
+						String fieldname = fae.field;
+						Type t = visit(fae.struct);
+						switch (t){
+							case ArrayType arrayType -> {
+								error("attempting to field access an array");
+								yield t;
+							}
+							case BaseType baseType -> {
+								error("attempting to field access an basetype");
+								yield t;
+							}
+							case PointerType pointerType -> {
+								error("attempting to field access an pointertype");
+								yield t;
+							}
+							case StructType st -> {
+								//check if exists
+								fae.st = st;
+								boolean legal = false;
+								StructTypeDecl std = struct_sym_table.get(st); //
+								for(VarDecl vd: std.vardecls){
+									if(vd.name.equals(fieldname)){
+										legal = true;
+										if(legal){
+											t = vd.type;
+											break;
+										}
+									}
+								}
+								if(!legal){
+									error("field \'" + fieldname + "\' does not exist in struct \'" + st + "\'");
+								}
+								yield t;
+							}
+							case null -> {yield BaseType.UNKNOWN;}
+						}
+						yield BaseType.INT; //wrong
+					} //TODO
+					case FunCallExpr fce -> {
+						//fun not exist handled in name analyzer
+						//need to check args and ret type
+						//number of args first
+						if (fce.args.size() != func_sym_table.get(fce.name).params.size()){
+							error("Invalid number of args supplied to \'" + fce.name + "\'");
+						}
+						//arg type equality
+						int index = 0;
+						for(Expr arg: fce.args){
+							Type param_t = visit(arg);
+							Type arg_t = visit(func_sym_table.get(fce.name).params.get(index));
+							if(!param_t.equals(arg_t)){
+								error("Incorrect arg type supplied to \'" + fce.name + "\'." +
+										"Expected + '" + arg_t +"' got '" + param_t +"'");
+							}
+							index++;
+						}
+						yield func_sym_table.get(fce.name).type;
+					}
+					case IntLiteral intLiteral -> {
+						yield BaseType.INT;
+					}
+					case SizeOfExpr sizeOfExpr -> {
+						yield BaseType.INT;
+					}
+					case StrLiteral strLiteral -> {
+						yield new ArrayType(BaseType.CHAR , strLiteral.len+1);
+					}
+					case TypecastExpr te -> {
+						Type from_type = visit(te.expr);
+						Type to_type = te.type;
+						if(from_type == BaseType.CHAR){
+							if(to_type != BaseType.INT){
+								error("invalid typecast: CHAR to non INT");
+							}
+						}
+						else if(from_type instanceof ArrayType){
+							if(!(to_type instanceof PointerType)){
+								error("invalid typecase: Array to non PTR");
+							}
+							else{
+								if(!ptr_array_same_depth((ArrayType)from_type,(PointerType)to_type)){
+									error("invalid typecast, PTR depth or type");
+								}
+							}
+						}
+						else if(from_type instanceof PointerType){
+							if(!(to_type instanceof PointerType)){
+								error("invalid typecast: PTR to non PTR");
+							}
+							else{
+								if(!from_type.equals(to_type)){
+									error("invalid typecast, PTR depth or type");
+								}
+							}
+						}
+						yield to_type;
+					}
+					case ValueAtExpr vae -> {
+						Type t = visit(vae.expr);
+						switch (t){
+							case PointerType pt-> {
+								yield pt.type;
+							}
+							default -> {
+								error("attempt to dereference non-pointer type");
+								yield BaseType.UNKNOWN;
+							}
+						}
+					}
+					case VarExpr v -> {
+						//exists bc geterror count doesnt work.
+						if(v.vd == null){
+							//error("\'"+ v + "\' not defined");
+							yield v.type;
+						}
+						else{
+							//System.out.println("not null: " + v.vd);
+							yield visit(v.vd);
+						}
+					}
+				};
+				expr.type = tout; //important
+				yield tout;
 			}
 			case Program p -> {
 				add_buildins();
@@ -45,287 +304,48 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 
 				yield BaseType.NONE;
 			}
-			case VarDecl vd -> {
-				switch (vd.type){
-					case BaseType bT -> {
-						switch (bT){
-							case VOID -> {
-								error("cannot declair var '" + vd +"' as 'void'");
-								yield BaseType.VOID;
-							}
-							default -> {yield bT;}
-						}
+			case Stmt stmt -> {
+				yield switch (stmt){
+					case Block b -> {
+						for (ASTNode c : b.children())
+							visit(c);
+						yield BaseType.NONE;
 					}
-					//check that the type exists
-					case StructType structType -> {
-						if(!struct_sym_table.containsKey(structType)){
-							error("Struct '" + structType + "' undefined");
-						}
-						else{
-
-							structType.std = struct_sym_table.get(structType);
-						}
-						yield vd.type;
+					case ExprStmt es -> {
+						yield visit(es.expr);
 					}
-					case ArrayType aT -> {
-						//explore inside
-						VarDecl cpy = new VarDecl(vd.type,vd.name); //just for type
-						cpy.type = aT.t;
-						visit(cpy);
-						yield aT;
+					case If anIf -> {
+						Type t = visit(anIf.expr);
+						if(!isInt(t)){
+							error("invalid cond in if");
+						}
+						visit(anIf.istmt);
+						if(anIf.estmt != null){
+							visit(anIf.estmt);
+						}
+						yield BaseType.NONE;
 					}
-					default -> {yield vd.type;}
-				}
-			}
-			case VarExpr v -> {
-				//exists bc geterror count doesnt work.
-				if(v.vd == null){
-					//error("\'"+ v + "\' not defined");
-					yield v.type;
-				}
-				else{
-					//System.out.println("not null: " + v.vd);
-					yield visit(v.vd);
-				}
-			}
-			case StructTypeDecl std -> {
-				//ensure decl vars are valid
-				for(ASTNode child: std.vardecls){
-					visit(child);
-				}
-				struct_sym_table.put(std.st,std);
-				yield BaseType.NONE; // to change
+					case Return aReturn -> {
+						//ensure it is correct type here?
+						if(aReturn.expr != null){
+							yield visit(aReturn.expr);
+						}
+						yield BaseType.VOID;
+					}
+					case While aWhile -> {
+						Type t = visit(aWhile.expr);
+						if(!isInt(t)){
+							error("invalid cond in while");
+						}
+						visit(aWhile.stmt);
+						yield BaseType.NONE;
+					}
+				};
 			}
 			case Type t -> {
 				yield t;
 			}
-			case AddressOfExpr aoe -> {
-				Type t = visit(aoe.expr);
-				yield new PointerType(t);
-			}
-			case ArrayAccessExpr aae -> {
-				Type arr_type = visit(aae.arr);
-				Type inx_type = visit(aae.indx); //must be int
-				aae.type = arr_type;
-				aae.ele_sz = getArrElSize(arr_type);
-				switch (inx_type){
-					case BaseType bt -> {
-						switch (bt){
-							case INT -> {}
-							default -> error("Array index is non-scaler");
-						}
-					}
-					default -> {
-						error("Array index is non-scaler");
-						yield BaseType.UNKNOWN;
-					}
-				}
-				switch (arr_type){
-					case ArrayType arrayType -> {
-						yield arrayType.t;
-					}
-					case BaseType ignored -> {
-						//invalid
-						error("Attempt to index non-array object");
-						yield BaseType.UNKNOWN;
-					}
-					case PointerType pt -> {
-						yield pt.type;
-					}
-					case StructType ignored -> {
-						//invalid
-						error("Attempt to index non-array object");
-						yield BaseType.UNKNOWN;
-					}
-					default -> {
-						error("unexpected array type");
-						yield BaseType.UNKNOWN;
-					}
-				}
-			}
-			case Assign assign -> {
-				Type lhs = visit(assign.lhs);
-				Type rhs = visit(assign.rhs);
-
-				if(!is_valid_lvalue(assign.lhs)){
-					error("Invalid lvalue: '" + assign.lhs + "'");
-				}
-				else if(lhs == BaseType.VOID || lhs instanceof ArrayType){
-					error("cannot assign to VOID | ArrayType");
-				}
-				else if(rhs == BaseType.VOID || rhs instanceof ArrayType){
-					error("cannot assign from VOID | ArrayType");
-				}
-				else if(!lhs.equals(rhs)){
-					error(lhs + " != " + rhs);
-				}
-				yield lhs;
-			}
-			case BinOp binOp -> {
-				Type lhs = visit(binOp.lhs);
-				Type rhs = visit(binOp.rhs);
-				if(binOp.op == Op.NE || binOp.op == Op.EQ){
-					//can be int or char
-					if(lhs != BaseType.INT && lhs != BaseType.CHAR){
-						error(lhs + " not of type INT | CHAR");
-					}
-					else if(rhs != BaseType.INT && rhs != BaseType.CHAR){
-						error(rhs + " not of type INT | CHAR");
-					}
-					else if(!lhs.equals(rhs)){
-						error("invalid cond: lhs != rhs");
-					}
-					yield BaseType.INT;
-				}
-				else{
-					if(!lhs.equals(rhs)){
-						error(lhs + " != " + rhs);
-						yield BaseType.UNKNOWN;
-					}
-					else if(lhs != BaseType.INT){
-						error(lhs + " != INT");
-						yield BaseType.UNKNOWN;
-					}
-					yield lhs;
-				}
-
-			}
-			case ChrLiteral chrLiteral -> {yield BaseType.CHAR;}
-			case FieldAccessExpr fae -> {
-				String fieldname = fae.field;
-				Type t = visit(fae.struct);
-				switch (t){
-					case ArrayType arrayType -> {
-						error("attempting to field access an array");
-						yield t;
-					}
-					case BaseType baseType -> {
-						error("attempting to field access an basetype");
-						yield t;
-					}
-					case PointerType pointerType -> {
-						error("attempting to field access an pointertype");
-						yield t;
-					}
-					case StructType st -> {
-						//check if exists
-						fae.st = st;
-						boolean legal = false;
-						StructTypeDecl std = struct_sym_table.get(st); //
-						for(VarDecl vd: std.vardecls){
-							if(vd.name.equals(fieldname)){
-								legal = true;
-								if(legal){
-									t = vd.type;
-									break;
-								}
-							}
-						}
-						if(!legal){
-							error("field \'" + fieldname + "\' does not exist in struct \'" + st + "\'");
-						}
-						yield t;
-					}
-					case null -> {yield BaseType.UNKNOWN;}
-				}
-				yield BaseType.INT; //wrong
-			}
-			case FunCallExpr fce -> {
-				//fun not exist handled in name analyzer
-				//need to check args and ret type
-				//number of args first
-				if (fce.args.size() != func_sym_table.get(fce.name).params.size()){
-					error("Invalid number of args supplied to \'" + fce.name + "\'");
-				}
-				//arg type equality
-				int index = 0;
-				for(Expr arg: fce.args){
-					Type param_t = visit(arg);
-					Type arg_t = visit(func_sym_table.get(fce.name).params.get(index));
-					if(!param_t.equals(arg_t)){
-						error("Incorrect arg type supplied to \'" + fce.name + "\'." +
-								"Expected + '" + arg_t +"' got '" + param_t +"'");
-					}
-					index++;
-				}
-				yield func_sym_table.get(fce.name).type;
-			}
-			case IntLiteral intLiteral -> BaseType.INT;
-			case SizeOfExpr sizeOfExpr -> BaseType.INT;
-			case StrLiteral strLiteral -> {
-				yield new ArrayType(BaseType.CHAR , strLiteral.len+1);
-			}
-			case TypecastExpr te -> {
-				Type from_type = visit(te.expr);
-				Type to_type = te.type;
-				if(from_type == BaseType.CHAR){
-					if(to_type != BaseType.INT){
-						error("invalid typecast: CHAR to non INT");
-					}
-				}
-				else if(from_type instanceof ArrayType){
-					if(!(to_type instanceof PointerType)){
-						error("invalid typecase: Array to non PTR");
-					}
-					else{
-						if(!ptr_array_same_depth((ArrayType)from_type,(PointerType)to_type)){
-							error("invalid typecast, PTR depth or type");
-						}
-					}
-				}
-				else if(from_type instanceof PointerType){
-					if(!(to_type instanceof PointerType)){
-						error("invalid typecast: PTR to non PTR");
-					}
-					else{
-						if(!from_type.equals(to_type)){
-							error("invalid typecast, PTR depth or type");
-						}
-					}
-				}
-				yield to_type;
-			}
-			case ValueAtExpr vae -> {
-				Type t = visit(vae.expr);
-				switch (t){
-					case PointerType pt-> {
-						yield pt.type;
-					}
-					default -> {
-						error("attempt to dereference non-pointer type");
-						yield BaseType.UNKNOWN;
-					}
-				}
-			}
-			case ExprStmt es -> {
-				yield visit(es.expr);
-			}
-			case If anIf -> {
-				Type t = visit(anIf.expr);
-				if(!isInt(t)){
-					error("invalid cond in if");
-				}
-				visit(anIf.istmt);
-				if(anIf.estmt != null){
-					visit(anIf.estmt);
-				}
-				yield BaseType.NONE;
-			}
-			case Return aReturn -> {
-				//ensure it is correct type here?
-				if(aReturn.expr != null){
-					visit(aReturn.expr);
-				}
-				yield BaseType.VOID;
-			}
-			case While aWhile -> {
-				Type t = visit(aWhile.expr);
-				if(!isInt(t)){
-					error("invalid cond in while");
-				}
-				visit(aWhile.stmt);
-				yield BaseType.NONE;
-			}
+			default -> throw new IllegalStateException("Unexpected null value");
 		};
 
 	}

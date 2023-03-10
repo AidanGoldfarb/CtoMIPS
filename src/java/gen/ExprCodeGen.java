@@ -9,6 +9,8 @@ import gen.asm.*;
  */
 public class ExprCodeGen extends CodeGen {
 
+    private static final int WORD_SIZE = 4;
+
     public ExprCodeGen(AssemblyProgram asmProg) {
         this.asmProg = asmProg;
     }
@@ -135,11 +137,33 @@ public class ExprCodeGen extends CodeGen {
                 return dst;
             }
             case Assign assign -> {
-                Register lhsReg = (new AddrCodeGen(this.asmProg)).visit(assign.lhs);
-                Register rhsReg = visit(assign.rhs);
-                section.emit(OpCode.SW,rhsReg,lhsReg,0);
-                //section.emit(OpCode.MOVE,rhsReg,lhsReg);
-                return lhsReg;
+                //by value
+                switch (assign.lhs.type){
+                    case StructType st -> {
+                        int sizeInWords = getSize(st)/4; //assuming structs are word aligned
+                        System.out.println(sizeInWords);
+                        Register lhsReg = (new AddrCodeGen(this.asmProg)).visit(assign.lhs);
+                        Register rhsReg = (new AddrCodeGen(this.asmProg)).visit(assign.rhs);
+                        //copy size bytes
+                        while(sizeInWords > 0){
+                            Register val = Register.Virtual.create();
+                            section.emit(OpCode.LW,val,rhsReg,0);
+                            section.emit(OpCode.SW,val,lhsReg,0); //rhs -> lhs
+                            section.emit(OpCode.ADDI,lhsReg,lhsReg,4); //incr ptr
+                            section.emit(OpCode.ADDI,rhsReg,rhsReg,4); //incr ptr
+                            sizeInWords--;
+                        }
+                        return lhsReg;
+                    }
+                    default -> {
+                        //by reference
+                        Register lhsReg = (new AddrCodeGen(this.asmProg)).visit(assign.lhs);
+                        Register rhsReg = visit(assign.rhs);
+                        section.emit(OpCode.SW,rhsReg,lhsReg,0);
+                        return lhsReg;
+                    }
+                }
+
             }
             case IntLiteral il -> {
                 Register optimize_me_out = Register.Virtual.create();
@@ -192,4 +216,45 @@ public class ExprCodeGen extends CodeGen {
         //return dst;
     }
 
+    public int getSize(Type type){
+        //in bytes
+        switch (type){
+            case ArrayType arrayType -> {
+                return arrayType.len * getSize(arrayType.t);
+            }
+            case BaseType baseType -> {
+                switch (baseType){
+                    case INT -> {
+                        return 4;
+                    }
+                    case CHAR -> {
+                        return 1;
+                    }
+                    default -> {
+                        assert false;
+                        return 0;
+                    }
+                }
+            }
+            case PointerType pointerType -> {
+                return 4;
+            }
+            case StructType structType -> {
+                return getStructSize(structType);
+            }
+            default -> {assert false; return 0;}
+        }
+    }
+    private int getStructSize(StructType structType) {
+        int size = 0;
+        for(VarDecl vd: structType.std.vardecls){
+            int cur = getSize(vd.type);
+            size += cur;
+            size += padding(cur); //align each member
+        }
+        return size;
+    }
+    private int padding(int sz){
+        return (WORD_SIZE - (sz % WORD_SIZE)) % WORD_SIZE;
+    }
 }
