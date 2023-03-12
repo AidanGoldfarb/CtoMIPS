@@ -182,6 +182,10 @@ public final class AssemblyProgram {
         return currSection;
     }
 
+    public void setCurrentSection(Section section){
+        this.currSection = section;
+    }
+
     /**
      * Appends a given section to this program. The section will become the current section, as produced by
      * {@link #getCurrentSection()}.

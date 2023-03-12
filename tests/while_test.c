@@ -42,12 +42,18 @@
 //struct s1 snd;
 //struct s0 thrd;
 void main(){
-    int a;
-    a = 5;
-    while(a){
-        print_i(a);
-        a = a-1;
-    }
+    return;
+//    int main;
+//    int b;
+//    b = main(); //should be invalid
+//    return 0;
+
+//    int a;
+//    a = 5;
+//    while(a){
+//        print_i(a);
+//        a = a-1;
+}
 
 //   int ptr [4];
 //   ptr[0] = 6;
@@ -65,9 +71,6 @@ void main(){
 //    b.c = 7;
 //    b.d[0] = 'a';
 //    b.d[1] = 'b';
-
-
-}
 //    int a;
 //    return (struct b)a;
 //    struct b**** a;

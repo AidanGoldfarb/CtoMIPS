@@ -3,13 +3,14 @@ package gen;
 import ast.*;
 import gen.asm.*;
 
+import java.util.ArrayList;
+//import gen.asm.AssemblyProgram;
+
 
 /**
  * Generates code to evaluate an expression and return the result in a register.
  */
 public class ExprCodeGen extends CodeGen {
-
-    private static final int WORD_SIZE = 4;
 
     public ExprCodeGen(AssemblyProgram asmProg) {
         this.asmProg = asmProg;
@@ -21,21 +22,73 @@ public class ExprCodeGen extends CodeGen {
         switch (e){
             case FunCallExpr fce -> {
                 if(fce.name.equals("print_i")){
-                    //int val = ((IntLiteral)funCallExpr.args.get(0)).val;
-                    //System.out.println(fce.args.get(0));
                     Register val = visit(fce.args.get(0));
-
-                    //section.emit(OpCode.LW,val,val,0);
-                    section.emit(OpCode.MOVE ,gen.asm.Register.Arch.a0,val);
-                    section.emit(OpCode.LI ,gen.asm.Register.Arch.v0,1);
+                    section.emit(OpCode.MOVE ,Register.Arch.a0,val);
+                    section.emit(OpCode.LI ,Register.Arch.v0,1);
                     section.emit(OpCode.SYSCALL);
                     return null;
-                    //li $a0 val
-                    //li $v0 1
-                    //syscall
                 }
+                //general funcall
                 else{
-                    return null;
+                    System.out.println("entering untested code");
+                    Label funlabl = Label.get(fce.name);
+                    int args_size = get_args_size(fce);
+                    int ret_size = getSize(fce.type);
+                    int local_vars_size = get_local_var_size(fce);
+                    ArrayList<Register> args = new ArrayList<>();
+
+                    section.emit(OpCode.ADDI, Register.Arch.sp, Register.Arch.sp, -args_size);
+
+                    //save registers from caller
+//                    for (int i = 0; i < fce.args.size(); i++) {
+//                        section.emit(OpCode.SW, getCallerSavedReg(i), Register.Arch.sp, i * 4);
+//                    }
+
+                    //generate code for args
+                    for(Expr expr: fce.args){
+                        Register tmp = visit(expr); //gen code
+                        args.add(tmp); //save reg
+                    }
+
+                    //pass args onto stack
+                    section.emit(OpCode.ADDI,Register.Arch.sp,Register.Arch.sp,-args_size);
+                    int offset = 0;
+                    for(Register reg: args){ //maybe in rev order?
+                        section.emit(OpCode.SW,reg,Register.Arch.sp,offset);
+                        offset+=4;
+                    }
+                    assert offset==args_size;
+
+                    section.emit(OpCode.JAL,funlabl);//jump to funcall
+
+
+
+                    // Caller postcall
+                    // Restore any caller-saved registers that were used in this function call
+//                    for (int i = 0; i < fce.args.size(); i++) {
+//                        section.emit(OpCode.LW, getCallerSavedReg(i), Register.Arch.sp, i * 4);
+//                    }
+                    section.emit(OpCode.ADDI, Register.Arch.sp, Register.Arch.sp, args_size);
+                    section.emit(OpCode.MOVE,dst,Register.Arch.ra);
+                    return dst;
+//                    //reserve space for ret value
+//                    section.emit(OpCode.ADDI,Register.Arch.sp,Register.Arch.sp,-ret_size);
+//
+//                    //push ret address onto stack
+//                    section.emit(OpCode.ADDI,Register.Arch.sp,Register.Arch.sp,-4);
+//                    section.emit(OpCode.SW,Register.Arch.ra,Register.Arch.sp,0); //ra
+//
+//
+//
+//                    //restore $ra from stack
+//                    section.emit(OpCode.LW,Register.Arch.ra,Register.Arch.sp,0); //ra
+//
+//                    //read return value from stack
+//                    section.emit(OpCode.LW,dst,Register.Arch.sp,4); //ra
+//
+//                    //reset stack ptr
+//                    section.emit(OpCode.ADDI,Register.Arch.sp,Register.Arch.sp,args_size+ret_size);
+
                 }
             }
             case BinOp bo -> {
@@ -216,6 +269,39 @@ public class ExprCodeGen extends CodeGen {
         //return dst;
     }
 
+    private int get_local_var_size(FunCallExpr fce) {
+        int size = 0;
+        for(VarDecl vd: fce.fd.block.vds){
+            size += getSize(vd.type);
+        }
+        return size;
+    }
+
+    private void saveRegisters(AssemblyProgram.Section section) {
+        //save $ra and $fp
+        section.emit(OpCode.ADDI,Register.Arch.sp,Register.Arch.sp,-8); //allocate space on stack
+        section.emit(OpCode.SW,Register.Arch.fp,Register.Arch.sp,0); //fp
+        section.emit(OpCode.SW,Register.Arch.ra,Register.Arch.sp,4); //ra
+    }
+    private void restoreRegisters(AssemblyProgram.Section section) {
+//        emit("lw $ra, 4($sp)"); // restore $ra
+//        emit("lw $fp, 0($sp)"); // restore $fp
+//        emit("addi $sp, $sp, 8");
+        section.emit(OpCode.LW,Register.Arch.ra,Register.Arch.sp,4); //ra
+        section.emit(OpCode.LW,Register.Arch.fp,Register.Arch.sp,0); //fp
+        section.emit(OpCode.ADDI,Register.Arch.sp,Register.Arch.sp,8); //deallocate space on stack
+
+    }
+
+    private int get_args_size(FunCallExpr fce) {
+        int size = 0;
+        for(Expr expr: fce.args){
+            size+= getSize(expr.type);
+        }
+        assert size%WORD_SIZE == 0; //this better be word aligned
+        return size;
+    }
+
     public int getSize(Type type){
         //in bytes
         switch (type){
@@ -229,6 +315,9 @@ public class ExprCodeGen extends CodeGen {
                     }
                     case CHAR -> {
                         return 1;
+                    }
+                    case VOID -> {
+                        return 0; //for funcall
                     }
                     default -> {
                         assert false;
