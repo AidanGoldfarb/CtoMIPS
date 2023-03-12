@@ -216,6 +216,7 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 							}
 							index++;
 						}
+						fce.fd = func_sym_table.get(fce.name);
 						yield func_sym_table.get(fce.name).type;
 					}
 					case IntLiteral intLiteral -> {

@@ -41,8 +41,13 @@
 //struct s1 fst;
 //struct s1 snd;
 //struct s0 thrd;
+int foo(){
+    return 1;
+}
 void main(){
-    return;
+    int a;
+    a = foo();
+    //print_i(a);
 //    int main;
 //    int b;
 //    b = main(); //should be invalid

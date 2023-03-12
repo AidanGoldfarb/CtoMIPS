@@ -25,28 +25,32 @@ public class FunCodeGen extends CodeGen {
         // TODO: to complete
         this.asmProg.getCurrentSection().emit(OpCode.PUSH_REGISTERS);
         // 1) emit the prolog
-
-        // Emit function prologue
-        int local_vars_size = get_local_var_size(fd);
-        int args_size = get_args_size(fd);
         Label funlabl = Label.create(fd.name);
         Label retlabl = Label.create(fd.name+"_ret");
+        int local_vars_size = get_local_var_size(fd);
+        int args_size = get_args_size(fd);
+        if(!fd.name.equals("main")){
+            // Emit function prologue
+            section.emit(funlabl); // function label
+            section.emit(OpCode.ADDI, Register.Arch.sp, Register.Arch.sp, -local_vars_size); // allocate space for local vars
+            section.emit(OpCode.SW, Register.Arch.fp, Register.Arch.sp, 0); // save $fp on the stack
+            section.emit(OpCode.ADDIU, Register.Arch.fp, Register.Arch.sp, 0); // set $fp to the current stack pointer
 
-        section.emit(funlabl); // function label
-        section.emit(OpCode.ADDI, Register.Arch.sp, Register.Arch.sp, -local_vars_size); // allocate space for local vars
-        section.emit(OpCode.SW, Register.Arch.fp, Register.Arch.sp, 0); // save $fp on the stack
-        section.emit(OpCode.ADDIU, Register.Arch.fp, Register.Arch.sp, 0); // set $fp to the current stack pointer
+        }
 
         // 2) emit the body of the function
         StmtCodeGen scd = new StmtCodeGen(asmProg);
         scd.visit(fd.block);
 
         // 3) emit the epilog
-        // Emit function epilogue
-        section.emit(retlabl);
-        section.emit(OpCode.LW, Register.Arch.fp, Register.Arch.sp, 0); // restore $fp
-        section.emit(OpCode.ADDI, Register.Arch.sp, Register.Arch.sp, args_size + local_vars_size + 4); // deallocate stack space
-        section.emit(OpCode.JR, Register.Arch.ra); // return to calling function
+        if(!fd.name.equals("main")) {
+            // Emit function epilogue
+            section.emit(retlabl);
+            section.emit(OpCode.LW, Register.Arch.fp, Register.Arch.sp, 0); // restore $fp
+            section.emit(OpCode.ADDI, Register.Arch.sp, Register.Arch.sp, args_size + local_vars_size + 4); // deallocate stack space
+            section.emit(OpCode.JR, Register.Arch.ra); // return to calling function
+        }
+
         this.asmProg.getCurrentSection().emit(OpCode.POP_REGISTERS);
     }
 
