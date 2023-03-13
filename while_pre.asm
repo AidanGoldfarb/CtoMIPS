@@ -1,33 +1,40 @@
-.data
+.text
 j main
+
+.data
 
 .text
 foo:
+addi $sp,$sp,-4
 sw $fp,0($sp)
 move $fp,$sp
 addi $sp,$sp,0
 # Emiting function body
 pushRegisters
-li v1,1
-move $v0,v1
+li v1,5
+sw v1,8($fp)
 popRegisters
 # Done with function body
 addi $sp,$sp,0
 lw $fp,0($sp)
+addi $sp,$sp,4
 jr $ra
-j main
 
 .text
 main:
 # Emiting function body
 pushRegisters
-addi v3,$fp,-4
-addi $sp,$sp,-4
 addi $sp,$sp,0
+addi $sp,$sp,-4
+addi $sp,$sp,-4
+sw $ra,0($sp)
 jal foo
-lw v4,0($sp)
-addi $sp,$sp,4
-sw v4,0(v3)
+lw v3,4($sp)
+move $ra,$sp
+addi $sp,$sp,8
+move $a0,v3
+li $v0,1
+syscall
 popRegisters
 # Done with function body
 

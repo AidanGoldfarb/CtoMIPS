@@ -42,11 +42,13 @@
 //struct s1 snd;
 //struct s0 thrd;
 int foo(){
-    return 1;
+    return 5;
 }
 void main(){
     int a;
-    a = foo();
+    //a = foo();
+    print_i(foo());
+    //print_i(a);
     //print_i(a);
 //    int main;
 //    int b;

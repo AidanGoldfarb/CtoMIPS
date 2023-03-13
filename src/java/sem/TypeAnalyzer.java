@@ -397,7 +397,7 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 			case FunDecl fd -> {
 				Type fdrt = fd.type;
 				Block b = fd.block;
-				explore_stmt(b,fdrt);
+				explore_stmt(b,fdrt,fd);
 				boolean found = this.ret_found.contains(true);
 				this.ret_found = new ArrayList<>(); //.clear() doesnt work
 				if(!found && fd.type != BaseType.VOID){
@@ -456,11 +456,11 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 	}
 
 	//given a block b, explores all statements to check for return
-	private void explore_stmt(Stmt stmt, Type goal) {
+	private void explore_stmt(Stmt stmt, Type goal, FunDecl fd) {
 		switch (stmt){
 			case Block block -> {
 				for(Stmt instmt: block.stmts){
-					explore_stmt(instmt, goal);
+					explore_stmt(instmt, goal, fd);
 				}
 
 			}
@@ -468,9 +468,10 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 				//do nothing
 			}
 			case If anIf -> {
-				explore_if(anIf,goal);
+				explore_if(anIf,goal,fd);
 			}
 			case Return aReturn -> {
+				aReturn.fd = fd;
 				this.ret_found.add(true);
 				Type rt;
 				if(aReturn.expr != null){
@@ -484,20 +485,20 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 				}
 			}
 			case While aWhile -> {
-				explore_while(aWhile, goal);
+				explore_while(aWhile, goal, fd);
 			}
 		}
 	}
 
-	public void explore_if(If anIf, Type goal){
+	public void explore_if(If anIf, Type goal, FunDecl fd){
 		//just check istmt
-		explore_stmt(anIf.istmt,goal);
+		explore_stmt(anIf.istmt,goal,fd);
 		if(anIf.estmt!=null){
-			explore_stmt(anIf.estmt,goal);
+			explore_stmt(anIf.estmt,goal,fd);
 		}
 	}
-	public void explore_while(While aWhile, Type goal){
-		explore_stmt(aWhile.stmt,goal);
+	public void explore_while(While aWhile, Type goal, FunDecl fd){
+		explore_stmt(aWhile.stmt,goal,fd);
 	}
 
 	private void valid_return_check(Return r, FunDecl fd){

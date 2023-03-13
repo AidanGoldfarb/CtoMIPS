@@ -6,6 +6,8 @@ public final class Return extends Stmt {
 
     public final Expr expr;
 
+    public FunDecl fd; //for type analyzer
+
     public Return(Expr expr) {
         this.expr = expr;
     }
