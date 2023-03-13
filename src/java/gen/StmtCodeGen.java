@@ -57,7 +57,7 @@ public class StmtCodeGen extends CodeGen {
                 if(aReturn.expr != null){
                     //emit code, move into return reg
                     Register res = (new ExprCodeGen(this.asmProg)).visit(aReturn.expr);
-                    section.emit(OpCode.MOVE,res,Register.Arch.ra);
+                    section.emit(OpCode.MOVE,Register.Arch.v0,res);
                 }
             }
 

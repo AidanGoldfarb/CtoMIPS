@@ -31,24 +31,30 @@ public class FunCodeGen extends CodeGen {
         int args_size = get_args_size(fd);
         if(!fd.name.equals("main")){
             // Emit function prologue
+            section.emit("Begin prologue");
             section.emit(funlabl); // function label
-            section.emit(OpCode.ADDI, Register.Arch.sp, Register.Arch.sp, -local_vars_size); // allocate space for local vars
-            section.emit(OpCode.SW, Register.Arch.fp, Register.Arch.sp, 0); // save $fp on the stack
-            section.emit(OpCode.ADDIU, Register.Arch.fp, Register.Arch.sp, 0); // set $fp to the current stack pointer
-
+            section.emit(OpCode.ADDI, Register.Arch.sp, Register.Arch.sp, -(local_vars_size+4)); // allocate space for local vars
+            section.emit(OpCode.SW,Register.Arch.ra,Register.Arch.sp,0);
+            section.emit(OpCode.SW, Register.Arch.fp, Register.Arch.sp, 4); // save $fp on the stack
+            section.emit(OpCode.ADDI, Register.Arch.fp, Register.Arch.sp, 4); // set $fp to the current stack pointer
+            section.emit("End prologue");
         }
 
         // 2) emit the body of the function
+        section.emit("Emiting function body");
         StmtCodeGen scd = new StmtCodeGen(asmProg);
         scd.visit(fd.block);
+        section.emit("Done with function body");
 
         // 3) emit the epilog
         if(!fd.name.equals("main")) {
             // Emit function epilogue
-            section.emit(retlabl);
-            section.emit(OpCode.LW, Register.Arch.fp, Register.Arch.sp, 0); // restore $fp
-            section.emit(OpCode.ADDI, Register.Arch.sp, Register.Arch.sp, args_size + local_vars_size + 4); // deallocate stack space
+            section.emit("Begin epilogue");
+            section.emit(OpCode.LW, Register.Arch.ra, Register.Arch.fp, 0);
+            section.emit(OpCode.LW, Register.Arch.fp, Register.Arch.sp, 4); // restore $fp
+            section.emit(OpCode.ADDI, Register.Arch.sp, Register.Arch.sp, 8); // deallocate stack space args_size + local_vars_size - 4
             section.emit(OpCode.JR, Register.Arch.ra); // return to calling function
+            section.emit("End epilogue");
         }
 
         this.asmProg.getCurrentSection().emit(OpCode.POP_REGISTERS);

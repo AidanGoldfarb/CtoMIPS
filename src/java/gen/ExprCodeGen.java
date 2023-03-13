@@ -31,25 +31,27 @@ public class ExprCodeGen extends CodeGen {
                 //general funcall
                 else{
                     System.out.println("entering untested code");
-                    Label funlabl = Label.get(fce.name);
+
+                    Label funlabl = Label.get("label_0_"+fce.name);
                     int args_size = get_args_size(fce);
                     int ret_size = getSize(fce.type);
                     int local_vars_size = get_local_var_size(fce);
                     ArrayList<Register> args = new ArrayList<>();
-
-                    section.emit(OpCode.ADDI, Register.Arch.sp, Register.Arch.sp, -args_size);
 
                     //save registers from caller
 //                    for (int i = 0; i < fce.args.size(); i++) {
 //                        section.emit(OpCode.SW, getCallerSavedReg(i), Register.Arch.sp, i * 4);
 //                    }
 
+                    section.emit("Begin generating code for args");
                     //generate code for args
                     for(Expr expr: fce.args){
                         Register tmp = visit(expr); //gen code
                         args.add(tmp); //save reg
                     }
+                    section.emit("End generating code for args");
 
+                    section.emit("Begin pass args onto stack");
                     //pass args onto stack
                     section.emit(OpCode.ADDI,Register.Arch.sp,Register.Arch.sp,-args_size);
                     int offset = 0;
@@ -58,6 +60,15 @@ public class ExprCodeGen extends CodeGen {
                         offset+=4;
                     }
                     assert offset==args_size;
+                    section.emit("End pass args onto stack");
+
+                    section.emit("Reserve space on stack for return value");
+                    section.emit(OpCode.ADDI,Register.Arch.sp,Register.Arch.sp,-ret_size);
+                    section.emit("End reserve space on stack for return value");
+
+                    section.emit("Push ret addr onto stack");
+                    section.emit(OpCode.SW,Register.Arch.ra,Register.Arch.sp,0);
+                    section.emit("End push ret addr onto stack");
 
                     section.emit(OpCode.JAL,funlabl);//jump to funcall
 
@@ -68,10 +79,15 @@ public class ExprCodeGen extends CodeGen {
 //                    for (int i = 0; i < fce.args.size(); i++) {
 //                        section.emit(OpCode.LW, getCallerSavedReg(i), Register.Arch.sp, i * 4);
 //                    }
+                    section.emit("Restore return address from stack");
+                    section.emit(OpCode.LW,Register.Arch.ra,Register.Arch.sp,0);
+                    section.emit("End push ret addr onto stack");
+
                     section.emit(OpCode.ADDI, Register.Arch.sp, Register.Arch.sp, args_size);
-                    section.emit(OpCode.MOVE,dst,Register.Arch.ra);
+                    section.emit(OpCode.MOVE,dst,Register.Arch.v0);
                     return dst;
-//                    //reserve space for ret value
+
+                    //                    //reserve space for ret value
 //                    section.emit(OpCode.ADDI,Register.Arch.sp,Register.Arch.sp,-ret_size);
 //
 //                    //push ret address onto stack
