@@ -1,40 +1,33 @@
 .data
+j main
 
 .text
-pushRegisters
-# Begin prologue
-label_0_foo:
-addi $sp,$sp,-4
-sw $ra,0($sp)
-sw $fp,4($sp)
-addi $fp,$sp,4
-# End prologue
+foo:
+sw $fp,0($sp)
+move $fp,$sp
+addi $sp,$sp,0
 # Emiting function body
+pushRegisters
 li v1,1
 move $v0,v1
-# Done with function body
-# Begin epilogue
-lw $ra,0($fp)
-lw $fp,4($sp)
-addi $sp,$sp,8
-jr $ra
-# End epilogue
 popRegisters
+# Done with function body
+addi $sp,$sp,0
+lw $fp,0($sp)
+jr $ra
+j main
 
 .text
-pushRegisters
+main:
 # Emiting function body
+pushRegisters
 addi v3,$fp,-4
+addi $sp,$sp,-4
 addi $sp,$sp,0
-# Begin generating code for args
-# End generating code for args
-# Begin pass args onto stack
-addi $sp,$sp,0
-# End pass args onto stack
-jal label_0_foo
-addi $sp,$sp,0
-move v4,$v0
+jal foo
+lw v4,0($sp)
+addi $sp,$sp,4
 sw v4,0(v3)
-# Done with function body
 popRegisters
+# Done with function body
 

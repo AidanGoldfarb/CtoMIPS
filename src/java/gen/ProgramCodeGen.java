@@ -2,6 +2,7 @@ package gen;
 
 import ast.*;
 import gen.asm.AssemblyProgram;
+import gen.asm.Label;
 import gen.asm.OpCode;
 
 /**

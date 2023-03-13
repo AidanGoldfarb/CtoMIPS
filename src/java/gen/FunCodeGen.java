@@ -23,41 +23,39 @@ public class FunCodeGen extends CodeGen {
         AssemblyProgram.Section section = this.asmProg.getCurrentSection();
 
         // TODO: to complete
-        this.asmProg.getCurrentSection().emit(OpCode.PUSH_REGISTERS);
+        int local_var_size = get_local_var_size(fd);
+        Label funcall = Label.get(fd.name);
+        section.emit(funcall);
         // 1) emit the prolog
-        Label funlabl = Label.create(fd.name);
-        Label retlabl = Label.create(fd.name+"_ret");
-        int local_vars_size = get_local_var_size(fd);
-        int args_size = get_args_size(fd);
         if(!fd.name.equals("main")){
             // Emit function prologue
-            section.emit("Begin prologue");
-            section.emit(funlabl); // function label
-            section.emit(OpCode.ADDI, Register.Arch.sp, Register.Arch.sp, -(local_vars_size+4)); // allocate space for local vars
-            section.emit(OpCode.SW,Register.Arch.ra,Register.Arch.sp,0);
-            section.emit(OpCode.SW, Register.Arch.fp, Register.Arch.sp, 4); // save $fp on the stack
-            section.emit(OpCode.ADDI, Register.Arch.fp, Register.Arch.sp, 4); // set $fp to the current stack pointer
-            section.emit("End prologue");
+            //push fp to stack, then initialize it
+            section.emit(OpCode.SW,Register.Arch.fp,Register.Arch.sp,0); //old fp
+            section.emit(OpCode.MOVE,Register.Arch.fp,Register.Arch.sp); //new fp
+
+            //make space for local vars
+            section.emit(OpCode.ADDI,Register.Arch.sp,Register.Arch.sp,-local_var_size);
+
+            //save registers
         }
 
         // 2) emit the body of the function
         section.emit("Emiting function body");
         StmtCodeGen scd = new StmtCodeGen(asmProg);
+        this.asmProg.getCurrentSection().emit(OpCode.PUSH_REGISTERS);
         scd.visit(fd.block);
+        this.asmProg.getCurrentSection().emit(OpCode.POP_REGISTERS);
         section.emit("Done with function body");
 
         // 3) emit the epilog
         if(!fd.name.equals("main")) {
             // Emit function epilogue
-            section.emit("Begin epilogue");
-            section.emit(OpCode.LW, Register.Arch.ra, Register.Arch.fp, 0);
-            section.emit(OpCode.LW, Register.Arch.fp, Register.Arch.sp, 4); // restore $fp
-            section.emit(OpCode.ADDI, Register.Arch.sp, Register.Arch.sp, 8); // deallocate stack space args_size + local_vars_size - 4
-            section.emit(OpCode.JR, Register.Arch.ra); // return to calling function
-            section.emit("End epilogue");
+            //restore sp
+            section.emit(OpCode.ADDI,Register.Arch.sp,Register.Arch.sp,local_var_size);
+            section.emit(OpCode.LW,Register.Arch.fp,Register.Arch.sp,0);
+            section.emit(OpCode.JR,Register.Arch.ra);
         }
 
-        this.asmProg.getCurrentSection().emit(OpCode.POP_REGISTERS);
     }
 
     private int get_args_size(FunDecl fd) {
