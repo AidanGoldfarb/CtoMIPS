@@ -76,46 +76,46 @@ public class AddrCodeGen extends CodeGen {
         return -1;
     }
 
-    public int getSize(Type type){
-        //in bytes
-        switch (type){
-            case ArrayType arrayType -> {
-                return arrayType.len * getSize(arrayType.t);
-            }
-            case BaseType baseType -> {
-                switch (baseType){
-                    case INT -> {
-                        return 4;
-                    }
-                    case CHAR -> {
-                        return 1;
-                    }
-                    default -> {
-                        assert false;
-                        return 0;
-                    }
-                }
-            }
-            case PointerType pointerType -> {
-                return 4;
-            }
-            case StructType structType -> {
-                return getStructSize(structType);
-            }
-            default -> {assert false; return 0;}
-        }
-    }
-    private int getStructSize(StructType structType) {
-        int size = 0;
-        for(VarDecl vd: structType.std.vardecls){
-            int cur = getSize(vd.type);
-            size += cur;
-            size += padding(cur); //align each member
-        }
-        return size;
-    }
-    private int padding(int sz){
-        return (WORD_SIZE - (sz % WORD_SIZE)) % WORD_SIZE;
-    }
+//    public int getSize(Type type){
+//        //in bytes
+//        switch (type){
+//            case ArrayType arrayType -> {
+//                return arrayType.len * getSize(arrayType.t);
+//            }
+//            case BaseType baseType -> {
+//                switch (baseType){
+//                    case INT -> {
+//                        return 4;
+//                    }
+//                    case CHAR -> {
+//                        return 1;
+//                    }
+//                    default -> {
+//                        assert false;
+//                        return 0;
+//                    }
+//                }
+//            }
+//            case PointerType pointerType -> {
+//                return 4;
+//            }
+//            case StructType structType -> {
+//                return getStructSize(structType);
+//            }
+//            default -> {assert false; return 0;}
+//        }
+//    }
+//    private int getStructSize(StructType structType) {
+//        int size = 0;
+//        for(VarDecl vd: structType.std.vardecls){
+//            int cur = getSize(vd.type);
+//            size += cur;
+//            size += padding(cur); //align each member
+//        }
+//        return size;
+//    }
+//    private int padding(int sz){
+//        return (WORD_SIZE - (sz % WORD_SIZE)) % WORD_SIZE;
+//    }
 
 }

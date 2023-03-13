@@ -42,18 +42,23 @@ public class ExprCodeGen extends CodeGen {
                     }
 
                     //reserve space in stack for args
+                    section.emit("res space for args");
                     section.emit(OpCode.ADDI,Register.Arch.sp,Register.Arch.sp,-arg_size);
+
                     //push args onto stack
                     int offset=0;
                     for(Register r: args){
+                        section.emit("pushing arg into stack");
                         section.emit(OpCode.SW,r,Register.Arch.sp,offset);
                         offset+=4; //4 if not structs
                     }
 
                     //reserve space for return value
+                    section.emit("space for ret value");
                     section.emit(OpCode.ADDI,Register.Arch.sp,Register.Arch.sp,-ret_size);
 
                     //save return address
+                    section.emit("space to save ret addr");
                     section.emit(OpCode.ADDI,Register.Arch.sp,Register.Arch.sp,-4);
                     section.emit(OpCode.SW,Register.Arch.ra,Register.Arch.sp,0);
 
@@ -262,22 +267,6 @@ public class ExprCodeGen extends CodeGen {
         return size;
     }
 
-    private void saveRegisters(AssemblyProgram.Section section) {
-        //save $ra and $fp
-        section.emit(OpCode.ADDI,Register.Arch.sp,Register.Arch.sp,-8); //allocate space on stack
-        section.emit(OpCode.SW,Register.Arch.fp,Register.Arch.sp,0); //fp
-        section.emit(OpCode.SW,Register.Arch.ra,Register.Arch.sp,4); //ra
-    }
-    private void restoreRegisters(AssemblyProgram.Section section) {
-//        emit("lw $ra, 4($sp)"); // restore $ra
-//        emit("lw $fp, 0($sp)"); // restore $fp
-//        emit("addi $sp, $sp, 8");
-        section.emit(OpCode.LW,Register.Arch.ra,Register.Arch.sp,4); //ra
-        section.emit(OpCode.LW,Register.Arch.fp,Register.Arch.sp,0); //fp
-        section.emit(OpCode.ADDI,Register.Arch.sp,Register.Arch.sp,8); //deallocate space on stack
-
-    }
-
     private int get_args_size(FunCallExpr fce) {
         int size = 0;
         for(Expr expr: fce.args){
@@ -286,49 +275,49 @@ public class ExprCodeGen extends CodeGen {
         assert size%WORD_SIZE == 0; //this better be word aligned
         return size;
     }
-
-    public int getSize(Type type){
-        //in bytes
-        switch (type){
-            case ArrayType arrayType -> {
-                return arrayType.len * getSize(arrayType.t);
-            }
-            case BaseType baseType -> {
-                switch (baseType){
-                    case INT -> {
-                        return 4;
-                    }
-                    case CHAR -> {
-                        return 1;
-                    }
-                    case VOID -> {
-                        return 0; //for funcall
-                    }
-                    default -> {
-                        assert false;
-                        return 0;
-                    }
-                }
-            }
-            case PointerType pointerType -> {
-                return 4;
-            }
-            case StructType structType -> {
-                return getStructSize(structType);
-            }
-            default -> {assert false; return 0;}
-        }
-    }
-    private int getStructSize(StructType structType) {
-        int size = 0;
-        for(VarDecl vd: structType.std.vardecls){
-            int cur = getSize(vd.type);
-            size += cur;
-            size += padding(cur); //align each member
-        }
-        return size;
-    }
-    private int padding(int sz){
-        return (WORD_SIZE - (sz % WORD_SIZE)) % WORD_SIZE;
-    }
+//
+//    public int getSize(Type type){
+//        //in bytes
+//        switch (type){
+//            case ArrayType arrayType -> {
+//                return arrayType.len * getSize(arrayType.t);
+//            }
+//            case BaseType baseType -> {
+//                switch (baseType){
+//                    case INT -> {
+//                        return 4;
+//                    }
+//                    case CHAR -> {
+//                        return 1;
+//                    }
+//                    case VOID -> {
+//                        return 0; //for funcall
+//                    }
+//                    default -> {
+//                        assert false;
+//                        return 0;
+//                    }
+//                }
+//            }
+//            case PointerType pointerType -> {
+//                return 4;
+//            }
+//            case StructType structType -> {
+//                return getStructSize(structType);
+//            }
+//            default -> {assert false; return 0;}
+//        }
+//    }
+//    private int getStructSize(StructType structType) {
+//        int size = 0;
+//        for(VarDecl vd: structType.std.vardecls){
+//            int cur = getSize(vd.type);
+//            size += cur;
+//            size += padding(cur); //align each member
+//        }
+//        return size;
+//    }
+//    private int padding(int sz){
+//        return (WORD_SIZE - (sz % WORD_SIZE)) % WORD_SIZE;
+//    }
 }
