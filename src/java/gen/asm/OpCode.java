@@ -159,6 +159,7 @@ public abstract class OpCode {
     public static final BinaryArithmetic MULT = new BinaryArithmetic("mult");
     public static final BinaryArithmetic MULTU = new BinaryArithmetic("multu");
     public static final BinaryArithmetic MOVE = new BinaryArithmetic("move");
+    public static final BinaryArithmetic NOT = new BinaryArithmetic("not");
 
 
     /**
@@ -186,6 +187,7 @@ public abstract class OpCode {
     public static final ArithmeticWithImmediate SLTI = new ArithmeticWithImmediate("slti");
     public static final ArithmeticWithImmediate SLTIU = new ArithmeticWithImmediate("sltiu");
     public static final ArithmeticWithImmediate XORI = new ArithmeticWithImmediate("xori");
+
 
     /**
      * A list of all known type I arithmetic opcodes.

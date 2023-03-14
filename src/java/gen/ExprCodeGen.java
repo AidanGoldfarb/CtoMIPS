@@ -114,13 +114,14 @@ public class ExprCodeGen extends CodeGen {
                         //!(b>a)
                         Register rhsReg = visit(bo.rhs);
                         section.emit(OpCode.SLT,dst,lhsReg,rhsReg); //b>a
-                        section.emit(OpCode.XOR,dst,dst,dst); //flip
+                        //xor with 1
+                        section.emit(OpCode.XORI,dst,dst,1); //flip
                     }
                     case LE -> {
                         //!(b<a)
                         Register rhsReg = visit(bo.rhs);
                         section.emit(OpCode.SLT,dst,rhsReg,lhsReg); //b<a
-                        section.emit(OpCode.XOR,dst,dst,dst); //flip
+                        section.emit(OpCode.XORI,dst,dst,1); //flip
                     }
                     case NE -> {
                         // a xor b
@@ -131,7 +132,7 @@ public class ExprCodeGen extends CodeGen {
                         //a xnor b
                         Register rhsReg = visit(bo.rhs);
                         section.emit(OpCode.XOR,dst,lhsReg,rhsReg); //a xor b
-                        section.emit(OpCode.XOR,dst,dst,dst); //flip
+                        section.emit(OpCode.XORI,dst,dst,1); //flip
                     }
                     case OR -> { //needs to short circuit
                         //if LHS is 1, dont eval rhs

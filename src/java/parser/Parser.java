@@ -459,7 +459,7 @@ public class Parser {
             }
             else{
                 expect(TokenClass.GE);
-                op = Op.LT;
+                op = Op.GE;
             }
             Expr rhs = parseF();
             lhs = new BinOp(lhs,op,rhs);

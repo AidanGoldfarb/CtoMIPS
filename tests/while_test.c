@@ -41,11 +41,24 @@
 //struct s1 fst;
 //struct s1 snd;
 //struct s0 thrd;
-int foo(int a){
-    return a+5;
-}
+
+//int foo(int b){
+//    return b-1;
+//}
 void main(){
-    print_i(foo(5));
+    print_i(0<=0);
+//    int a;
+//    int b;
+//    a = 2;
+//    b = foo(a);
+//    print_i(b);
+//    if(b <= 1){
+//        print_i(11);
+//    }
+//    else{
+//        print_i(22);
+//    }
+
     //print_i(a);
     //print_i(a);
 //    int main;
