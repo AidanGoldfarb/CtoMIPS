@@ -41,23 +41,13 @@
 //struct s1 fst;
 //struct s1 snd;
 //struct s0 thrd;
-
-//int foo(int b){
-//    return b-1;
-//}
+int d;
+int foo(int a, int b, int c){
+    d = 5;
+    return a+b+c+d;
+}
 void main(){
-    print_i(0<=0);
-//    int a;
-//    int b;
-//    a = 2;
-//    b = foo(a);
-//    print_i(b);
-//    if(b <= 1){
-//        print_i(11);
-//    }
-//    else{
-//        print_i(22);
-//    }
+    print_i(foo(foo(15,13,12),1,2));
 
     //print_i(a);
     //print_i(a);
