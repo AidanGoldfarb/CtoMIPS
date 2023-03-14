@@ -34,7 +34,6 @@ public class StringParser extends CodeGen{
 
             }
             default -> {
-                System.out.println("p:" + p);
                 if(p.children() != null){
                     for(ASTNode child: p.children()){
                         visit(child);

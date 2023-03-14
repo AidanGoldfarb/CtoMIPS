@@ -23,14 +23,14 @@ public class ExprCodeGen extends CodeGen {
             case FunCallExpr fce -> {
                 if(fce.name.equals("print_i")){
                     Register val = visit(fce.args.get(0));
-                    section.emit(OpCode.MOVE ,Register.Arch.a0,val);
+                    section.emit(OpCode.ADDI ,Register.Arch.a0,val,0);
                     section.emit(OpCode.LI ,Register.Arch.v0,1);
                     section.emit(OpCode.SYSCALL);
                     return null;
                 }
                 else if(fce.name.equals("print_s") || fce.name.equals("print_c")){
                     Register val = visit(fce.args.get(0));
-                    section.emit(OpCode.MOVE ,Register.Arch.a0,val);
+                    section.emit(OpCode.ADDI ,Register.Arch.a0,val,0);
                     section.emit(OpCode.LI ,Register.Arch.v0,4);
                     section.emit(OpCode.SYSCALL);
                     return null;
@@ -38,7 +38,7 @@ public class ExprCodeGen extends CodeGen {
                 else if(fce.name.equals("read_i")){
                     section.emit(OpCode.LI ,Register.Arch.v0,5);
                     section.emit(OpCode.SYSCALL);
-                    section.emit(OpCode.MOVE ,dst,Register.Arch.v0);
+                    section.emit(OpCode.ADDI ,dst,Register.Arch.v0,0);
                     //section.emit(OpCode.SW,dst,dst,0);
                     return dst;
                 }
@@ -87,7 +87,7 @@ public class ExprCodeGen extends CodeGen {
                     section.emit(OpCode.LW,dst,Register.Arch.sp,4);
 
                     //restore return addr
-                    section.emit(OpCode.MOVE,Register.Arch.ra,Register.Arch.sp);
+                    section.emit(OpCode.ADDI,Register.Arch.ra,Register.Arch.sp,0);
 
                     //reset stack
                     section.emit(OpCode.ADDI,Register.Arch.sp,Register.Arch.sp,4+ret_size+arg_size);
@@ -198,20 +198,28 @@ public class ExprCodeGen extends CodeGen {
                 //by value
                 switch (assign.lhs.type){
                     case StructType st -> {
-                        int sizeInWords = getSize(st)/4; //assuming structs are word aligned
-                        System.out.println(sizeInWords);
-                        Register lhsReg = (new AddrCodeGen(this.asmProg)).visit(assign.lhs);
-                        Register rhsReg = (new AddrCodeGen(this.asmProg)).visit(assign.rhs);
-                        //copy size bytes
-                        while(sizeInWords > 0){
-                            Register val = Register.Virtual.create();
-                            section.emit(OpCode.LW,val,rhsReg,0);
-                            section.emit(OpCode.SW,val,lhsReg,0); //rhs -> lhs
-                            section.emit(OpCode.ADDI,lhsReg,lhsReg,4); //incr ptr
-                            section.emit(OpCode.ADDI,rhsReg,rhsReg,4); //incr ptr
-                            sizeInWords--;
+                        if(assign.rhs instanceof FunCallExpr){
+                            Register lhsReg = (new AddrCodeGen(this.asmProg)).visit(assign.lhs);
+                            Register ignored = visit(assign.rhs); //should write to lhs
+                            //section.emit(OpCode.MOVE,lhsReg,rhsReg);
+                            return lhsReg;
                         }
-                        return lhsReg;
+                        else{
+                            int sizeInWords = getSize(st)/4; //assuming structs are word aligned
+                            //System.out.println(sizeInWords);
+                            Register lhsReg = (new AddrCodeGen(this.asmProg)).visit(assign.lhs);
+                            Register rhsReg = (new AddrCodeGen(this.asmProg)).visit(assign.rhs);
+                            //copy size bytes
+                            while(sizeInWords > 0){
+                                Register val = Register.Virtual.create();
+                                section.emit(OpCode.LW,val,rhsReg,0);
+                                section.emit(OpCode.SW,val,lhsReg,0); //rhs -> lhs
+                                section.emit(OpCode.ADDI,lhsReg,lhsReg,4); //incr ptr
+                                section.emit(OpCode.ADDI,rhsReg,rhsReg,4); //incr ptr
+                                sizeInWords--;
+                            }
+                            return lhsReg;
+                        }
                     }
                     default -> {
                         //by reference

@@ -32,7 +32,7 @@ public class FunCodeGen extends CodeGen {
 
             section.emit(OpCode.ADDI,Register.Arch.sp,Register.Arch.sp,-4); //make space for fp
             section.emit(OpCode.SW,Register.Arch.fp,Register.Arch.sp,0); //old fp
-            section.emit(OpCode.MOVE,Register.Arch.fp,Register.Arch.sp); //new fp
+            section.emit(OpCode.ADDI,Register.Arch.fp,Register.Arch.sp,0); //new fp
 //            section.emit(OpCode.SW,Register.Arch.sp,Register.Arch.fp,0); //new fp
 
 

@@ -65,6 +65,23 @@ public class StmtCodeGen extends CodeGen {
                     }
                     else{
                         System.out.println("returning struct by value");
+                        int sizeInWords = getSize(aReturn.expr.type)/4;
+                        int fpOffset = 8;
+                        //fp+8 and beyond
+                        Register lhsReg = Register.Virtual.create(); //make this point to fp+8
+                        section.emit(OpCode.ADDI,lhsReg,Register.Arch.fp,0);
+                        section.emit(OpCode.ADDI,lhsReg,lhsReg,8);
+
+                        Register rhsReg = (new AddrCodeGen(this.asmProg).visit(aReturn.expr));
+                        //copy word by word
+                        while(sizeInWords > 0){
+                            Register val = Register.Virtual.create();
+                            section.emit(OpCode.LW,val,rhsReg,0);
+                            section.emit(OpCode.SW,val,lhsReg,0); //rhs -> lhs
+                            section.emit(OpCode.ADDI,lhsReg,lhsReg,4); //incr ptr
+                            section.emit(OpCode.ADDI,rhsReg,rhsReg,4); //incr ptr
+                            sizeInWords--;
+                        }
 
                     }
                 }

@@ -158,7 +158,7 @@ public abstract class OpCode {
     public static final BinaryArithmetic MSUBU = new BinaryArithmetic("msubu");
     public static final BinaryArithmetic MULT = new BinaryArithmetic("mult");
     public static final BinaryArithmetic MULTU = new BinaryArithmetic("multu");
-    public static final BinaryArithmetic MOVE = new BinaryArithmetic("move");
+    //public static final BinaryArithmetic MOVE = new BinaryArithmetic("move");
     public static final BinaryArithmetic NOT = new BinaryArithmetic("not");
 
 

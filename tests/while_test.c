@@ -52,21 +52,24 @@
 //    }
 //    return 0;
 //}
-struct s{int a; int b;};
+struct s{int a;};
 
 struct s foo(){
     struct s stc;
-//    stc.a = 5;
-//    stc.b = 7;
+    stc.a = 5;
     return stc;
 }
+
+//int foo(int a, int b){
+//    return a+b+1;
+//}
 
 void main(){
 //    struct s stc;
 //    stc = foo();
-//    int a;
-//    a = read_i();
-//    print_i(a);
+    int a;
+    a = read_i();
+    print_i(a);
     //a = 5;
     //print_i(a);
     //print_i(a);

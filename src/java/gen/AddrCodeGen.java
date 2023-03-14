@@ -40,9 +40,6 @@ public class AddrCodeGen extends CodeGen {
                 section.emit(OpCode.ADD,adr,adr,offset_reg);
                 return adr;
             }
-//            case ValueAtExpr valueAtExpr -> {
-//                //
-//            }
             case AddressOfExpr aoe -> {
                 return visit(aoe.expr);
             }
