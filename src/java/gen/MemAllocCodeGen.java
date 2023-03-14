@@ -10,7 +10,7 @@ import gen.asm.StaticAllocationDirective;
 
 public class MemAllocCodeGen extends CodeGen {
 
-    private static final int WORD_SIZE = 4;
+    //private static final int WORD_SIZE = 4;
 
     public MemAllocCodeGen(AssemblyProgram asmProg) {
         this.asmProg = asmProg;

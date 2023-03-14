@@ -1,5 +1,6 @@
 package ast;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public final class TypecastExpr extends Expr{
@@ -18,6 +19,9 @@ public final class TypecastExpr extends Expr{
     }
     @Override
     public List<ASTNode> children() {
-        return null;
+        List<ASTNode> children = new ArrayList();
+        children.add(this.type);
+        children.add(this.expr);
+        return children;
     }
 }

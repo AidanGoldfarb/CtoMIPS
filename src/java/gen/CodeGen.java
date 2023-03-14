@@ -56,6 +56,7 @@ public abstract class CodeGen {
     }
     public int getStructSize(StructType structType) {
         int size = 0;
+        //System.out.println("structtype dec: " + structType.std);
         for(VarDecl vd: structType.std.vardecls){
             int cur = getSize(vd.type);
             size += cur;

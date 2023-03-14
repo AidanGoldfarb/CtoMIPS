@@ -126,10 +126,13 @@ public final class AssemblyProgram {
         public void emit(StaticAllocationDirective sad){
             items.add(sad);
         }
+        public void emit(StaticStringDirective ssd){
+            items.add(ssd);
+        }
         public void print(final PrintWriter writer) {
             switch(type) {
-                case DATA : writer.println(".data"); break;
-                case TEXT : writer.println(".text"); break;
+                case DATA : writer.println("\n.data"); break;
+                case TEXT : writer.println("\n.text"); break;
             }
             items.forEach(item -> {
                     switch(item) {
@@ -141,6 +144,11 @@ public final class AssemblyProgram {
                             writer.print(sad.label+":\t");
                             writer.print(sad.dir+" ");
                             writer.println(sad.size);
+                        }
+                        case StaticStringDirective ssd -> {
+                            writer.print(ssd.l+":\t");
+                            writer.print(ssd.dir+" ");
+                            writer.println("\"" + ssd.str + "\"");
                         }
                     }}
             );

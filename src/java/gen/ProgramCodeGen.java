@@ -19,6 +19,11 @@ public class ProgramCodeGen extends CodeGen {
         this.dataSection = asmProg.newSection(AssemblyProgram.Section.Type.DATA);
     }
 
+    private void parse_strings(Program p, AssemblyProgram asmProg) {
+        StringParser sp = new StringParser(asmProg);
+        sp.visit(p);
+    }
+
     private void init_code(AssemblyProgram asmProg) {
         AssemblyProgram.Section textinit = new AssemblyProgram.Section(AssemblyProgram.Section.Type.TEXT);
         asmProg.emitSection(textinit);
@@ -30,6 +35,9 @@ public class ProgramCodeGen extends CodeGen {
         // allocate all variables
         MemAllocCodeGen allocator = new MemAllocCodeGen(asmProg);
         allocator.visit(p);
+
+        //parse strings
+        parse_strings(p,asmProg);
 
         // generate the code for each function
         p.decls.forEach((d) -> {

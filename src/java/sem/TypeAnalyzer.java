@@ -379,6 +379,10 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 				if(!struct_sym_table.containsKey(structType)){
 					error("Struct does not exist");
 				}
+				else{
+//					System.out.println("decl: " + struct_sym_table.get(structType));
+					structType.std = struct_sym_table.get(structType);
+				}
 			}
 		}
 	}
@@ -584,7 +588,6 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 			default -> {error("invalid cond"); return false; }
 		}
 	}
-
 
 	public int getSize(Type type){
 		//in bytes

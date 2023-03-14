@@ -1,6 +1,6 @@
 #include "minic-stdlib.h"
 
-int main() {
+void main() {
   int n;
   int first;
   int second;

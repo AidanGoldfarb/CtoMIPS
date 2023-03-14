@@ -23,7 +23,7 @@ public final class StructType implements Type {
     @Override
     public List<ASTNode> children() {
         List children = new ArrayList<ASTNode>();
-        children.add(this.name);
+        children.add(this.std);
         return children;
     }
 

@@ -55,11 +55,18 @@ public class StmtCodeGen extends CodeGen {
             }
             case ast.Return aReturn -> {
                 if(aReturn.expr != null){
-                    //emit code, move into return reg
-                    Register res = (new ExprCodeGen(this.asmProg)).visit(aReturn.expr);
-                    //this.asmProg.getCurrentSection().emit(OpCode.POP_REGISTERS);
-                    //int arg_size = get_args_size(aReturn.fd);
-                    section.emit(OpCode.SW,res,Register.Arch.fp,8); //fp + 4(old fp save) + 4 (old $ra) = 8
+                    //return reference
+                    if(!(aReturn.expr.type instanceof StructType)){
+                        //emit code, move into return reg
+                        Register res = (new ExprCodeGen(this.asmProg)).visit(aReturn.expr);
+                        //this.asmProg.getCurrentSection().emit(OpCode.POP_REGISTERS);
+                        //int arg_size = get_args_size(aReturn.fd);
+                        section.emit(OpCode.SW,res,Register.Arch.fp,8); //fp + 4(old fp save) + 4 (old $ra) = 8
+                    }
+                    else{
+                        System.out.println("returning struct by value");
+
+                    }
                 }
                 else{
                     //this.asmProg.getCurrentSection().emit(OpCode.POP_REGISTERS);

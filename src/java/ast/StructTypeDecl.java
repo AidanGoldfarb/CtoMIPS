@@ -30,8 +30,9 @@ public final class StructTypeDecl extends Decl {
         super.name = "struct " + st.name;
     }
     public List<ASTNode> children() {
-
-        return new ArrayList(); // To change!
+        ArrayList children = new ArrayList<ASTNode>();
+        children.addAll(this.vardecls);
+        return children;
     }
 
     @Override

@@ -28,6 +28,20 @@ public class ExprCodeGen extends CodeGen {
                     section.emit(OpCode.SYSCALL);
                     return null;
                 }
+                else if(fce.name.equals("print_s") || fce.name.equals("print_c")){
+                    Register val = visit(fce.args.get(0));
+                    section.emit(OpCode.MOVE ,Register.Arch.a0,val);
+                    section.emit(OpCode.LI ,Register.Arch.v0,4);
+                    section.emit(OpCode.SYSCALL);
+                    return null;
+                }
+                else if(fce.name.equals("read_i")){
+                    section.emit(OpCode.LI ,Register.Arch.v0,5);
+                    section.emit(OpCode.SYSCALL);
+                    section.emit(OpCode.MOVE ,dst,Register.Arch.v0);
+                    //section.emit(OpCode.SW,dst,dst,0);
+                    return dst;
+                }
                 //general funcall
                 else{
                     ArrayList<Register> args = new ArrayList<>(); //lst of registers for arg values
@@ -203,6 +217,7 @@ public class ExprCodeGen extends CodeGen {
                         //by reference
                         Register lhsReg = (new AddrCodeGen(this.asmProg)).visit(assign.lhs);
                         Register rhsReg = visit(assign.rhs);
+                        section.emit("storing rhs in lhs");
                         section.emit(OpCode.SW,rhsReg,lhsReg,0);
                         return lhsReg;
                     }
@@ -220,8 +235,9 @@ public class ExprCodeGen extends CodeGen {
                 return optimize_me_out;
             }
             case StrLiteral sl -> {
-                //should be in data section with label, not sure if done here
-                return null;
+               //load label into reg
+                section.emit(OpCode.LA,dst,sl.label);
+                return dst;
             }
             case VarExpr ve -> {
                 //return (new AddrCodeGen(this.asmProg)).visit(ve);
@@ -251,6 +267,10 @@ public class ExprCodeGen extends CodeGen {
             }
             case AddressOfExpr aoe -> {
                 return (new AddrCodeGen(this.asmProg)).visit(aoe);
+            }
+            case TypecastExpr tce -> {
+                tce.expr.type = tce.type;
+                return visit(tce.expr);
             }
             default -> {
                 System.out.println("not implemented (ECG): " + e);

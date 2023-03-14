@@ -41,14 +41,33 @@
 //struct s1 fst;
 //struct s1 snd;
 //struct s0 thrd;
-int d;
-int foo(int a, int b, int c){
-    d = 5;
-    return a+b+c+d;
-}
-void main(){
-    print_i(foo(foo(15,13,12),1,2));
+//int counter;
+//int foo(){
+//    while(counter){
+//        if(counter%2==0){
+//            print_i(counter);
+//        }
+//
+//        counter = counter-1;
+//    }
+//    return 0;
+//}
+struct s{int a; int b;};
 
+struct s foo(){
+    struct s stc;
+//    stc.a = 5;
+//    stc.b = 7;
+    return stc;
+}
+
+void main(){
+//    struct s stc;
+//    stc = foo();
+//    int a;
+//    a = read_i();
+//    print_i(a);
+    //a = 5;
     //print_i(a);
     //print_i(a);
 //    int main;
