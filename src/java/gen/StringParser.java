@@ -13,8 +13,8 @@ public class StringParser extends CodeGen{
     public void visit(ASTNode p){
         switch (p){
             case StrLiteral sl-> {
-                //System.out.println("sz: " + sl.len);
-                int padding = padding(sl.len+1);
+                int num_escape = count_num_escape(sl.str);
+                int padding = padding(sl.len+1 - num_escape);
                 Section section = this.asmProg.getCurrentSection();
                 assert section.type == Section.Type.DATA;
 
@@ -31,7 +31,7 @@ public class StringParser extends CodeGen{
                 }
             }
             case null -> {
-
+                System.out.println("null: " + p);
             }
             default -> {
                 if(p.children() != null){
@@ -39,9 +39,22 @@ public class StringParser extends CodeGen{
                         visit(child);
                     }
                 }
+                else{
+                    System.out.println("no kids: " + p);
+                }
 
             }
 
         }
+    }
+
+    private int count_num_escape(String str) {
+        int count = 0;
+        for (int i = 0; i < str.length(); i++) {
+            if (str.charAt(i) == '\\') {
+                count++;
+            }
+        }
+        return count;
     }
 }

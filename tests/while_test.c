@@ -62,9 +62,14 @@
 #include "minic-stdlib.h"
 
 void main() {
-    char b;
-    b = read_c();
-    print_c(b);
+    char* str;
+    str = (char*)"\nhello\n";
+    print_s(str);
+    //print_s(str);
+//    print_s((char*)"\t");
+//    char b;
+//    b = read_c();
+//    print_c(b);
     //print_c(b);
 //  int n;
 //  int first;

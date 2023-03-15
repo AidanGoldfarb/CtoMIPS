@@ -56,7 +56,6 @@ public class Tokeniser {
         //print_rest(); //debug
         int line = scanner.getLine();
         int column = scanner.getColumn();
-
         // get the next character
         char c;
         try{
@@ -441,6 +440,7 @@ public class Tokeniser {
             }
             return new Token(TokenClass.INT_LITERAL, sb.toString(), line, column);
         }
+
 
         //char_literal
         if( c == '\''){

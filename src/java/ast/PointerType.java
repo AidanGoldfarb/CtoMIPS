@@ -1,5 +1,6 @@
 package ast;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -18,7 +19,9 @@ public final class PointerType implements Type{
 
     @Override
     public List<ASTNode> children() {
-        return null;
+        List<ASTNode> children = new ArrayList();
+        children.add(this.type);
+        return children;
     }
 
     @Override
