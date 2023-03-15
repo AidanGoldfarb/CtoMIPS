@@ -157,8 +157,8 @@ public class ExprCodeGen extends CodeGen {
                     case EQ -> {
                         //a xnor b
                         Register rhsReg = visit(bo.rhs);
-                        section.emit(OpCode.XOR,dst,lhsReg,rhsReg); //a xor b
-                        section.emit(OpCode.XORI,dst,dst,1); //flip
+                        section.emit(OpCode.XOR,dst,lhsReg,rhsReg);
+                        section.emit(OpCode.SLTIU,dst,dst,1);
                     }
                     case OR -> { //needs to short circuit
                         //if LHS is 1, dont eval rhs

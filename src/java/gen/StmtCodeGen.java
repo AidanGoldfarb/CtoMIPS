@@ -51,6 +51,7 @@ public class StmtCodeGen extends CodeGen {
                 section.emit(elselabel);
                 if(anIf.estmt != null)
                     visit(anIf.estmt);
+
                 section.emit(endif);
             }
             case ast.Return aReturn -> {
