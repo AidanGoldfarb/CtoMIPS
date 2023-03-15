@@ -252,7 +252,7 @@ public class ExprCodeGen extends CodeGen {
             case ChrLiteral cl -> {
                 Register optimize_me_out = Register.Virtual.create();
                 section.emit(OpCode.LI,optimize_me_out,cl.c);
-                section.emit(OpCode.LB,optimize_me_out,optimize_me_out,0);
+                //section.emit(OpCode.LB,optimize_me_out,optimize_me_out,0);
                 return optimize_me_out;
             }
             case StrLiteral sl -> {

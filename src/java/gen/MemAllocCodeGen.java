@@ -35,7 +35,9 @@ public class MemAllocCodeGen extends CodeGen {
                     }
                 }
                 else{
-                    this.fpOffset -= getSize(vd.type);
+                    int size = getSize(vd.type);
+                    int padding = padding(size);
+                    this.fpOffset -= size+padding;
                     vd.fpOffset = this.fpOffset;
 
                 }
