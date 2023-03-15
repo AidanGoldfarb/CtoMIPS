@@ -61,10 +61,188 @@
 //}
 #include "minic-stdlib.h"
 
+char a11; char a12; char a13;
+char a21; char a22; char a23;
+char a31; char a32; char a33;
+char empty; // Empty cell character
+
+// Resets the board
+void reset() {
+ a11 = empty; a12 = empty;  a13 = empty;
+ a21 = empty; a22 = empty;  a23 = empty;
+ a31 = empty; a32 = empty;  a33 = empty;
+}
+
+int set(char row, int col, char mark) {
+  int r;
+  r = 1;
+  if (row == 'a') {
+     if (col == 1) {
+        if (a11 == empty)
+	    a11 = mark;
+	else
+	  r = -1;
+     } else {
+       if (col == 2) {
+         if (a12 == empty)
+           a12 = mark;
+	 else
+	   r = -1;
+       } else {
+         if (col == 3) {
+	   if (a13 == empty)
+              a13 = mark;
+	   else
+	     r = -1;
+         } else {
+           r = 0;
+         }
+       }
+    }
+  } else {
+    if (row == 'b') {
+       if (col == 1) {
+          if (a21 == empty)
+            a21 = mark;
+	  else
+	    r = -1;
+       } else {
+         if (col == 2) {
+	    if (a22 == empty)
+              a22 = mark;
+	    else
+	      r = -1;
+         } else {
+	    if (col == 3) {
+	      if (a23 == empty)
+                 a23 = mark;
+              else
+	       r = -1;
+            } else {
+	      r = 0;
+	    }
+	}
+      }
+    } else {
+     if (row == 'c') {
+        if (col == 1) {
+	   if (a31 == empty)
+             a31 = mark;
+	   else
+	     r = -1;
+        } else {
+           if (col == 2) {
+	      if (a32 == empty)
+                a32 = mark;
+              else
+	        r = -1;
+           } else {
+              if (col == 3) {
+	        if (a33 == empty)
+                   a33 = mark;
+		else
+		  r = -1;
+	      } else {
+	        r = 0;
+	      }
+          }
+        }
+     } else {
+       r = 0;
+     }
+   }
+  }
+ return r;
+}
+
+// Prints the game board to stdout
+void printGame() {
+  print_s((char*)"\n");
+  print_s((char*)"     1   2   3\n");
+  print_s((char*)"   +---+---+---+\n");
+  print_s((char*)"a  | ");print_c(a11);print_s((char*)" | ");print_c(a12);print_s((char*)" | ");print_c(a13);print_s((char*)" |\n");
+  print_s((char*)"   +---+---+---+\n");
+  print_s((char*)"b  | ");print_c(a21);print_s((char*)" | ");print_c(a22);print_s((char*)" | ");print_c(a23);print_s((char*)" |\n");
+  print_s((char*)"   +---+---+---+\n");
+  print_s((char*)"c  | ");print_c(a31);print_s((char*)" | ");print_c(a32);print_s((char*)" | ");print_c(a33);print_s((char*)" |\n");
+  print_s((char*)"   +---+---+---+\n");
+  print_s((char*)"\n");
+}
+
+// Gets the mark for player 1 or 2
+char get_mark(int player) {
+  if (player == 1)
+    return 'X';
+  else
+    return 'O';
+}
+
+// Asks the current player to select his/her move.
+void selectmove(int player) {
+  char row; int col; int selected; int success;
+  char mark;
+  selected = 1;
+  while(selected) {
+    print_s((char*)"Player ");print_i(player);print_s((char*)" select move (e.g. a2)>");
+    row = read_c(); col = read_i();
+
+    mark = get_mark(player);
+    success = set(row,col,mark);
+      if (success == 0) {
+      	 print_s((char*)"That is not a valid move!\n");
+      } else {
+        if (success == -1)
+	  print_s((char*)"That move is not possible!\n");
+        else
+	  selected = 0;
+      }
+  }
+}
+
 void main() {
-    char* str;
-    str = (char*)"\nhello\n";
-    print_s(str);
+    char mark;
+    mark = get_mark(0);
+//    char row;
+//    int col;
+//    int selected;
+//    int success;
+//    char mark;
+//    int player;
+//    selected = 1;
+//    player = 1;
+//    while(selected){
+//        print_s((char*)"Player ");
+//        print_i(player);
+//        print_s((char*)" select move (e.g. a2)>");
+//        row = read_c();
+//        col = read_i();
+//        mark = get_mark(player);
+//
+//
+//        selected = 0;
+//    }
+
+
+//    int playing;
+//    int player;
+//    char mark; char yesno;
+//
+//    empty = ' ';
+//    playing = 1;
+//    reset();
+//    printGame();
+//
+//    player = 1;
+//    reset();
+//    printGame();
+//    while( playing ){
+//        selectmove(player); //breaks
+//        playing = 0;
+//    }
+/////////END TICTACTOE
+
+
+
     //print_s(str);
 //    print_s((char*)"\t");
 //    char b;

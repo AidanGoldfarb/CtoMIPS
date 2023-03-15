@@ -111,7 +111,7 @@ public class StmtCodeGen extends CodeGen {
                 Register exprReg = (new ExprCodeGen(this.asmProg)).visit(aWhile.expr);
                 visit(aWhile.stmt);
 
-                section.emit(OpCode.BEQ,exprReg,Register.Arch.zero,exitwhile);
+                section.emit(OpCode.BNE,exprReg,Register.Arch.zero,exitwhile);
                 section.emit(OpCode.J,loop);
                 section.emit(exitwhile);
             }

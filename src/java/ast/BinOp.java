@@ -1,5 +1,6 @@
 package ast;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public final class BinOp extends Expr{
@@ -22,6 +23,9 @@ public final class BinOp extends Expr{
 
     @Override
     public List<ASTNode> children() {
-        return null;
+        ArrayList<ASTNode> children = new ArrayList<>();
+        children.add(lhs);
+        children.add(rhs);
+        return children;
     }
 }

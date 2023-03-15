@@ -1,5 +1,6 @@
 package ast;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public final class ChrLiteral extends Expr{
@@ -16,6 +17,7 @@ public final class ChrLiteral extends Expr{
     }
     @Override
     public List<ASTNode> children() {
-        return null;
+        ArrayList<ASTNode> children = new ArrayList<>();
+        return children;
     }
 }
