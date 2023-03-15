@@ -52,24 +52,79 @@
 //    }
 //    return 0;
 //}
-struct s{int a;};
+//struct s{int a;};
+//
+//struct s foo(){
+//    struct s stc;
+//    stc.a = 5;
+//    return stc;
+//}
+#include "minic-stdlib.h"
 
-struct s foo(){
-    struct s stc;
-    stc.a = 5;
-    return stc;
+void main() {
+  int n;
+  int first;
+  int second;
+  int next;
+  int c;
+  char t;
+
+  //read n from the standard input
+  n = read_i();
+
+  first = 0;
+  second = 1;
+
+  print_s((char*)"First ");
+  print_i(n);
+  print_s((char*)" terms of Fibonacci series are : ");
+
+  c = 0;
+  while (c < n) {
+    if ( c <= 1 )
+        next = c;
+    else
+      {
+        next = first + second;
+        first = second;
+        second = next;
+      }
+    print_i(next);
+    print_s((char*)" ");
+    c = c+1;
+  }
 }
 
-//int foo(int a, int b){
-//    return a+b+1;
-//}
 
-void main(){
+
+
+
+
+
+
+
+
+//void foo(int n){
+//    while(n>0){
+//        print_i(n);
+//        n = n-1;
+//    }
+//}
+//
+//void main(){
+//    int n;
+//    n = 10;
+//    foo(n);
 //    struct s stc;
 //    stc = foo();
-    int a;
-    a = read_i();
-    print_i(a);
+//    print_i(stc.a);
+    //char c;
+    //c = 'c';
+    //c = read_c();
+    //print_c(c);
+//    int a;
+//    a = read_i();
+//    print_i(a);
     //a = 5;
     //print_i(a);
     //print_i(a);
@@ -83,7 +138,7 @@ void main(){
 //    while(a){
 //        print_i(a);
 //        a = a-1;
-}
+//}
 
 //   int ptr [4];
 //   ptr[0] = 6;

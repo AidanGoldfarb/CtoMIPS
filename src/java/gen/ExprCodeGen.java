@@ -28,10 +28,17 @@ public class ExprCodeGen extends CodeGen {
                     section.emit(OpCode.SYSCALL);
                     return null;
                 }
-                else if(fce.name.equals("print_s") || fce.name.equals("print_c")){
+                else if(fce.name.equals("print_s")){
                     Register val = visit(fce.args.get(0));
                     section.emit(OpCode.ADDI ,Register.Arch.a0,val,0);
                     section.emit(OpCode.LI ,Register.Arch.v0,4);
+                    section.emit(OpCode.SYSCALL);
+                    return null;
+                }
+                else if(fce.name.equals("print_c")){
+                    Register val = visit(fce.args.get(0));
+                    section.emit(OpCode.ADDI ,Register.Arch.a0,val,0);
+                    section.emit(OpCode.LI ,Register.Arch.v0,11);
                     section.emit(OpCode.SYSCALL);
                     return null;
                 }
@@ -39,7 +46,12 @@ public class ExprCodeGen extends CodeGen {
                     section.emit(OpCode.LI ,Register.Arch.v0,5);
                     section.emit(OpCode.SYSCALL);
                     section.emit(OpCode.ADDI ,dst,Register.Arch.v0,0);
-                    //section.emit(OpCode.SW,dst,dst,0);
+                    return dst;
+                }
+                else if(fce.name.equals("read_c")){
+                    section.emit(OpCode.LI ,Register.Arch.v0,12);
+                    section.emit(OpCode.SYSCALL);
+                    section.emit(OpCode.ADDI ,dst,Register.Arch.v0,0);
                     return dst;
                 }
                 //general funcall
@@ -240,6 +252,7 @@ public class ExprCodeGen extends CodeGen {
             case ChrLiteral cl -> {
                 Register optimize_me_out = Register.Virtual.create();
                 section.emit(OpCode.LI,optimize_me_out,cl.c);
+                section.emit(OpCode.LB,optimize_me_out,optimize_me_out,0);
                 return optimize_me_out;
             }
             case StrLiteral sl -> {

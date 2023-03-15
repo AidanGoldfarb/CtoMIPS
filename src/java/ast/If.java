@@ -1,5 +1,6 @@
 package ast;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public final class If extends Stmt {
@@ -24,6 +25,12 @@ public final class If extends Stmt {
 
     @Override
     public List<ASTNode> children() {
-        return null;
+        ArrayList<ASTNode> children = new ArrayList<>();
+        children.add(this.expr);
+        children.add(this.istmt);
+        if(this.estmt != null){
+            children.add(estmt);
+        }
+        return children;
     }
 }
