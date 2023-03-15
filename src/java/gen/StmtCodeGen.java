@@ -63,6 +63,7 @@ public class StmtCodeGen extends CodeGen {
                         //this.asmProg.getCurrentSection().emit(OpCode.POP_REGISTERS);
                         //int arg_size = get_args_size(aReturn.fd);
                         section.emit(OpCode.SW,res,Register.Arch.fp,8); //fp + 4(old fp save) + 4 (old $ra) = 8
+                        System.out.println("FIX ME (place j $ra)");
                     }
                     else{
                         System.out.println("returning struct by value");
@@ -110,9 +111,8 @@ public class StmtCodeGen extends CodeGen {
 
                 section.emit(loop);
                 Register exprReg = (new ExprCodeGen(this.asmProg)).visit(aWhile.expr);
+                section.emit(OpCode.BEQ,exprReg,Register.Arch.zero,exitwhile);
                 visit(aWhile.stmt);
-
-                section.emit(OpCode.BNE,exprReg,Register.Arch.zero,exitwhile);
                 section.emit(OpCode.J,loop);
                 section.emit(exitwhile);
             }

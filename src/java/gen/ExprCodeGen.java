@@ -59,7 +59,7 @@ public class ExprCodeGen extends CodeGen {
                     ArrayList<Register> args = new ArrayList<>(); //lst of registers for arg values
                     int arg_size = get_args_size(fce);
                     int ret_size = getSize(fce.type);
-                    int local_var_size = get_local_var_size(fce);
+                    //int local_var_size = get_local_var_size(fce);
 
                     //generate args code, put them in regs
                     for(Expr expr: fce.args){ //assuming not structs now
@@ -92,14 +92,12 @@ public class ExprCodeGen extends CodeGen {
                     section.emit(OpCode.JAL,Label.get(fce.name)); //sets $ra to next spot in memory
 
                     //load return value
-                    //section.emit(OpCode.LW,dst,Register.Arch.sp,arg_size);
-                    //section.emit(OpCode.MOVE,dst,Register.Arch.v0);
-                    //read return from (reset) fp + localvar+returnsize
-                    //section.emit(OpCode.LW,dst,Register.Arch.fp,-(local_var_size+arg_size+ret_size));
-                    section.emit(OpCode.LW,dst,Register.Arch.sp,4);
+                    if(fce.type != ast.BaseType.VOID)
+                        section.emit(OpCode.LW,dst,Register.Arch.sp,4);
 
                     //restore return addr
-                    section.emit(OpCode.ADDI,Register.Arch.ra,Register.Arch.sp,0);
+                    //section.emit(OpCode.ADDI,Register.Arch.ra,Register.Arch.sp,0);
+                    section.emit(OpCode.LW,Register.Arch.ra,Register.Arch.sp,0); //fuck me actually
 
                     //reset stack
                     section.emit(OpCode.ADDI,Register.Arch.sp,Register.Arch.sp,4+ret_size+arg_size);
