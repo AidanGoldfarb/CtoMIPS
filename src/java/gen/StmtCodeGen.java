@@ -63,12 +63,14 @@ public class StmtCodeGen extends CodeGen {
                         //this.asmProg.getCurrentSection().emit(OpCode.POP_REGISTERS);
                         //int arg_size = get_args_size(aReturn.fd);
                         section.emit(OpCode.SW,res,Register.Arch.fp,8); //fp + 4(old fp save) + 4 (old $ra) = 8
-                        System.out.println("FIX ME (place j $ra)");
+                        section.emit("should jump back here");
+                        emitEpilogue(section,get_local_var_size(aReturn.fd));
+                        section.emit(OpCode.JR, Register.Arch.ra);
+                        //System.out.println("FIX ME (place j $ra)");
                     }
                     else{
                         System.out.println("returning struct by value");
                         int sizeInWords = getSize(aReturn.expr.type)/4;
-                        int fpOffset = 8;
                         //fp+8 and beyond
                         Register lhsReg = Register.Virtual.create(); //make this point to fp+8
                         section.emit(OpCode.ADDI,lhsReg,Register.Arch.fp,0);
@@ -84,7 +86,9 @@ public class StmtCodeGen extends CodeGen {
                             section.emit(OpCode.ADDI,rhsReg,rhsReg,4); //incr ptr
                             sizeInWords--;
                         }
-
+                        section.emit("should jump back here");
+                        //emitEpilogue(section,get_local_var_size(aReturn.fd));
+                        //section.emit(OpCode.JR, Register.Arch.ra);
                     }
                 }
                 else{

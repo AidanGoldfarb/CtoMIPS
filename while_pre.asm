@@ -113,6 +113,7 @@ sw v43,0(v41)
 popRegisters
 # Done with function body
 # Begin Epilogue
+popRegisters
 addi $sp,$sp,0
 lw $fp,0($sp)
 addi $sp,$sp,4
@@ -286,14 +287,33 @@ sltiu v184,v184,1
 beq v184,$zero,label_70_else
 li v191,1
 sw v191,8($fp)
+# should jump back here
+# Begin Epilogue
+popRegisters
+addi $sp,$sp,4
+lw $fp,0($sp)
+addi $sp,$sp,4
+jr $ra
+# End Epilogue
+jr $ra
 j label_71_endif
 label_70_else:
 li v193,0
 sw v193,8($fp)
+# should jump back here
+# Begin Epilogue
+popRegisters
+addi $sp,$sp,4
+lw $fp,0($sp)
+addi $sp,$sp,4
+jr $ra
+# End Epilogue
+jr $ra
 label_71_endif:
 popRegisters
 # Done with function body
 # Begin Epilogue
+popRegisters
 addi $sp,$sp,4
 lw $fp,0($sp)
 addi $sp,$sp,4
@@ -631,9 +651,19 @@ label_74_endif:
 addi v459,$fp,-8
 lw v458,0(v459)
 sw v458,8($fp)
+# should jump back here
+# Begin Epilogue
+popRegisters
+addi $sp,$sp,4
+lw $fp,0($sp)
+addi $sp,$sp,4
+jr $ra
+# End Epilogue
+jr $ra
 popRegisters
 # Done with function body
 # Begin Epilogue
+popRegisters
 addi $sp,$sp,4
 lw $fp,0($sp)
 addi $sp,$sp,4
@@ -775,6 +805,7 @@ syscall
 popRegisters
 # Done with function body
 # Begin Epilogue
+popRegisters
 addi $sp,$sp,0
 lw $fp,0($sp)
 addi $sp,$sp,4
@@ -808,6 +839,7 @@ syscall
 popRegisters
 # Done with function body
 # Begin Epilogue
+popRegisters
 addi $sp,$sp,0
 lw $fp,0($sp)
 addi $sp,$sp,4
@@ -833,14 +865,33 @@ sltiu v563,v563,1
 beq v563,$zero,label_118_else
 li v570,2
 sw v570,8($fp)
+# should jump back here
+# Begin Epilogue
+popRegisters
+addi $sp,$sp,0
+lw $fp,0($sp)
+addi $sp,$sp,4
+jr $ra
+# End Epilogue
+jr $ra
 j label_119_endif
 label_118_else:
 li v572,1
 sw v572,8($fp)
+# should jump back here
+# Begin Epilogue
+popRegisters
+addi $sp,$sp,0
+lw $fp,0($sp)
+addi $sp,$sp,4
+jr $ra
+# End Epilogue
+jr $ra
 label_119_endif:
 popRegisters
 # Done with function body
 # Begin Epilogue
+popRegisters
 addi $sp,$sp,0
 lw $fp,0($sp)
 addi $sp,$sp,4
@@ -866,14 +917,33 @@ sltiu v573,v573,1
 beq v573,$zero,label_121_else
 li v580,88
 sw v580,8($fp)
+# should jump back here
+# Begin Epilogue
+popRegisters
+addi $sp,$sp,0
+lw $fp,0($sp)
+addi $sp,$sp,4
+jr $ra
+# End Epilogue
+jr $ra
 j label_122_endif
 label_121_else:
 li v582,79
 sw v582,8($fp)
+# should jump back here
+# Begin Epilogue
+popRegisters
+addi $sp,$sp,0
+lw $fp,0($sp)
+addi $sp,$sp,4
+jr $ra
+# End Epilogue
+jr $ra
 label_122_endif:
 popRegisters
 # Done with function body
 # Begin Epilogue
+popRegisters
 addi $sp,$sp,0
 lw $fp,0($sp)
 addi $sp,$sp,4
@@ -1005,6 +1075,7 @@ label_125_exitwhile:
 popRegisters
 # Done with function body
 # Begin Epilogue
+popRegisters
 addi $sp,$sp,20
 lw $fp,0($sp)
 addi $sp,$sp,4
@@ -1271,9 +1342,19 @@ label_168_endif:
 addi v834,$fp,-32
 lw v833,0(v834)
 sw v833,8($fp)
+# should jump back here
+# Begin Epilogue
+popRegisters
+addi $sp,$sp,4
+lw $fp,0($sp)
+addi $sp,$sp,4
+jr $ra
+# End Epilogue
+jr $ra
 popRegisters
 # Done with function body
 # Begin Epilogue
+popRegisters
 addi $sp,$sp,4
 lw $fp,0($sp)
 addi $sp,$sp,4

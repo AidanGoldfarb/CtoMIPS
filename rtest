@@ -1,1 +1,1 @@
-java -jar desc/part3/Mars4_5.jar while_output.asm
+java -jar desc/part3/Mars4_5.jar sm nc me while_output.asm

@@ -2,6 +2,8 @@ package gen;
 
 import ast.*;
 import gen.asm.AssemblyProgram;
+import gen.asm.OpCode;
+import gen.asm.Register;
 
 public abstract class CodeGen {
     public static final int WORD_SIZE = 4;
@@ -66,5 +68,28 @@ public abstract class CodeGen {
     }
     public int padding(int sz){
         return (WORD_SIZE - (sz % WORD_SIZE)) % WORD_SIZE;
+    }
+
+    public void emitPrologue(AssemblyProgram.Section section, int local_var_size){
+        section.emit("Begin Prologue");
+        section.emit(OpCode.ADDI,Register.Arch.sp,Register.Arch.sp,-4); //make space for fp
+        section.emit(OpCode.SW,Register.Arch.fp,Register.Arch.sp,0); //old fp
+        section.emit(OpCode.ADDI,Register.Arch.fp,Register.Arch.sp,0); //new fp
+
+        //make space for local vars
+        section.emit(OpCode.ADDI,Register.Arch.sp,Register.Arch.sp,-local_var_size);
+
+        //save registers
+        section.emit("End Prologue");
+    }
+
+    public void emitEpilogue(AssemblyProgram.Section section, int local_var_size){
+        section.emit("Begin Epilogue");
+        section.emit(OpCode.POP_REGISTERS); //this breaks
+        section.emit(OpCode.ADDI, Register.Arch.sp,Register.Arch.sp,local_var_size);
+        section.emit(OpCode.LW,Register.Arch.fp,Register.Arch.sp,0); //reset fp
+        section.emit(OpCode.ADDI,Register.Arch.sp,Register.Arch.sp,4); //restore sp
+        section.emit(OpCode.JR,Register.Arch.ra);
+        section.emit("End Epilogue");
     }
 }

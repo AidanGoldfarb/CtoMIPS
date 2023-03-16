@@ -29,18 +29,7 @@ public class FunCodeGen extends CodeGen {
         // 1) emit the prolog
         if(!fd.name.equals("main")){
             // Emit function prologue
-            section.emit("Begin Prologue");
-            section.emit(OpCode.ADDI,Register.Arch.sp,Register.Arch.sp,-4); //make space for fp
-            section.emit(OpCode.SW,Register.Arch.fp,Register.Arch.sp,0); //old fp
-            section.emit(OpCode.ADDI,Register.Arch.fp,Register.Arch.sp,0); //new fp
-//            section.emit(OpCode.SW,Register.Arch.sp,Register.Arch.fp,0); //new fp
-
-
-            //make space for local vars
-            section.emit(OpCode.ADDI,Register.Arch.sp,Register.Arch.sp,-local_var_size);
-
-            //save registers
-            section.emit("End Prologue");
+            emitPrologue(section,local_var_size);
         }
 
         // 2) emit the body of the function
@@ -54,13 +43,7 @@ public class FunCodeGen extends CodeGen {
         // 3) emit the epilog
         if(!fd.name.equals("main")) {
             // Emit function epilogue
-            //restore sp
-            section.emit("Begin Epilogue");
-            section.emit(OpCode.ADDI,Register.Arch.sp,Register.Arch.sp,local_var_size);
-            section.emit(OpCode.LW,Register.Arch.fp,Register.Arch.sp,0); //reset fp
-            section.emit(OpCode.ADDI,Register.Arch.sp,Register.Arch.sp,4); //restore sp
-            section.emit(OpCode.JR,Register.Arch.ra);
-            section.emit("End Epilogue");
+            emitEpilogue(section,local_var_size);
         }
 
     }
