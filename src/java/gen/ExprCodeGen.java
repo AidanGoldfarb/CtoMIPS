@@ -92,8 +92,13 @@ public class ExprCodeGen extends CodeGen {
                     section.emit(OpCode.JAL,Label.get(fce.name)); //sets $ra to next spot in memory
 
                     //load return value
-                    if(fce.type != ast.BaseType.VOID)
-                        section.emit(OpCode.LW,dst,Register.Arch.sp,4);
+                    if(fce.type != ast.BaseType.VOID) {
+                        System.out.println("i am here!");
+                        section.emit(OpCode.LW, dst, Register.Arch.sp, 4);
+                    }
+//                    else if (fce.type instanceof StructType) {
+//                        //allocate space( maybe before), save struct again)
+//                    }
 
                     //restore return addr
                     //section.emit(OpCode.ADDI,Register.Arch.ra,Register.Arch.sp,0);
@@ -210,8 +215,9 @@ public class ExprCodeGen extends CodeGen {
                     case StructType st -> {
                         if(assign.rhs instanceof FunCallExpr){
                             Register lhsReg = (new AddrCodeGen(this.asmProg)).visit(assign.lhs);
-                            Register ignored = visit(assign.rhs); //should write to lhs
-                            //section.emit(OpCode.MOVE,lhsReg,rhsReg);
+                            Register rhsReg = visit(assign.rhs); //
+                            //section.emit(OpCode.SW,rhsReg,lhsReg,0); //old
+                            storeStruct(lhsReg,rhsReg,getSize(assign.rhs.type)/4,section);
                             return lhsReg;
                         }
                         else{

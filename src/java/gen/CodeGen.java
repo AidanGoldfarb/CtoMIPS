@@ -4,6 +4,7 @@ import ast.*;
 import gen.asm.AssemblyProgram;
 import gen.asm.OpCode;
 import gen.asm.Register;
+import gen.asm.AssemblyProgram.Section;
 
 public abstract class CodeGen {
     public static final int WORD_SIZE = 4;
@@ -85,11 +86,23 @@ public abstract class CodeGen {
 
     public void emitEpilogue(AssemblyProgram.Section section, int local_var_size){
         section.emit("Begin Epilogue");
-        section.emit(OpCode.POP_REGISTERS); //this breaks
+        section.emit(OpCode.POP_REGISTERS);
         section.emit(OpCode.ADDI, Register.Arch.sp,Register.Arch.sp,local_var_size);
         section.emit(OpCode.LW,Register.Arch.fp,Register.Arch.sp,0); //reset fp
         section.emit(OpCode.ADDI,Register.Arch.sp,Register.Arch.sp,4); //restore sp
         section.emit(OpCode.JR,Register.Arch.ra);
         section.emit("End Epilogue");
+    }
+
+    public void storeStruct(Register lhsReg, Register rhsReg, int sizeInWords, Section section){
+        while(sizeInWords > 0){
+            //section.emit(OpCode.ADDI,lhsReg,rhsReg,0); //lhs <- rhs
+            section.emit(OpCode.SW,rhsReg,lhsReg,0);
+            sizeInWords--;
+            if(sizeInWords>0){
+                section.emit(OpCode.ADDI,lhsReg,lhsReg,4); //incr ptr
+                section.emit(OpCode.ADDI,rhsReg,rhsReg,4); //incr ptr
+            }
+        }
     }
 }

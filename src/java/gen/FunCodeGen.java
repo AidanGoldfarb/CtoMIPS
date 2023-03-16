@@ -21,31 +21,34 @@ public class FunCodeGen extends CodeGen {
         // This is necessary for the register allocator.
         asmProg.newSection(AssemblyProgram.Section.Type.TEXT);
         AssemblyProgram.Section section = this.asmProg.getCurrentSection();
-
-        // TODO: to complete
         int local_var_size = get_local_var_size(fd);
+
+        // Emit label
         Label funcall = Label.get(fd.name);
         section.emit(funcall);
+        //
+
         // 1) emit the prolog
         if(!fd.name.equals("main")){
             // Emit function prologue
             emitPrologue(section,local_var_size);
         }
+        //
 
         // 2) emit the body of the function
         section.emit("Emiting function body");
-        StmtCodeGen scd = new StmtCodeGen(asmProg);
         this.asmProg.getCurrentSection().emit(OpCode.PUSH_REGISTERS);
-        scd.visit(fd.block);
+        (new StmtCodeGen(asmProg)).visit(fd.block);
         this.asmProg.getCurrentSection().emit(OpCode.POP_REGISTERS);
         section.emit("Done with function body");
+        //
 
         // 3) emit the epilog
         if(!fd.name.equals("main")) {
             // Emit function epilogue
             emitEpilogue(section,local_var_size);
         }
-
+        //
     }
 
 //    private int get_args_size(FunDecl fd) {

@@ -72,23 +72,17 @@ public class StmtCodeGen extends CodeGen {
                         System.out.println("returning struct by value");
                         int sizeInWords = getSize(aReturn.expr.type)/4;
                         //fp+8 and beyond
+                        //section.emit("this better point to fp+8");
                         Register lhsReg = Register.Virtual.create(); //make this point to fp+8
-                        section.emit(OpCode.ADDI,lhsReg,Register.Arch.fp,0);
-                        section.emit(OpCode.ADDI,lhsReg,lhsReg,8);
+                        section.emit(OpCode.ADDI,lhsReg,Register.Arch.fp,8);
+                        //section.emit(OpCode.ADDI,lhsReg,lhsReg,8);
 
                         Register rhsReg = (new AddrCodeGen(this.asmProg).visit(aReturn.expr));
+                        section.emit(OpCode.LW,rhsReg,rhsReg,0);
                         //copy word by word
-                        while(sizeInWords > 0){
-                            Register val = Register.Virtual.create();
-                            section.emit(OpCode.LW,val,rhsReg,0);
-                            section.emit(OpCode.SW,val,lhsReg,0); //rhs -> lhs
-                            section.emit(OpCode.ADDI,lhsReg,lhsReg,4); //incr ptr
-                            section.emit(OpCode.ADDI,rhsReg,rhsReg,4); //incr ptr
-                            sizeInWords--;
-                        }
-                        section.emit("should jump back here");
-                        //emitEpilogue(section,get_local_var_size(aReturn.fd));
-                        //section.emit(OpCode.JR, Register.Arch.ra);
+                        storeStruct(lhsReg,rhsReg,sizeInWords,section);
+                        emitEpilogue(section,get_local_var_size(aReturn.fd));
+                        section.emit(OpCode.JR, Register.Arch.ra);
                     }
                 }
                 else{
