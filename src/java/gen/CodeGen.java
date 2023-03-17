@@ -94,15 +94,85 @@ public abstract class CodeGen {
         section.emit("End Epilogue");
     }
 
-    public void storeStruct(Register lhsReg, Register rhsReg, int sizeInWords, Section section){
+    public void copyStruct(Register lhsReg, Register rhsReg, int sizeInWords, Section section){
+        //lhs is addr
+        //rhs is addr
+        //copy sizeInWords bytes from lhs to rhs
         while(sizeInWords > 0){
-            //section.emit(OpCode.ADDI,lhsReg,rhsReg,0); //lhs <- rhs
-            section.emit(OpCode.SW,rhsReg,lhsReg,0);
+            Register tmp = Register.Virtual.create();
+            section.emit(OpCode.LW,tmp,rhsReg,0);
+            section.emit(OpCode.SW,tmp,lhsReg,0);
+
+            section.emit(OpCode.ADDI,lhsReg,lhsReg,4);
+            section.emit(OpCode.ADDI,rhsReg,rhsReg,4);
+
             sizeInWords--;
-            if(sizeInWords>0){
-                section.emit(OpCode.ADDI,lhsReg,lhsReg,4); //incr ptr
-                section.emit(OpCode.ADDI,rhsReg,rhsReg,4); //incr ptr
-            }
         }
     }
+
+//    public void storeStruct(Register lhsReg, Register rhsReg, int sizeInWords, Section section){
+//        //dont use rhsReg, use sp+4 (ret addr)
+//        //int offset = 4;
+//        //section.emit(OpCode.LW,rhsReg,rhsReg,0);
+//        while(sizeInWords > 0){
+//            Register tmp = Register.Virtual.create();
+//            //section.emit(OpCode.LW,rhsReg,rhsReg,0); //IS 8
+//
+//            section.emit("this is the one");
+//            section.emit(OpCode.SW,rhsReg,lhsReg,0);
+//
+//            //offset += 4;
+//
+//            sizeInWords--;
+//            if(sizeInWords>0){
+//                section.emit(OpCode.ADDI,lhsReg,lhsReg,4); //incr ptr
+//            }
+//        }
+//    }
+
+//    public void storeStruct2(Register lhsReg, Register rhsReg, int sizeInWords, Section section){
+//        //dont use rhsReg, use sp+4 (ret addr)
+//        //section.emit(OpCode.LW,rhsReg,rhsReg,0);
+//        while(sizeInWords > 0){
+//            Register tmp = Register.Virtual.create();
+//            section.emit(OpCode.LW,tmp,rhsReg,0); //IS 8
+//
+//            section.emit("this is the one");
+//            section.emit(OpCode.SW,tmp,lhsReg,0);
+//
+//            //offset += 4;
+//
+//            sizeInWords--;
+//            if(sizeInWords>0){
+//                section.emit(OpCode.ADDI,lhsReg,lhsReg,4); //incr ptr
+//                section.emit(OpCode.ADDI,rhsReg,rhsReg,4); //incr ptr
+//                //section.emit(OpCode.LW,rhsReg,rhsReg,0);
+//
+//                //section.emit(OpCode.ADDI,rhsReg,rhsReg,4); //incr ptr
+//            }
+//        }
+//    }
+    /*
+
+     */
+//    public void storeStruct(Register lhsReg, Register rhsReg, int sizeInWords, Section section){
+//        //dont use rhsReg, use sp+4 (ret addr)
+////        Register spfake = Register.Virtual.create();
+////        section.emit(OpCode.ADDI,spfake,Register.Arch.sp,0);
+//        while(sizeInWords > 0){
+//
+//            section.emit(OpCode.SW,rhsReg,lhsReg,0);
+//            sizeInWords--;
+//            if(sizeInWords>0){
+////                section.emit(OpCode.ADDI,lhsReg,lhsReg,4); //incr ptr
+////                section.emit(OpCode.LW,rhsReg,rhsReg,0);
+////                section.emit(OpCode.ADDI,rhsReg,rhsReg,4);
+////2147479524
+//
+//                //NOsection.emit(OpCode.LW,rhsReg,rhsReg,0);
+//
+//                //NOsection.emit(OpCode.ADDI,rhsReg,rhsReg,4); //incr ptr
+//            }
+//        }
+//    }
 }

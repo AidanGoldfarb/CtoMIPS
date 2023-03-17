@@ -92,13 +92,14 @@ public class ExprCodeGen extends CodeGen {
                     section.emit(OpCode.JAL,Label.get(fce.name)); //sets $ra to next spot in memory
 
                     //load return value
-                    if(fce.type != ast.BaseType.VOID) {
-                        System.out.println("i am here!");
+                    if (fce.type instanceof StructType) {
+                        //just put address here
+                        section.emit(OpCode.ADDI,dst,Register.Arch.sp,4);// should this be LW?
+                    }
+                    else if(fce.type != ast.BaseType.VOID) {
                         section.emit(OpCode.LW, dst, Register.Arch.sp, 4);
                     }
-//                    else if (fce.type instanceof StructType) {
-//                        //allocate space( maybe before), save struct again)
-//                    }
+
 
                     //restore return addr
                     //section.emit(OpCode.ADDI,Register.Arch.ra,Register.Arch.sp,0);
@@ -215,9 +216,11 @@ public class ExprCodeGen extends CodeGen {
                     case StructType st -> {
                         if(assign.rhs instanceof FunCallExpr){
                             Register lhsReg = (new AddrCodeGen(this.asmProg)).visit(assign.lhs);
-                            Register rhsReg = visit(assign.rhs); //
-                            //section.emit(OpCode.SW,rhsReg,lhsReg,0); //old
-                            storeStruct(lhsReg,rhsReg,getSize(assign.rhs.type)/4,section);
+                            Register rhsReg = visit(assign.rhs); //sp+4
+
+                            //lhs is reg
+                            //rhs is
+                            copyStruct(lhsReg,rhsReg,getSize(assign.rhs.type)/4,section);
                             return lhsReg;
                         }
                         else{
@@ -226,14 +229,7 @@ public class ExprCodeGen extends CodeGen {
                             Register lhsReg = (new AddrCodeGen(this.asmProg)).visit(assign.lhs);
                             Register rhsReg = (new AddrCodeGen(this.asmProg)).visit(assign.rhs);
                             //copy size bytes
-                            while(sizeInWords > 0){
-                                Register val = Register.Virtual.create();
-                                section.emit(OpCode.LW,val,rhsReg,0);
-                                section.emit(OpCode.SW,val,lhsReg,0); //rhs -> lhs
-                                section.emit(OpCode.ADDI,lhsReg,lhsReg,4); //incr ptr
-                                section.emit(OpCode.ADDI,rhsReg,rhsReg,4); //incr ptr
-                                sizeInWords--;
-                            }
+                            copyStruct(lhsReg,rhsReg,sizeInWords,section);
                             return lhsReg;
                         }
                     }

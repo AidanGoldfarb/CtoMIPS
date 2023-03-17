@@ -53,12 +53,13 @@
 //    return 0;
 //}
 
-struct s{int a;};
+struct s{int a; int b;};
 
 
 struct s foo(){
     struct s stc;
-    stc.a = 5;
+    stc.a = 4;
+    stc.b = 9;
     return stc;
 }
 
@@ -66,6 +67,7 @@ void main() {
     struct s stc;
     stc = foo();
     print_i(stc.a);
+    print_i(stc.b);
 /////////END TICTACTOE
 
 

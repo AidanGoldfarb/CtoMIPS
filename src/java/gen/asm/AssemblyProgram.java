@@ -90,6 +90,10 @@ public final class AssemblyProgram {
             emit(new Instruction.LoadAddress(dst, label));
         }
 
+//        public void emit(OpCode.LoadAddress ignoredOpcode, Register dst, Register src){
+//            emit(new Instruction.LoadAddress(dst, src));
+//        }
+
         public void emit(OpCode.LoadImmediate opcode, Register dst, int immediate) {
             emit(new Instruction.LoadImmediate(opcode, dst, immediate));
         }
