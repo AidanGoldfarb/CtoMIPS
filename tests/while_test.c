@@ -56,18 +56,16 @@
 struct s{int a; int b;};
 
 
-struct s foo(){
-    struct s stc;
-    stc.a = 4;
-    stc.b = 9;
-    return stc;
+void foo(struct s stc){
+    print_i(stc.a);
+    print_i(stc.b);
 }
 
 void main() {
     struct s stc;
-    stc = foo();
-    print_i(stc.a);
-    print_i(stc.b);
+    stc.a=9;
+    stc.b=18;
+    foo(stc);
 /////////END TICTACTOE
 
 

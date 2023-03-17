@@ -94,17 +94,17 @@ public abstract class CodeGen {
         section.emit("End Epilogue");
     }
 
-    public void copyStruct(Register lhsReg, Register rhsReg, int sizeInWords, Section section){
+    public void copyStruct(Register dst, Register src, int sizeInWords, Section section){
         //lhs is addr
         //rhs is addr
         //copy sizeInWords bytes from lhs to rhs
         while(sizeInWords > 0){
             Register tmp = Register.Virtual.create();
-            section.emit(OpCode.LW,tmp,rhsReg,0);
-            section.emit(OpCode.SW,tmp,lhsReg,0);
+            section.emit(OpCode.LW,tmp,src,0);
+            section.emit(OpCode.SW,tmp,dst,0);
 
-            section.emit(OpCode.ADDI,lhsReg,lhsReg,4);
-            section.emit(OpCode.ADDI,rhsReg,rhsReg,4);
+            section.emit(OpCode.ADDI,dst,dst,4);
+            section.emit(OpCode.ADDI,src,src,4);
 
             sizeInWords--;
         }

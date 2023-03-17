@@ -12,45 +12,29 @@ foo:
 addi $sp,$sp,-4
 sw $fp,0($sp)
 addi $fp,$sp,0
-addi $sp,$sp,-8
+addi $sp,$sp,0
 # End Prologue
 # Emiting function body
 pushRegisters
-addi v2,$fp,-8
-li v1,0
-add v2,v2,v1
-li v4,4
-# storing rhs in lhs
-sw v4,0(v2)
-addi v7,$fp,-8
-li v6,4
-add v7,v7,v6
-li v9,9
-# storing rhs in lhs
-sw v9,0(v7)
-addi v10,$fp,8
-addi v11,$fp,-8
-lw v12,0(v11)
-sw v12,0(v10)
-addi v10,v10,4
-addi v11,v11,4
-lw v13,0(v11)
-sw v13,0(v10)
-addi v10,v10,4
-addi v11,v11,4
-# Begin Epilogue
-popRegisters
-addi $sp,$sp,8
-lw $fp,0($sp)
-addi $sp,$sp,4
-jr $ra
-# End Epilogue
-jr $ra
+addi v4,$fp,8
+li v3,0
+add v4,v4,v3
+lw v2,0(v4)
+addi $a0,v2,0
+li $v0,1
+syscall
+addi v9,$fp,8
+li v8,4
+add v9,v9,v8
+lw v7,0(v9)
+addi $a0,v7,0
+li $v0,1
+syscall
 popRegisters
 # Done with function body
 # Begin Epilogue
 popRegisters
-addi $sp,$sp,8
+addi $sp,$sp,0
 lw $fp,0($sp)
 addi $sp,$sp,4
 jr $ra
@@ -61,40 +45,39 @@ jr $ra
 main:
 # Emiting function body
 pushRegisters
-addi v15,$fp,-16
+addi v12,$fp,-8
+li v11,0
+add v12,v12,v11
+li v14,9
+# storing rhs in lhs
+sw v14,0(v12)
+addi v17,$fp,-8
+li v16,4
+add v17,v17,v16
+li v19,18
+# storing rhs in lhs
+sw v19,0(v17)
 # res space for args
-addi $sp,$sp,0
-# space for ret value
 addi $sp,$sp,-8
+addi v21,$fp,-8
+# This better point to sp+offset
+addi v22,$sp,0
+lw v23,0(v21)
+sw v23,0(v22)
+addi v22,v22,4
+addi v21,v21,4
+lw v24,0(v21)
+sw v24,0(v22)
+addi v22,v22,4
+addi v21,v21,4
+# space for ret value
+addi $sp,$sp,0
 # space to save ret addr
 addi $sp,$sp,-4
 sw $ra,0($sp)
 jal foo
-addi v16,$sp,4
 lw $ra,0($sp)
 addi $sp,$sp,12
-lw v17,0(v16)
-sw v17,0(v15)
-addi v15,v15,4
-addi v16,v16,4
-lw v18,0(v16)
-sw v18,0(v15)
-addi v15,v15,4
-addi v16,v16,4
-addi v23,$fp,-16
-li v22,0
-add v23,v23,v22
-lw v21,0(v23)
-addi $a0,v21,0
-li $v0,1
-syscall
-addi v28,$fp,-16
-li v27,4
-add v28,v28,v27
-lw v26,0(v28)
-addi $a0,v26,0
-li $v0,1
-syscall
 popRegisters
 # Done with function body
 

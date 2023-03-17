@@ -56,28 +56,40 @@ public class ExprCodeGen extends CodeGen {
                 }
                 //general funcall
                 else{
-                    ArrayList<Register> args = new ArrayList<>(); //lst of registers for arg values
+                    //ArrayList<Register> args = new ArrayList<>(); //lst of registers for arg values
                     int arg_size = get_args_size(fce);
                     int ret_size = getSize(fce.type);
                     //int local_var_size = get_local_var_size(fce);
-
-                    //generate args code, put them in regs
-                    for(Expr expr: fce.args){ //assuming not structs now
-                        Register tmp = visit(expr); //gen code
-                        args.add(tmp); //save reg
-                    }
 
                     //reserve space in stack for args
                     section.emit("res space for args");
                     section.emit(OpCode.ADDI,Register.Arch.sp,Register.Arch.sp,-arg_size);
 
-                    //push args onto stack
+                    //generate args code, put them in regs, push onto stack
                     int offset=0;
-                    for(Register r: args){
-                        section.emit("pushing arg into stack");
-                        section.emit(OpCode.SW,r,Register.Arch.sp,offset);
-                        offset+=4; //4 if not structs
+                    for(Expr expr: fce.args){ //assuming not structs now
+                        if(expr.type instanceof StructType){
+                            int size = getSize(expr.type);
+                            Register struct = (new AddrCodeGen(this.asmProg)).visit(expr);
+                            Register stackdummy = Register.Virtual.create();
+                            section.emit("This better point to sp+offset");
+                            section.emit(OpCode.ADDI,stackdummy,Register.Arch.sp,offset);
+                            copyStruct(stackdummy,struct,size/4,section);
+                        }
+                        else{
+                            Register tmp = visit(expr); //gen code
+                            section.emit(OpCode.SW,tmp,Register.Arch.sp,offset);
+                            offset+=4;
+                        }
                     }
+
+                    //push args onto stack
+//                    int offset=0;
+//                    for(Register r: args){
+//                        section.emit("pushing arg into stack");
+//                        section.emit(OpCode.SW,r,Register.Arch.sp,offset);
+//                        offset+=4; //4 if not structs
+//                    }
 
                     //reserve space for return value
                     section.emit("space for ret value");
@@ -94,10 +106,10 @@ public class ExprCodeGen extends CodeGen {
                     //load return value
                     if (fce.type instanceof StructType) {
                         //just put address here
-                        section.emit(OpCode.ADDI,dst,Register.Arch.sp,4);// should this be LW?
+                        section.emit(OpCode.ADDI,dst,Register.Arch.sp,4);// just returns sp+4, addr to be copied to/from
                     }
                     else if(fce.type != ast.BaseType.VOID) {
-                        section.emit(OpCode.LW, dst, Register.Arch.sp, 4);
+                        section.emit(OpCode.LW, dst, Register.Arch.sp, 4); //returns value at ret val location
                     }
 
 
