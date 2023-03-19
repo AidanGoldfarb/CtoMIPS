@@ -83,17 +83,20 @@ public abstract class CodeGen {
         section.emit(OpCode.SW,Register.Arch.fp,Register.Arch.sp,0); //old fp
         section.emit(OpCode.ADDI,Register.Arch.fp,Register.Arch.sp,0); //new fp
 
+        int padding = padding(local_var_size);
+
         //make space for local vars
-        section.emit(OpCode.ADDI,Register.Arch.sp,Register.Arch.sp,-local_var_size);
+        section.emit(OpCode.ADDI,Register.Arch.sp,Register.Arch.sp,-(local_var_size+padding));
 
         //save registers
         section.emit("End Prologue");
     }
 
     public void emitEpilogue(AssemblyProgram.Section section, int local_var_size, boolean ismain){
+        int padding = padding(local_var_size);
         section.emit("Begin Epilogue");
         section.emit(OpCode.POP_REGISTERS);
-        section.emit(OpCode.ADDI, Register.Arch.sp,Register.Arch.sp,local_var_size);
+        section.emit(OpCode.ADDI, Register.Arch.sp,Register.Arch.sp,local_var_size+padding);
         section.emit(OpCode.LW,Register.Arch.fp,Register.Arch.sp,0); //reset fp
         section.emit(OpCode.ADDI,Register.Arch.sp,Register.Arch.sp,4); //restore sp
         if(!ismain)

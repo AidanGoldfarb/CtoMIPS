@@ -69,7 +69,9 @@
 
 
 void main() {
-    print_i(sizeof(int));
+    char c;
+    c = read_c();
+    print_c(c);
 /////////END TICTACTOE
 
 
