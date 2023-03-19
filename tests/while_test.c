@@ -69,9 +69,7 @@
 
 
 void main() {
-    print_c('h');
-    print_c('\t');
-    print_c('z');
+    print_i(sizeof(int));
 /////////END TICTACTOE
 
 

@@ -310,6 +310,11 @@ public class ExprCodeGen extends CodeGen {
                 tce.expr.type = tce.type;
                 return visit(tce.expr);
             }
+            case SizeOfExpr soe -> {
+                int sz = getSize(soe.t);
+                section.emit(OpCode.LI,dst,sz);
+                return dst;
+            }
             default -> {
                 System.out.println("not implemented (ECG): " + e);
                 return null;

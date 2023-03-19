@@ -16,17 +16,9 @@ addi $sp,$sp,0
 # End Prologue
 # Emiting function body
 pushRegisters
-li v2,104
-addi $a0,v2,0
-li $v0,11
-syscall
-li v5,9
-addi $a0,v5,0
-li $v0,11
-syscall
-li v8,122
-addi $a0,v8,0
-li $v0,11
+li v1,4
+addi $a0,v1,0
+li $v0,1
 syscall
 popRegisters
 # Done with function body
