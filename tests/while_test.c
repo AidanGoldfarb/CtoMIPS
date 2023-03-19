@@ -53,19 +53,42 @@
 //    return 0;
 //}
 
-struct s{int a; int b;};
+//struct s{int a; char b; int c;};
+   //
+   //
+   //struct s foo(struct s stc){
+   //    stc.a = stc.a + 10;
+   //    stc.b = 'c';
+   //    stc.c = stc.c + 10;
+   //    return stc;
+   //}
 
+//void foo(int* a){
+//    print_i(*a);
+//}
 
-void foo(struct s stc){
-    print_i(stc.a);
-    print_i(stc.b);
+void foo(int* ptr, int counter){
+    while(counter < 10){
+        print_i(ptr[counter]);
+        print_c('_');
+        counter = counter + 1;
+    }
 }
 
 void main() {
-    struct s stc;
-    stc.a=9;
-    stc.b=18;
-    foo(stc);
+    int counter;
+    int arr [10];
+    int index;
+    index = 0;
+    counter = 10;
+    while(counter){
+        arr[index] = index*counter;
+        //print_i(arr[index]);
+        //print_c(' ');
+        index = index+1;
+        counter = counter-1;
+    }
+    foo(arr,0);
 /////////END TICTACTOE
 
 

@@ -50,6 +50,9 @@ public class AddrCodeGen extends CodeGen {
                 }
                 else{
                     section.emit(OpCode.ADDI,res,Register.Arch.fp,v.vd.fpOffset);
+                    if(v.vd.isArgByRef){
+                        section.emit(OpCode.LW,res,res,0);
+                    }
                 }
                 return res;
             }

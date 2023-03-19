@@ -29,10 +29,10 @@ public class FunCodeGen extends CodeGen {
         //
 
         // 1) emit the prolog
-        if(!fd.name.equals("main")){
+        //if(!fd.name.equals("main")){
             // Emit function prologue
-            emitPrologue(section,local_var_size);
-        }
+        emitPrologue(section,local_var_size);
+        //}
         //
 
         // 2) emit the body of the function
@@ -44,10 +44,11 @@ public class FunCodeGen extends CodeGen {
         //
 
         // 3) emit the epilog
-        if(!fd.name.equals("main")) {
-            // Emit function epilogue
-            emitEpilogue(section,local_var_size);
+        boolean ismain = false;
+        if(fd.name.equals("main")) {
+            ismain = true;
         }
+        emitEpilogue(section,local_var_size,ismain);
         //
     }
 

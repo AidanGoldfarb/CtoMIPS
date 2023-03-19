@@ -14,7 +14,13 @@ public abstract class CodeGen {
     protected int get_args_size(FunDecl fd) {
         int size = 0;
         for(VarDecl vd: fd.params){
-            size+= getSize(vd.type);
+            if(vd.type instanceof ArrayType){
+                System.out.println("here");
+                size+=4;
+            }
+            else{
+                size+= getSize(vd.type);
+            }
         }
         return size;
     }
@@ -84,13 +90,14 @@ public abstract class CodeGen {
         section.emit("End Prologue");
     }
 
-    public void emitEpilogue(AssemblyProgram.Section section, int local_var_size){
+    public void emitEpilogue(AssemblyProgram.Section section, int local_var_size, boolean ismain){
         section.emit("Begin Epilogue");
         section.emit(OpCode.POP_REGISTERS);
         section.emit(OpCode.ADDI, Register.Arch.sp,Register.Arch.sp,local_var_size);
         section.emit(OpCode.LW,Register.Arch.fp,Register.Arch.sp,0); //reset fp
         section.emit(OpCode.ADDI,Register.Arch.sp,Register.Arch.sp,4); //restore sp
-        section.emit(OpCode.JR,Register.Arch.ra);
+        if(!ismain)
+            section.emit(OpCode.JR,Register.Arch.ra);
         section.emit("End Epilogue");
     }
 

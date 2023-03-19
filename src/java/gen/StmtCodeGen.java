@@ -55,6 +55,10 @@ public class StmtCodeGen extends CodeGen {
                 section.emit(endif);
             }
             case ast.Return aReturn -> {
+                boolean ismain = false;
+                if(aReturn.fd.name.equals("main")){
+                    ismain = true;
+                }
                 if(aReturn.expr != null){
                     //return reference
                     if(!(aReturn.expr.type instanceof StructType)){
@@ -64,7 +68,8 @@ public class StmtCodeGen extends CodeGen {
                         //int arg_size = get_args_size(aReturn.fd);
                         section.emit(OpCode.SW,res,Register.Arch.fp,8); //fp + 4(old fp save) + 4 (old $ra) = 8
                         section.emit("should jump back here");
-                        emitEpilogue(section,get_local_var_size(aReturn.fd));
+
+                        emitEpilogue(section,get_local_var_size(aReturn.fd),ismain);
                         section.emit(OpCode.JR, Register.Arch.ra);
                         //System.out.println("FIX ME (place j $ra)");
                     }
@@ -81,7 +86,7 @@ public class StmtCodeGen extends CodeGen {
                         //copy word by word
                         copyStruct(lhsReg,rhsReg,sizeInWords,section);
 
-                        emitEpilogue(section,get_local_var_size(aReturn.fd));
+                        emitEpilogue(section,get_local_var_size(aReturn.fd),ismain);
                         section.emit(OpCode.JR, Register.Arch.ra);
                     }
                 }

@@ -54,10 +54,18 @@ public class ExprCodeGen extends CodeGen {
                     section.emit(OpCode.ADDI ,dst,Register.Arch.v0,0);
                     return dst;
                 }
+                else if(fce.name.equals("mcmalloc")){
+                    Register val = visit(fce.args.get(0));
+                    section.emit(OpCode.ADDI ,Register.Arch.a0,val,0);
+                    section.emit(OpCode.LI ,Register.Arch.v0,9);
+                    section.emit(OpCode.SYSCALL);
+                    section.emit(OpCode.ADDI ,dst,Register.Arch.v0,0);
+                    return dst;
+                }
                 //general funcall
                 else{
                     //ArrayList<Register> args = new ArrayList<>(); //lst of registers for arg values
-                    int arg_size = get_args_size(fce);
+                    int arg_size = get_args_size(fce.fd);
                     int ret_size = getSize(fce.type);
                     //int local_var_size = get_local_var_size(fce);
 
@@ -67,7 +75,7 @@ public class ExprCodeGen extends CodeGen {
 
                     //generate args code, put them in regs, push onto stack
                     int offset=0;
-                    for(Expr expr: fce.args){ //assuming not structs now
+                    for(Expr expr: fce.args){
                         if(expr.type instanceof StructType){
                             int size = getSize(expr.type);
                             Register struct = (new AddrCodeGen(this.asmProg)).visit(expr);
@@ -76,20 +84,18 @@ public class ExprCodeGen extends CodeGen {
                             section.emit(OpCode.ADDI,stackdummy,Register.Arch.sp,offset);
                             copyStruct(stackdummy,struct,size/4,section);
                         }
+                        else if(expr.type instanceof PointerType || expr.type instanceof ArrayType){
+                            Register adr = (new AddrCodeGen(this.asmProg)).visit(expr); //gen addr
+                            section.emit(OpCode.SW,adr,Register.Arch.sp,offset);
+                            offset+=4;
+                        }
                         else{
-                            Register tmp = visit(expr); //gen code
+                            Register tmp = visit(expr); //gen value
                             section.emit(OpCode.SW,tmp,Register.Arch.sp,offset);
                             offset+=4;
                         }
                     }
 
-                    //push args onto stack
-//                    int offset=0;
-//                    for(Register r: args){
-//                        section.emit("pushing arg into stack");
-//                        section.emit(OpCode.SW,r,Register.Arch.sp,offset);
-//                        offset+=4; //4 if not structs
-//                    }
 
                     //reserve space for return value
                     section.emit("space for ret value");
@@ -229,7 +235,6 @@ public class ExprCodeGen extends CodeGen {
                         if(assign.rhs instanceof FunCallExpr){
                             Register lhsReg = (new AddrCodeGen(this.asmProg)).visit(assign.lhs);
                             Register rhsReg = visit(assign.rhs); //sp+4
-
                             //lhs is reg
                             //rhs is
                             copyStruct(lhsReg,rhsReg,getSize(assign.rhs.type)/4,section);
@@ -246,7 +251,7 @@ public class ExprCodeGen extends CodeGen {
                         }
                     }
                     default -> {
-                        //by reference
+                        //by value
                         Register lhsReg = (new AddrCodeGen(this.asmProg)).visit(assign.lhs);
                         Register rhsReg = visit(assign.rhs);
                         section.emit("storing rhs in lhs");
@@ -273,7 +278,6 @@ public class ExprCodeGen extends CodeGen {
                 return dst;
             }
             case VarExpr ve -> {
-                //return (new AddrCodeGen(this.asmProg)).visit(ve);
                 Register val = Register.Virtual.create();
                 Register adr = (new AddrCodeGen(this.asmProg)).visit(ve);
                 section.emit(OpCode.LW,val,adr,0);
@@ -283,6 +287,7 @@ public class ExprCodeGen extends CodeGen {
                 Register val = Register.Virtual.create();
                 Register adr = (new AddrCodeGen(this.asmProg)).visit(aae);
                 section.emit(OpCode.LW,val,adr,0);
+                //section.emit(OpCode.LW,val,val,0);
                 return val;
             }
             case FieldAccessExpr fae -> {
@@ -321,14 +326,14 @@ public class ExprCodeGen extends CodeGen {
         return size;
     }
 
-    private int get_args_size(FunCallExpr fce) {
-        int size = 0;
-        for(Expr expr: fce.args){
-            size+= getSize(expr.type);
-        }
-        assert size%WORD_SIZE == 0; //this better be word aligned
-        return size;
-    }
+//    private int get_args_size(FunCallExpr fce) {
+//        int size = 0;
+//        for(Expr expr: fce.args){
+//            size+= getSize(expr.type);
+//        }
+//        assert size%WORD_SIZE == 0; //this better be word aligned
+//        return size;
+//    }
 //
 //    public int getSize(Type type){
 //        //in bytes

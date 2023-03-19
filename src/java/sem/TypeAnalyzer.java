@@ -17,6 +17,13 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 				yield switch (decl){
 					case FunDecl fd -> {
 						ensure_type_exists(fd.type);
+						for(VarDecl vd: fd.params){
+							Type t = visit(vd);
+							if(t instanceof PointerType || t instanceof ArrayType){
+								//System.out.println("setting isArgByRef to true in: " + vd);
+								vd.isArgByRef = true;
+							}
+						}
 						func_sym_table.put(fd.name,fd); //redecl handed in name analyzer
 						visit(fd.block);
 						yield BaseType.NONE;
@@ -210,13 +217,14 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 						for(Expr arg: fce.args){
 							Type param_t = visit(arg);
 							Type arg_t = visit(func_sym_table.get(fce.name).params.get(index));
-							if(!param_t.equals(arg_t)){
+							if(!arg_t.equals(param_t)){
 								error("Incorrect arg type supplied to \'" + fce.name + "\'." +
 										"Expected + '" + arg_t +"' got '" + param_t +"'");
 							}
 							index++;
 						}
 						fce.fd = func_sym_table.get(fce.name);
+
 						yield func_sym_table.get(fce.name).type;
 					}
 					case IntLiteral intLiteral -> {
@@ -241,7 +249,10 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 								error("invalid typecase: Array to non PTR");
 							}
 							else{
-								if(!ptr_array_same_depth((ArrayType)from_type,(PointerType)to_type)){
+//								if(!ptr_array_same_depth((ArrayType)from_type,(PointerType)to_type)){
+//									error("invalid typecast, PTR depth or type");
+//								}
+								if(from_type.equals(to_type)){
 									error("invalid typecast, PTR depth or type");
 								}
 							}
@@ -351,19 +362,19 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 
 	}
 
-	private boolean ptr_array_same_depth(ArrayType fromType, PointerType toType) {
-		int fst = 0;
-		int snd = 0;
-		while(fromType.t instanceof ArrayType){
-			fst++;
-			fromType = (ArrayType) fromType.t;
-		}
-		while(toType.type instanceof PointerType){
-			snd++;
-			toType = (PointerType) toType.type;
-		}
-		return fst==snd;
-	}
+//	private boolean ptr_array_same_depth(ArrayType fromType, PointerType toType) {
+//		int fst = 0;
+//		int snd = 0;
+//		while(fromType.t instanceof ArrayType){
+//			fst++;
+//			fromType = (ArrayType) fromType.t;
+//		}
+//		while(toType.type instanceof PointerType){
+//			snd++;
+//			toType = (PointerType) toType.type;
+//		}
+//		return fst==snd;
+//	}
 	private void ensure_type_exists(Type type) {
 		switch (type){
 			case ArrayType arrayType -> {
@@ -618,6 +629,50 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 			default -> {assert false; return 0;}
 		}
 	}
+
+//	public boolean arr_ptr_eq(Type a, Type b){
+//		switch (a){
+//			case ArrayType at-> {
+//				if(!ptr_array_same_depth(at,(PointerType)b)){
+//					return false;
+//				}
+//				Type a_base = basetype_arr(at);
+//				Type b_base = basetype_ptr((PointerType)b);
+//				return a_base.equals(b_base);
+//			}
+//			case PointerType pt -> {
+//				System.out.println("Hello: " + b );
+//				ArrayType parama = (ArrayType) b;
+//				System.out.println("Bye");
+//				if(!ptr_array_same_depth(parama,pt)){
+//					return false;
+//				}
+//				Type a_base = basetype_arr((ArrayType)b);
+//				Type b_base = basetype_ptr(pt);
+//				return a_base.equals(b_base);
+//			}
+//			default -> {
+//				assert false;
+//				return false;
+//			}
+//		}
+//	}
+
+	private Type basetype_arr(ArrayType at){
+		ArrayType cpy = new ArrayType(at.t,at.len);
+		while(cpy.t instanceof ArrayType){
+			cpy = (ArrayType) cpy.t;
+		}
+		return cpy.t;
+	}
+	private Type basetype_ptr(PointerType pt){
+		PointerType cpy = new PointerType(pt.type);
+		while(cpy.type instanceof PointerType){
+			cpy = (PointerType) cpy.type;
+		}
+		return cpy.type;
+	}
+
 
 	private int getStructSize(StructType structType) {
 		int size = 0;

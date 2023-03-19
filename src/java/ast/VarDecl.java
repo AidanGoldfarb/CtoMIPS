@@ -13,6 +13,8 @@ public final class VarDecl extends Decl {
 
     public Label label; //if global
 
+    public boolean isArgByRef = false; //true iff ptr type or arr type, and is decl as arg to function
+
     public VarDecl(Type type, String name) {
 	    this.type = type;
 	    this.name = name;

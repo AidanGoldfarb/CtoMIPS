@@ -1,5 +1,7 @@
 package ast;
 
+import java.sql.Array;
+import java.util.ArrayList;
 import java.util.List;
 
 public final class AddressOfExpr extends Expr{
@@ -17,6 +19,8 @@ public final class AddressOfExpr extends Expr{
 
     @Override
     public List<ASTNode> children() {
-        return null;
+        ArrayList<ASTNode> children = new ArrayList<>();
+        children.add(expr);
+        return children;
     }
 }
