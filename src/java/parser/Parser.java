@@ -549,38 +549,6 @@ public class Parser {
             print("exit H");
             return parseI();
         }
-//        print("H");
-//        //typecast
-//        if(accept(TokenClass.LPAR) && contains(first_type,lookAhead(1).tokenClass)){
-//            print("exit H");
-//            return parseTypecast();
-//        }
-//        else if(accept(TokenClass.ASTERIX)){
-//            print("exit H");
-//            return parseValueat();
-//        }
-//        else if(accept(TokenClass.AND)){
-//            print("exit H");
-//            return parseAddressof();
-//        }
-//        else if(accept(TokenClass.PLUS)){
-//            //useless
-//            nextToken();
-//            Expr expr = parseExp();
-//            print("exit H");
-//            return new BinOp(new IntLiteral(0),Op.ADD,expr);
-//        }
-//        else if(accept(TokenClass.MINUS)){
-//            nextToken();
-//            Expr expr = parseExp();
-//            print("exit H");
-//            return new BinOp(new IntLiteral(0),Op.SUB,expr);
-//        }
-//        else{
-//            print("exit H");
-//            return parseI();
-//        }
-
     }
 
     //Contains funcall, arrayaccess, fieldaccess, varexp, (exp)
@@ -594,7 +562,24 @@ public class Parser {
         else if(accept(TokenClass.CHAR_LITERAL)){
             String data = token.data;
             nextToken();
-            return new ChrLiteral(data.charAt(0));
+
+            data = data.charAt(0) == '\\' ? data.substring(1) : data;
+            char res;
+            // tbnrf'"\0
+            switch (data.charAt(0)){
+                case 't' ->  res = '\t';
+                case 'b' -> res = '\b';
+                case 'n' -> res = '\n';
+                case 'r' -> res = '\r';
+                case 'f' -> res = '\f';
+                case '\'' -> res = '\'';
+                case '\"' -> res = '\"';
+                case '\\' -> res = '\\';
+                case '0'-> res = '\0';
+                default -> res = data.charAt(0);
+            }
+
+            return new ChrLiteral(res);
         }
         else if(accept(TokenClass.STRING_LITERAL)){
             String data = token.data;

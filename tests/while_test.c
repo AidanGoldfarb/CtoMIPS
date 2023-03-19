@@ -67,28 +67,11 @@
 //    print_i(*a);
 //}
 
-void foo(int* ptr, int counter){
-    while(counter < 10){
-        print_i(ptr[counter]);
-        print_c('_');
-        counter = counter + 1;
-    }
-}
 
 void main() {
-    int counter;
-    int arr [10];
-    int index;
-    index = 0;
-    counter = 10;
-    while(counter){
-        arr[index] = index*counter;
-        //print_i(arr[index]);
-        //print_c(' ');
-        index = index+1;
-        counter = counter-1;
-    }
-    foo(arr,0);
+    print_c('h');
+    print_c('\t');
+    print_c('z');
 /////////END TICTACTOE
 
 

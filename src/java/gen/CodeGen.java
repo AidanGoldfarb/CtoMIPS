@@ -43,7 +43,7 @@ public abstract class CodeGen {
                         return 4;
                     }
                     case CHAR -> {
-                        return 4;
+                        return 1;
                     }
                     case VOID -> {
                         return 0; //for funcall
