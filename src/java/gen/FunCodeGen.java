@@ -31,15 +31,15 @@ public class FunCodeGen extends CodeGen {
         // 1) emit the prolog
         //if(!fd.name.equals("main")){
             // Emit function prologue
-        emitPrologue(section,local_var_size);
+            emitPrologue(section,local_var_size);
         //}
         //
 
         // 2) emit the body of the function
-        section.emit("Emiting function body");
+        section.emit("Emiting function body: " +fd.name);
         this.asmProg.getCurrentSection().emit(OpCode.PUSH_REGISTERS);
         (new StmtCodeGen(asmProg)).visit(fd.block);
-        this.asmProg.getCurrentSection().emit(OpCode.POP_REGISTERS);
+        //this.asmProg.getCurrentSection().emit(OpCode.POP_REGISTERS);
         section.emit("Done with function body");
         //
 

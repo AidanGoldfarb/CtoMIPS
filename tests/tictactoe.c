@@ -259,6 +259,7 @@ void main() {
   empty = ' ';
   playing = 1;
   reset();
+  print_i(playing);
   printGame();
   player = 1; // Begin with player one
   while (playing) {

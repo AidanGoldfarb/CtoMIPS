@@ -67,6 +67,7 @@ public class ExprCodeGen extends CodeGen {
                     //ArrayList<Register> args = new ArrayList<>(); //lst of registers for arg values
                     int arg_size = get_args_size(fce.fd);
                     int ret_size = getSize(fce.type);
+                    ret_size = ret_size + padding(ret_size);
                     //int local_var_size = get_local_var_size(fce);
 
                     //reserve space in stack for args
@@ -80,7 +81,6 @@ public class ExprCodeGen extends CodeGen {
                             int size = getSize(expr.type);
                             Register struct = (new AddrCodeGen(this.asmProg)).visit(expr);
                             Register stackdummy = Register.Virtual.create();
-                            section.emit("This better point to sp+offset");
                             section.emit(OpCode.ADDI,stackdummy,Register.Arch.sp,offset);
                             copyStruct(stackdummy,struct,size/4,section);
                         }
@@ -321,14 +321,6 @@ public class ExprCodeGen extends CodeGen {
             }
         }
         //return dst;
-    }
-
-    private int get_local_var_size(FunCallExpr fce) {
-        int size = 0;
-        for(VarDecl vd: fce.fd.block.vds){
-            size += getSize(vd.type);
-        }
-        return size;
     }
 
 //    private int get_args_size(FunCallExpr fce) {

@@ -43,12 +43,14 @@ public class MemAllocCodeGen extends CodeGen {
                 }
             }
             case FunDecl fd -> {
-                //set param offsets
+                //set param offset
                 int ret_size = getSize(fd.type);
+                ret_size += padding(ret_size);
                 int offset = 4+4+ret_size; //skip saved fp + $ra + ret val
                 for(VarDecl vd: fd.params){
                     vd.fpOffset = offset;
-                    offset += getSize(vd.type);
+                    int size = getSize(vd.type);
+                    offset += size+padding(size);
                 }
 
                 visit(fd.block);

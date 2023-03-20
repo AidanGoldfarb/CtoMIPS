@@ -562,23 +562,28 @@ public class Parser {
         else if(accept(TokenClass.CHAR_LITERAL)){
             String data = token.data;
             nextToken();
-
+            boolean is_escape = false;
             data = data.charAt(0) == '\\' ? data.substring(1) : data;
-            char res;
-            // tbnrf'"\0
-            switch (data.charAt(0)){
-                case 't' ->  res = '\t';
-                case 'b' -> res = '\b';
-                case 'n' -> res = '\n';
-                case 'r' -> res = '\r';
-                case 'f' -> res = '\f';
-                case '\'' -> res = '\'';
-                case '\"' -> res = '\"';
-                case '\\' -> res = '\\';
-                case '0'-> res = '\0';
-                default -> res = data.charAt(0);
+            if(data.charAt(0)=='\\'){
+                is_escape = true;
             }
-
+            char res;
+            if(is_escape){
+                switch (data.charAt(0)){
+                    case 't' ->  res = '\t';
+                    case 'b' -> res = '\b';
+                    case 'n' -> res = '\n';
+                    case 'r' -> res = '\r';
+                    case 'f' -> res = '\f';
+                    case '\'' -> res = '\'';
+                    case '\"' -> res = '\"';
+                    case '\\' -> res = '\\';
+                    case '0'-> res = '\0';
+                    default -> res = data.charAt(0);
+                }
+            }else{
+                res = data.charAt(0);
+            }
             return new ChrLiteral(res);
         }
         else if(accept(TokenClass.STRING_LITERAL)){

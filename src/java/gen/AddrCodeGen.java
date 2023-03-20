@@ -70,7 +70,8 @@ public class AddrCodeGen extends CodeGen {
             if(field.equals(vd.name)){
                 return offset;
             }
-            offset+=getSize(vd.type);
+            int size = getSize(vd.type);
+            offset+=size+padding(size);
         }
         assert false;
         return -1;
