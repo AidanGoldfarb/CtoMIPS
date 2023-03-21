@@ -1,2 +1,4 @@
 *.class
 TokeniserTest.java
+*.asm
+*.txt

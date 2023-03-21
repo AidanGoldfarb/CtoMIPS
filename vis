@@ -1,0 +1,1 @@
+dot -Tpdf graph.dot -o graph.pdf && open graph.pdf

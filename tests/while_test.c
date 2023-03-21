@@ -314,26 +314,13 @@
 //  return r;
 //}
 
-struct stc{int arr[5]; char b; int i;};
-
-struct stc builder(){
-    struct stc s;
-    s.arr[0] = 5;
-    s.arr[1] = 6;
-    s.arr[2] = 6;
-    s.arr[3] = 7;
-    s.arr[4] = 8;
-    s.b = 'b';
-    s.i = 5;
-    return s;
-}
-
-void foo(struct stc me){
-    print_i(me.arr[3]);
-}
 
 void main() {
-    struct stc s;
+    int a;
+    a = 5;
+    while(a){
+        a=a-1;
+    }
     //foo(builder());
 
 
