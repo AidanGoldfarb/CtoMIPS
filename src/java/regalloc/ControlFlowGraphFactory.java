@@ -5,6 +5,7 @@ import regalloc.ControlFlowGraph.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import static gen.asm.OpCode.Kind.*;
 
@@ -17,8 +18,13 @@ public class ControlFlowGraphFactory {
 
     public ControlFlowGraph build(AssemblyProgram.Section section) throws IOException {
         ControlFlowGraph cfg = new ControlFlowGraph();
+        parse_labels(section, cfg);
+
+        int sz = section.items.size()-1;
         loop:
-        for (AssemblyItem item : section.items) {
+        for(int i = 0; i <= sz; i++){
+            AssemblyItem item = section.items.get(i);
+            System.out.println("at : " + item);
             switch (item) {
                 case Instruction insn -> {
                     Node cur = new Node(insn, insn.registers());
@@ -55,14 +61,6 @@ public class ControlFlowGraphFactory {
                             add_to_bottom(cur, cfg);
                         }
                     }
-
-                    //                    if(cur.id == 2) {
-//                        cfg.addEdge(0, 2);
-//                        cfg.addNode(cur, 0);
-//                    }
-//                    else{
-//                        cfg.addNode(cur,-1);
-//                    }
                 }
                 case Label label -> {
                     Node cur = new Node(label);
@@ -79,6 +77,22 @@ public class ControlFlowGraphFactory {
         //System.out.println(cfg);
         return cfg;
     }
+
+    private void parse_labels(AssemblyProgram.Section section, ControlFlowGraph cfg) {
+        for(AssemblyItem item: section.items) {
+            switch (item) {
+                case Label label -> {
+                    System.out.println("label: " + label);
+                    Node cur = new Node(label);
+                    cfg.vertice_list.add(cur);
+                }
+                default -> {
+                    //System.out.println("parselabel not implemented: " + item);
+                }
+            }
+        }
+    }
+
 
     /*
     robust add to bottom of graph

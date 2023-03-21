@@ -1,3 +1,6 @@
+.data
+
+
 .text
 main:
 # Begin Prologue

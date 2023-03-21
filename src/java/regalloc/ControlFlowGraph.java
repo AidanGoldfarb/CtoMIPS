@@ -43,6 +43,7 @@ public class ControlFlowGraph {
                 for(Node par: lst){
                     if(par.id == parent){
                         lst.add(n);
+                        //lst.add(0,n); //add to front
                         return;
                     }
                 }
@@ -61,7 +62,6 @@ public class ControlFlowGraph {
 
     public void addEdge(int from, Label to){
         Node from_node = getNode(from);
-        System.out.println("looking for: " + to.toString());
         Node to_node = getNode(to.toString());
         Pair p = new Pair(from_node,to_node);
         edge_list.add(p);
@@ -91,6 +91,11 @@ public class ControlFlowGraph {
                 if(n.name.equals(name)){
                     return n;
                 }
+            }
+        }
+        for(Node n: vertice_list){
+            if(n.name.equals(name)){
+                return n;
             }
         }
         assert false;
