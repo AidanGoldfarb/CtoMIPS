@@ -322,7 +322,7 @@ public class Tokeniser {
                 sb.append(scanner.next());
                 len++;
                 //[return ] or [return;]
-                if( (scanner.peek() == ';'|| Character.isWhitespace(scanner.peek()))
+                if( (scanner.peek() == '(' || scanner.peek() == ';'|| Character.isWhitespace(scanner.peek()))
                         && len==6 && sb.toString().equals("return")) {
                     return new Token(TokenClass.RETURN, line, column);
                 }

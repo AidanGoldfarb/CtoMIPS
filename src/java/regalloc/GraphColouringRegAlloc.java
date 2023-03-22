@@ -32,7 +32,7 @@ public class GraphColouringRegAlloc implements AssemblyPass {
         });
 
         LivenessAnalyzer la = new LivenessAnalyzer();
-
+        //la.run(cfgs.get(0));
         return newProg;
     }
 

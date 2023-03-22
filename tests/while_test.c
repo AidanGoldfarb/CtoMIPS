@@ -315,9 +315,8 @@
 //}
 
 
-void main() {
-    int a;
-    a = 5;
+int main() {
+    return(0);
 //    while(a){
 //        if(a%2==0){
 //            print_i(0);

@@ -75,8 +75,8 @@ public class ControlFlowGraphFactory {
         }
         cfg.writeDotRep();
         //System.out.println(cfg);
-        ArrayList<Node> preorder = cfg.preorderTraversal();
-        System.out.println(preorder);
+//        ArrayList<Node> preorder = cfg.preorderTraversal();
+//        System.out.println(preorder);
         return cfg;
     }
 
