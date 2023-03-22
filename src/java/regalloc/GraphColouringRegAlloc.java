@@ -31,6 +31,8 @@ public class GraphColouringRegAlloc implements AssemblyPass {
             }
         });
 
+        LivenessAnalyzer la = new LivenessAnalyzer();
+
         return newProg;
     }
 

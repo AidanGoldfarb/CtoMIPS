@@ -75,6 +75,8 @@ public class ControlFlowGraphFactory {
         }
         cfg.writeDotRep();
         //System.out.println(cfg);
+        ArrayList<Node> preorder = cfg.preorderTraversal();
+        System.out.println(preorder);
         return cfg;
     }
 
@@ -84,7 +86,7 @@ public class ControlFlowGraphFactory {
                 case Label label -> {
                     System.out.println("label: " + label);
                     Node cur = new Node(label);
-                    cfg.vertice_list.add(cur);
+                    cfg.label_list.add(cur);
                 }
                 default -> {
                     //System.out.println("parselabel not implemented: " + item);

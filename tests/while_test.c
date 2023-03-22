@@ -318,9 +318,14 @@
 void main() {
     int a;
     a = 5;
-    while(a){
-        a=a-1;
-    }
+//    while(a){
+//        if(a%2==0){
+//            print_i(0);
+//        }
+//        else{
+//            print_i(1);
+//        }
+//    }
     //foo(builder());
 
 
