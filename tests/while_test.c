@@ -314,9 +314,54 @@
 //  return r;
 //}
 
+//int iter_bin_search(int* arr, int x, int low, int high){
+//    int mid;
+//    while(low!=high){
+//        mid = (low+high)/2;
+//        if(x == arr[mid]){
+//            return mid;
+//        }
+//        if(x > arr[mid]){
+//            low = mid+1;
+//        }
+//        else{
+//            high = mid-1;
+//        }
+//    }
+//}
+//
+//int rec_bin_search(int* arr, int x, int low, int high){
+//    int mid;
+//    if (low > high){
+//        return -1;
+//    }else{
+//        mid = (low+high)/2;
+//        if(arr[mid]==x){
+//            return mid;
+//        }
+//        if(x>arr[mid]){
+//            return rec_bin_search(arr,x,mid+1,high);
+//        }
+//        else{
+//            return rec_bin_search(arr,x,low,mid-1);
+//        }
+//    }
+//
+//}
 
-int main() {
-    return(0);
+
+void main() {
+    int a;
+    a = 5;
+
+//    int arr[5];
+//    arr[0] = 5;
+//    arr[1] = 6;
+//    arr[2] = 7;
+//    arr[3] = 8;
+//    arr[4] = 9;
+//    print_i(iter_bin_search(arr,7,0,4));
+//    print_i(rec_bin_search(arr,7,0,4));
 //    while(a){
 //        if(a%2==0){
 //            print_i(0);

@@ -7,12 +7,7 @@ import gen.asm.Register;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.FileWriter;
-import java.util.LinkedList;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.ListIterator;
+import java.util.*;
 
 public class ControlFlowGraph {
     static int V; //number of vertices
@@ -117,6 +112,7 @@ public class ControlFlowGraph {
     public ArrayList<Node> preorderTraversal(){
         this.preorder = new ArrayList<>();
         preorderTraversalHelper(this.root);
+        resetVisited();
         return this.preorder;
     }
     private void preorderTraversalHelper(Node rootNode) {
@@ -143,6 +139,33 @@ public class ControlFlowGraph {
         }
     }
 
+    private void resetVisited(){
+        resetVisitedHelper(this.root);
+    }
+
+    private void resetVisitedHelper(Node rootNode) {
+        if (rootNode == null) {
+            return;
+        }
+
+        rootNode.visited = false;
+
+        this.preorder.add(rootNode);
+        //System.out.println(rootNode);
+
+        for (Node childNode : rootNode.children) {
+            if(childNode.visited){
+                preorderTraversalHelper(childNode);
+            }
+
+        }
+
+        for (Node parentNode : rootNode.parents) {
+            if(parentNode.visited){
+                preorderTraversalHelper(parentNode);
+            }
+        }
+    }
 
 
     @Override
@@ -205,8 +228,8 @@ public class ControlFlowGraph {
     public static class Node {
         Instruction instruction;
         List<Register> opperands;
-        List<Node> liveIn;
-        List<Node> liveOut;
+        Set<Register> liveIn;
+        Set<Register> liveOut;
         int id;
         String name;
         List<Node> parents;
@@ -217,8 +240,8 @@ public class ControlFlowGraph {
         public Node(Instruction instruction, List<Register> operands){
             this.instruction = instruction;
             this.opperands = operands;
-            this.liveIn = new ArrayList<>();
-            this.liveOut = new ArrayList<>();
+            this.liveIn = new HashSet<>();
+            this.liveOut = new HashSet<>();
             this.id = V;
             this.name = instruction.toString() + "_" + id;
             this.parents = new ArrayList<>();
@@ -227,8 +250,8 @@ public class ControlFlowGraph {
         }
 
         public Node(Label label){
-            this.liveIn = new ArrayList<>();
-            this.liveOut = new ArrayList<>();
+            this.liveIn = new HashSet<>();
+            this.liveOut = new HashSet<>();
             this.id = V;
             this.name = label.toString();
             this.parents = new ArrayList<>();
