@@ -2,3 +2,5 @@
 TokeniserTest.java
 *.asm
 *.txt
+bin/
+out/
