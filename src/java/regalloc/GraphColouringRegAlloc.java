@@ -6,6 +6,7 @@ import gen.asm.Instruction;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import regalloc.ControlFlowGraph.*;
 
 public class GraphColouringRegAlloc implements AssemblyPass {
 
@@ -32,7 +33,16 @@ public class GraphColouringRegAlloc implements AssemblyPass {
         });
 
         LivenessAnalyzer la = new LivenessAnalyzer();
-        //la.run(cfgs.get(0));
+        la.run(cfgs.get(0));
+
+
+        for(Node n: cfgs.get(0).preorderTraversal()){
+            System.out.println("NODE: " + n);
+            System.out.println("LiveIN: " + n.liveIn);
+            System.out.println("LiveOUT: " + n.liveOut);
+            System.out.println();
+        }
+
         return newProg;
     }
 

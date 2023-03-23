@@ -1,3 +1,3 @@
 digraph {
-"main" -> "addi $sp,$sp,-4_1" -> "sw $fp,0($sp)_2" -> "addi $fp,$sp,0_3" -> "addi $sp,$sp,-4_4" -> "pushRegisters_5" -> "addi v1,$fp,-4_6" -> "li v3,5_7" -> "sw v3,0(v1)_8" -> "popRegisters_9" -> "addi $sp,$sp,4_10" -> "lw $fp,0($sp)_11" -> "addi $sp,$sp,4_12"
+"main" -> "addi v1,$fp,-4_1" -> "li v3,5_2" -> "sw v3,0(v1)_3"
 }

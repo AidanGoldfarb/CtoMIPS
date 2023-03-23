@@ -1,12 +1,10 @@
 package regalloc;
+import gen.asm.Instruction;
 import gen.asm.Register;
 import regalloc.ControlFlowGraph.*;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-import java.util.HashSet;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class LivenessAnalyzer {
 
@@ -15,30 +13,69 @@ public class LivenessAnalyzer {
     }
 
     public void run(ControlFlowGraph cfg){
+        int iter = 0;
         ArrayList<Node> preorder = cfg.preorderTraversal();
-        ArrayList<Node> preorder_rev = cfg.preorderTraversal();
+        ArrayList<Node> preorder_rev = new ArrayList<>(preorder);//cfg.preorderTraversal(); //did this wrong
         Collections.reverse(preorder_rev);
+        assert preorder.size() == preorder_rev.size();
         int size = preorder.size();
-        for(int i = 0; i<size; i++){
-            Node n = preorder_rev.get(i);
-            var oldLiveIn = deepCopy(n.liveIn); //deep copy needed?
-            var oldLiveOut = deepCopy(n.liveOut);
-            //succ(n)
-            for(int j = size-i-1; j<size; j++){
-                Node s = preorder.get(j);
-                n.liveOut.addAll(s.liveIn);
-                //n.liveIn = //LIVE_in(n) = use(n) U (LIVE_out(n)-def(n))
+
+        HashMap<Node,HashSet<Register>> oldLiveIns = new HashMap<>();
+        HashMap<Node,HashSet<Register>> oldLiveOuts = new HashMap<>();
+
+        boolean done = false;
+        while(!done){
+            iter++;
+            for(int i = 0; i<size; i++){
+                Node n = preorder_rev.get(i);
+                HashSet<Register> oldLiveIn = deepCopy(n.liveIn); //deep copy needed?
+                HashSet<Register> oldLiveOut = deepCopy(n.liveOut);
+                oldLiveIns.put(n,oldLiveIn);
+                oldLiveOuts.put(n,oldLiveOut);
+
+                HashSet<Register> uses = new HashSet<>();
+                HashSet<Register> defs = new HashSet<>();
+                //instr node
+                if(n.instruction != null) {
+                    uses.addAll(n.instruction.uses());
+                    defs.add(n.instruction.def());
+                }
+                //succ(n)
+                //not last node
+                if(i != 0) {
+                    Node s = preorder.get(size - i);
+                    n.liveOut.addAll(s.liveIn);
+                }
+//                for(int j = size-i; j<size; j++){
+//                    Node s = preorder.get(j);
+//                    n.liveOut.addAll(s.liveIn);
+//                }
+
+                //LIVE_in(n) = use(n) U (LIVE_out(n)-def(n))
+                //rhs = LIVE_out(n)
+                HashSet<Register> rhs = new HashSet<>(n.liveOut);
+
+                //rhs = LIVE_out(n)-def(n)
+                rhs.removeAll(defs);
+
+                //rhs = use(n) U LIVE_out(n)-def(n)
+                rhs.addAll(uses);
+
+                //LIVE_in(n) = rhs
+                n.liveIn = rhs;
+
             }
-
+            for(Node n: cfg.preorderTraversal()){
+                var oldLiveIn = oldLiveIns.get(n);
+                var oldLiveOut = oldLiveOuts.get(n);
+                if(oldLiveIn.equals(n.liveIn) && oldLiveOut.equals(n.liveOut)){
+                    done = true;
+                }
+            }
+            oldLiveIns = new HashMap<>();
+            oldLiveOuts = new HashMap<>();
         }
-        for(Node n: preorder){
-            n.liveIn.addAll(n.opperands);
-
-            //LIVE_in'(n) = LIVE_in(n)
-            //LIVE_out'(n) = LIVE_out(n)
-            //LIVE_out(n) = U (s in succ(n)) (LIVE_in(s))
-            //LIVE_in(n) = use(n) U (LIVE_out(n)-def(n))
-        }
+        System.out.println("Liveness analysis done: " + iter + " iters");
     }
 
     private HashSet<Register> deepCopy(Set<Register> lst){

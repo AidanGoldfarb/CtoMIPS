@@ -111,61 +111,62 @@ public class ControlFlowGraph {
 
     public ArrayList<Node> preorderTraversal(){
         this.preorder = new ArrayList<>();
-        preorderTraversalHelper(this.root);
-        resetVisited();
+        preorderTraversalHelper(this.root, new HashSet<Node>());
+        //resetVisited();
         return this.preorder;
     }
-    private void preorderTraversalHelper(Node rootNode) {
+    private void preorderTraversalHelper(Node rootNode, HashSet<Node> visited) {
         if (rootNode == null) {
             return;
         }
 
-        rootNode.visited = true;
-
+        //rootNode.visited = true;
+        visited.add(rootNode);
         this.preorder.add(rootNode);
         //System.out.println(rootNode);
 
         for (Node childNode : rootNode.children) {
-            if(!childNode.visited){
-                preorderTraversalHelper(childNode);
+            if(!visited.contains(childNode)){
+                preorderTraversalHelper(childNode,visited);
             }
 
         }
 
         for (Node parentNode : rootNode.parents) {
-            if(!parentNode.visited){
-                preorderTraversalHelper(parentNode);
+            if(!visited.contains(parentNode)){
+                preorderTraversalHelper(parentNode,visited);
             }
         }
     }
 
-    private void resetVisited(){
-        resetVisitedHelper(this.root);
-    }
-
-    private void resetVisitedHelper(Node rootNode) {
-        if (rootNode == null) {
-            return;
-        }
-
-        rootNode.visited = false;
-
-        this.preorder.add(rootNode);
-        //System.out.println(rootNode);
-
-        for (Node childNode : rootNode.children) {
-            if(childNode.visited){
-                preorderTraversalHelper(childNode);
-            }
-
-        }
-
-        for (Node parentNode : rootNode.parents) {
-            if(parentNode.visited){
-                preorderTraversalHelper(parentNode);
-            }
-        }
-    }
+//    private void resetVisited(){
+//        resetVisitedHelper(this.root);
+//    }
+//
+//    private void resetVisitedHelper(Node rootNode) {
+//        if (rootNode == null) {
+//            return;
+//        }
+//
+//        rootNode.visited = false;
+//        System.out.println("resetting vis: " + rootNode );
+//
+//        this.preorder.add(rootNode);
+//        //System.out.println(rootNode);
+//
+//        for (Node childNode : rootNode.children) {
+//            if(childNode.visited){
+//                preorderTraversalHelper(childNode);
+//            }
+//
+//        }
+//
+//        for (Node parentNode : rootNode.parents) {
+//            if(parentNode.visited){
+//                preorderTraversalHelper(parentNode);
+//            }
+//        }
+//    }
 
 
     @Override
@@ -206,7 +207,7 @@ public class ControlFlowGraph {
 
     public String adj_list_string(){
         StringBuilder sb = new StringBuilder();
-        System.out.println("adjsize: " + adj_list.size());
+        //System.out.println("adjsize: " + adj_list.size());
         for(int i = 0; i<adj_list.size(); i++){
             LinkedList<Node> cur = adj_list.get(i);
             sb.append("[" + cur.peek().id + "]  -> ");

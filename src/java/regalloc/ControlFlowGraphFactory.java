@@ -24,7 +24,7 @@ public class ControlFlowGraphFactory {
         loop:
         for(int i = 0; i <= sz; i++){
             AssemblyItem item = section.items.get(i);
-            System.out.println("at : " + item);
+            //System.out.println("at : " + item);
             switch (item) {
                 case Instruction insn -> {
                     Node cur = new Node(insn, insn.registers());
@@ -67,7 +67,7 @@ public class ControlFlowGraphFactory {
                     add_to_bottom(cur, cfg);
                 }
                 default -> {
-                    System.out.println("CFGF not implemented: " + item);
+                    //System.out.println("CFGF not implemented: " + item);
                 }
             }
 
@@ -84,7 +84,7 @@ public class ControlFlowGraphFactory {
         for(AssemblyItem item: section.items) {
             switch (item) {
                 case Label label -> {
-                    System.out.println("label: " + label);
+                    //System.out.println("label: " + label);
                     Node cur = new Node(label);
                     cfg.label_list.add(cur);
                 }
