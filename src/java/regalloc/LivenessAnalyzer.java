@@ -42,8 +42,7 @@ public class LivenessAnalyzer {
                 }
                 //succ(n)
                 //not last node
-                if(i != 0) {
-                    Node s = preorder.get(size - i);
+                for(Node s: n.children){
                     n.liveOut.addAll(s.liveIn);
                 }
 //                for(int j = size-i; j<size; j++){
