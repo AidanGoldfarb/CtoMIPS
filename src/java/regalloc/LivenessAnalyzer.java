@@ -1,16 +1,12 @@
 package regalloc;
 import gen.asm.Instruction;
 import gen.asm.Register;
-import regalloc.ControlFlowGraph.*;
+import regalloc.Graph.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class LivenessAnalyzer {
-
-    public LivenessAnalyzer(){
-
-    }
 
     public void run(ControlFlowGraph cfg){
         int iter = 0;
@@ -41,14 +37,9 @@ public class LivenessAnalyzer {
                     defs.add(n.instruction.def());
                 }
                 //succ(n)
-                //not last node
                 for(Node s: n.children){
                     n.liveOut.addAll(s.liveIn);
                 }
-//                for(int j = size-i; j<size; j++){
-//                    Node s = preorder.get(j);
-//                    n.liveOut.addAll(s.liveIn);
-//                }
 
                 //LIVE_in(n) = use(n) U (LIVE_out(n)-def(n))
                 //rhs = LIVE_out(n)

@@ -1,7 +1,7 @@
 package regalloc;
 
 import gen.asm.*;
-import regalloc.ControlFlowGraph.*;
+import regalloc.Graph.*;
 
 import java.io.IOException;
 import java.util.ArrayList;

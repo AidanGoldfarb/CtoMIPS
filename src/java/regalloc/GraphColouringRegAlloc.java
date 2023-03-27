@@ -35,13 +35,14 @@ public class GraphColouringRegAlloc implements AssemblyPass {
         LivenessAnalyzer la = new LivenessAnalyzer();
         la.run(cfgs.get(0));
 
+        InterferenceGraphFactory igf = new InterferenceGraphFactory(cfgs.get(0));
 
-        for(Node n: cfgs.get(0).preorderTraversal()){
-            System.out.println("NODE: " + n);
-            System.out.println("LiveIN: " + n.liveIn);
-            System.out.println("LiveOUT: " + n.liveOut);
-            System.out.println();
-        }
+//        for(Node n: cfgs.get(0).preorderTraversal()){
+//            System.out.println("NODE: " + n);
+//            System.out.println("LiveIN: " + n.liveIn);
+//            System.out.println("LiveOUT: " + n.liveOut);
+//            System.out.println();
+//        }
 
         return newProg;
     }

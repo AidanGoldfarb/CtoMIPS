@@ -350,9 +350,20 @@
 //}
 
 
-void main() {
+int main() {
     int a;
-    a = 5;
+    int b;
+    int c;
+    c = 0;
+    a = 0;
+    if(a<9){
+        b = a+1;
+        c = c+b;
+        a = b*2;
+    }
+    return c;
+
+
 
 //    int arr[5];
 //    arr[0] = 5;
