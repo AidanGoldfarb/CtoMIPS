@@ -81,7 +81,7 @@ public class ControlFlowGraphFactory {
         for(AssemblyItem item: section.items) {
             switch (item) {
                 case Label label -> {
-                    System.out.println("label: " + label);
+                    //System.out.println("label: " + label);
                     Node cur = new Node(label);
                     cfg.label_list.add(cur);
                 }

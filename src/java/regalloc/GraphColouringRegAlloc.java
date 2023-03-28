@@ -45,15 +45,10 @@ public class GraphColouringRegAlloc implements AssemblyPass {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-//        for(Node n: cfgs.get(0).preorderTraversal()){
-//            System.out.println("NODE: " + n);
-//            System.out.println("LiveIN: " + n.liveIn);
-//            System.out.println("LiveOUT: " + n.liveOut);
-//            System.out.println();
-//        }
-//
-//        for(LinkedList<InterferenceGraph.InterferenceNode> ll: ig.adj_list){
-//            System.out.println(ll);
+
+//        for(var node: ig.vertice_list){
+//            System.out.println(node);
+//            System.out.println("\t"+node.neighbors);
 //        }
 
         return newProg;

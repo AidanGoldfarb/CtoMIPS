@@ -28,8 +28,12 @@ public class InterferenceGraphFactory {
                 //add edges
                 addInsAndOuts(node.liveIn,ig);
                 addInsAndOuts(node.liveOut,ig);
+
+
             }
         }
+        ig.updateAdjList();
+        ig.updateNeighbors();
         return ig;
     }
 

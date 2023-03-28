@@ -19,7 +19,7 @@ public class Graph {
 
     ArrayList<Node> label_list;
     HashSet<Pair> edge_list;
-    ArrayList<LinkedList<Node>> adj_list;
+    ArrayList<ArrayList<Node>> adj_list;
 
     ArrayList<Node> preorder;
 
@@ -37,13 +37,13 @@ public class Graph {
         V++;
         this.vertice_list.add(n);
         if(parent == -1){
-            LinkedList<Node> ll = new LinkedList<>();
+            ArrayList<Node> ll = new ArrayList<>();
             ll.add(n);
             this.adj_list.add(ll);
             this.root = n;
         }
         else{
-            for(LinkedList<Node> lst: adj_list){
+            for(ArrayList<Node> lst: adj_list){
                 for(Node par: lst){
                     if(par.id == parent){
                         par.children.add(n);
@@ -76,7 +76,7 @@ public class Graph {
     public Node getNode(int id){
         //add iterator later
         for (int i = 0; i < this.adj_list.size(); i++) {
-            LinkedList<Node> list = this.adj_list.get(i);
+            ArrayList<Node> list = this.adj_list.get(i);
             // Iterate through each neighbor of the current vertex
             for(Node n: list){
                 if(n.id == id){
@@ -91,7 +91,7 @@ public class Graph {
     public Node getNode(String name){
         //add iterator later
         for (int i = 0; i < this.adj_list.size(); i++) {
-            LinkedList<Node> list = this.adj_list.get(i);
+            ArrayList<Node> list = this.adj_list.get(i);
             // Iterate through each neighbor of the current vertex
             for(Node n: list){
                 if(n.name.equals(name)){
@@ -153,7 +153,7 @@ public class Graph {
 
         // Iterate through each vertex in the adjacency list
         for (int i = 0; i < this.adj_list.size(); i++) {
-            LinkedList<Node> list = this.adj_list.get(i);
+            ArrayList<Node> list = this.adj_list.get(i);
             // Iterate through each neighbor of the current vertex
             for(int j = 0; j<list.size(); j++){
                 if(j==0){
@@ -180,12 +180,12 @@ public class Graph {
         StringBuilder sb = new StringBuilder();
         //System.out.println("adjsize: " + adj_list.size());
         for(int i = 0; i<adj_list.size(); i++){
-            LinkedList<Node> cur = adj_list.get(i);
-            sb.append("[" + cur.peek().id + "]  -> ");
-            ListIterator li = cur.listIterator(1);
+            ArrayList<Node> cur = adj_list.get(i);
+            sb.append("[" + cur.get(0).id + "]  -> ");
+            ListIterator<Node> li = cur.listIterator(1);
             while(li.hasNext()){
                 Node n = (Node)li.next();
-                sb.append(n + "(" + n.id + ")" + ",");
+                sb.append(n).append("(").append(n.id).append(")").append(",");
             }
             sb.append("\n");
         }

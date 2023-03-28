@@ -3,17 +3,13 @@ package regalloc;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Objects;
+import java.util.*;
 
 import gen.asm.Register;
 
 public class InterferenceGraph extends Graph{
 
-    ArrayList<LinkedList<InterferenceNode>> adj_list;
+    ArrayList<ArrayList<InterferenceNode>> adj_list;
     Set<InterferenceNode> vertice_list;
 
 
@@ -24,41 +20,48 @@ public class InterferenceGraph extends Graph{
     /*
         add undirected edge
      */
-//    public void connectNodes(InterferenceNode fst, InterferenceNode snd){
-//        if(!containsNode(fst)){
-//            V++;
-//            this.vertice_list.add(fst);
-//            LinkedList<InterferenceNode> ll = new LinkedList<>();
-//            ll.add(fst);
-//            ll.add(snd);
-//            this.adj_list.add(ll);
-//        }
-//        if(!containsNode(snd)){
-//            V++;
-//            this.vertice_list.add(snd);
-//            LinkedList<InterferenceNode> ll = new LinkedList<>();
-//            ll.add(snd);
-//            ll.add(fst);
-//            this.adj_list.add(ll);
-//        }
-//
-//        //add to edge list
-//        Pair p1 = new Pair(fst, snd);
-//        edge_list.add(p1);
-//    }
+    public void updateAdjList(){
+        for(InterferenceNode node: this.vertice_list){
+            var ll = new ArrayList<InterferenceNode>();
+            ll.add(node);
+            adj_list.add(ll);
+        }
+        for(var p: this.edge_list){
+            InterferenceNode fst = (InterferenceNode) p.fst;
+            InterferenceNode snd = (InterferenceNode) p.snd;
+            for(ArrayList<InterferenceNode> lst: this.adj_list){
+                if(lst.get(0).equals(fst)){
+                    lst.add(snd);
+                }
+            }
+        }
+    }
 
     public void addEdge(InterferenceNode fst, InterferenceNode snd) {
         edge_list.add(new Pair(fst, snd));
     }
 
-    private boolean containsNode(InterferenceNode node) {
-        //add to adj list (ArrayList<LinkedList<Node>>)
-        for(LinkedList<InterferenceNode> lst: this.adj_list){
-            if(lst.contains(node)){
-                return true;
+    public void updateNeighbors(){
+        for(var p: this.edge_list){
+            InterferenceNode fst = (InterferenceNode) p.fst;
+            InterferenceNode snd = (InterferenceNode) p.snd;
+//            System.out.println("Adding " + snd + " to " + fst);
+            for(var node: this.vertice_list){
+                if(node.equals(fst)){
+                    node.neighbors.add(snd);
+                }
             }
+            for(var node: this.vertice_list){
+                if(node.equals(snd)){
+                    node.neighbors.add(fst);
+                }
+            }
+
         }
-        return false;
+        for(var node: this.vertice_list){
+            System.out.println(node);
+            System.out.println("\t"+node.neighbors);
+        }
     }
 
     @Override
@@ -68,11 +71,8 @@ public class InterferenceGraph extends Graph{
 
         out.println("graph {");
 
-        // Iterate through each vertex in the adjacency list
-        for (int i = 0; i < this.adj_list.size(); i++) {
-            for(InterferenceNode in: this.adj_list.get(i)){
-                out.println("\""+ in +"\"");
-            }
+        for(InterferenceNode node: this.vertice_list){
+            out.println("\""+ node +"\"");
         }
 
         for(Pair p: this.edge_list){
@@ -88,8 +88,11 @@ public class InterferenceGraph extends Graph{
     public static class InterferenceNode{
         Register register;
 
+        HashSet<InterferenceNode> neighbors;
+
         public InterferenceNode(Register r){
             this.register = r;
+            this.neighbors = new HashSet<>();
         }
 
 
