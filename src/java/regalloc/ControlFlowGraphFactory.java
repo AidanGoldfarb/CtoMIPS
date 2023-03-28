@@ -74,9 +74,6 @@ public class ControlFlowGraphFactory {
 
         }
         cfg.writeDotRep();
-        //System.out.println(cfg);
-//        ArrayList<Node> preorder = cfg.preorderTraversal();
-//        System.out.println(preorder);
         return cfg;
     }
 
@@ -84,7 +81,7 @@ public class ControlFlowGraphFactory {
         for(AssemblyItem item: section.items) {
             switch (item) {
                 case Label label -> {
-                    //System.out.println("label: " + label);
+                    System.out.println("label: " + label);
                     Node cur = new Node(label);
                     cfg.label_list.add(cur);
                 }

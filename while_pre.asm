@@ -3,6 +3,14 @@
 
 .text
 main:
+# Begin Prologue
+addi $sp,$sp,-4
+sw $fp,0($sp)
+addi $fp,$sp,0
+addi $sp,$sp,-12
+# End Prologue
+# Emiting function body: main
+pushRegisters
 addi v1,$fp,-12
 li v3,0
 # storing rhs in lhs
@@ -44,6 +52,19 @@ label_2_endif:
 addi v41,$fp,-12
 lw v40,0(v41)
 sw v40,8($fp)
+# should jump back here
+# Begin Epilogue
+popRegisters
+addi $sp,$sp,12
+lw $fp,0($sp)
+addi $sp,$sp,4
+# End Epilogue
 jr $ra
-
+# Done with function body
+# Begin Epilogue
+popRegisters
+addi $sp,$sp,12
+lw $fp,0($sp)
+addi $sp,$sp,4
+# End Epilogue
 

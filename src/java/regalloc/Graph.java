@@ -15,10 +15,10 @@ public class Graph {
 
     Node root;
 
-    ArrayList<Node> vertice_list;
+    HashSet<Node> vertice_list;
 
     ArrayList<Node> label_list;
-    ArrayList<Pair> edge_list;
+    HashSet<Pair> edge_list;
     ArrayList<LinkedList<Node>> adj_list;
 
     ArrayList<Node> preorder;
@@ -27,9 +27,9 @@ public class Graph {
     public Graph(){
         V = 0;
         this.E = 0;
-        this.vertice_list = new ArrayList<>();
+        this.vertice_list = new HashSet<>();
         this.label_list = new ArrayList<>();
-        this.edge_list = new ArrayList<>();
+        this.edge_list = new HashSet<>();
         this.adj_list = new ArrayList<>();
     }
 
@@ -69,7 +69,7 @@ public class Graph {
     public void addEdge(int from, Label to){
         Node from_node = getNode(from);
         Node to_node = getNode(to.toString());
-        Pair p = new Pair(from_node,to_node);
+        Pair p = new Pair(from_node, to_node);
         edge_list.add(p);
     }
 
@@ -104,6 +104,7 @@ public class Graph {
                 return n;
             }
         }
+        System.out.println("LL: " + label_list);
         assert false;
         return null;
     }
@@ -247,12 +248,26 @@ public class Graph {
 
     }
 
-    public class Pair <T>{
+    public static class Pair <T>{
         T fst,snd;
 
         public Pair(T fst, T snd){
             this.fst = fst;
             this.snd = snd;
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Pair node = (Pair) o;
+            return this.fst.equals(node.fst) && this.snd.equals(node.snd); //ordered for now
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(this.fst,this.snd);
+        }
+
     }
 }

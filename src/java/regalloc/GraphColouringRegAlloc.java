@@ -6,6 +6,9 @@ import gen.asm.Instruction;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
+
+import regalloc.Graph.*;
 import regalloc.ControlFlowGraph.*;
 
 public class GraphColouringRegAlloc implements AssemblyPass {
@@ -36,12 +39,21 @@ public class GraphColouringRegAlloc implements AssemblyPass {
         la.run(cfgs.get(0));
 
         InterferenceGraphFactory igf = new InterferenceGraphFactory(cfgs.get(0));
-
+        InterferenceGraph ig = igf.build();
+        try {
+            ig.writeDotRep();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 //        for(Node n: cfgs.get(0).preorderTraversal()){
 //            System.out.println("NODE: " + n);
 //            System.out.println("LiveIN: " + n.liveIn);
 //            System.out.println("LiveOUT: " + n.liveOut);
 //            System.out.println();
+//        }
+//
+//        for(LinkedList<InterferenceGraph.InterferenceNode> ll: ig.adj_list){
+//            System.out.println(ll);
 //        }
 
         return newProg;
