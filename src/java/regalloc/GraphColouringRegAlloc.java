@@ -46,10 +46,14 @@ public class GraphColouringRegAlloc implements AssemblyPass {
             throw new RuntimeException(e);
         }
 
+        //not destructive
+        GraphColourer gc = new GraphColourer(ig);
+        gc.run();
+
 //        for(var node: ig.vertice_list){
-//            System.out.println(node);
-//            System.out.println("\t"+node.neighbors);
+//            System.out.println(node + ": " + node.color);
 //        }
+
 
         return newProg;
     }

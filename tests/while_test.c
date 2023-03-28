@@ -350,18 +350,20 @@
 //}
 
 
-int main() {
+void main() {
     int a;
-    int b;
-    int c;
-    c = 0;
-    a = 0;
-    if(a<9){
-        b = a+1;
-        c = c+b;
-        a = b*2;
-    }
-    return c;
+    a = 5;
+//    int a;
+//    int b;
+//    int c;
+//    c = 0;
+//    a = 0;
+//    if(a<9){
+//        b = a+1;
+//        c = c+b;
+//        a = b*2;
+//    }
+//    return c;
 
 
 
