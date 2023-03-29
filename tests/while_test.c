@@ -353,6 +353,7 @@
 void main() {
     int a;
     a = 5;
+    print_i(a);
 //    int a;
 //    int b;
 //    int c;

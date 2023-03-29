@@ -1,15 +1,11 @@
 package regalloc;
 
-import gen.asm.AssemblyPass;
-import gen.asm.AssemblyProgram;
-import gen.asm.Instruction;
+import gen.asm.*;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.ArrayList;
-import java.util.LinkedList;
-
-import regalloc.Graph.*;
-import regalloc.ControlFlowGraph.*;
+import java.util.Map;
 
 public class GraphColouringRegAlloc implements AssemblyPass {
 
@@ -18,46 +14,65 @@ public class GraphColouringRegAlloc implements AssemblyPass {
 
     @Override
     public AssemblyProgram apply(AssemblyProgram program) {
+        program.sections.remove(0);//remove first jump to main
+
         AssemblyProgram newProg = new AssemblyProgram();
-        ControlFlowGraphFactory cfgf = new ControlFlowGraphFactory(program);
-        ArrayList<ControlFlowGraph> cfgs = new ArrayList<>();
+
+        final AssemblyProgram.Section jmpToMainSection = newProg.newSection(AssemblyProgram.Section.Type.TEXT);
+        jmpToMainSection.emit(OpCode.J,Label.get("main")); //re-add fst jmp
+
+        LivenessAnalyzer la = new LivenessAnalyzer();
+        ControlFlowGraphFactory cfgf = new ControlFlowGraphFactory();
+        InterferenceGraphFactory igf = new InterferenceGraphFactory();
+        GraphColourer gc = new GraphColourer();
+
         // To complete
         program.sections.forEach(section -> {
             if (section.type == AssemblyProgram.Section.Type.DATA)
                 newProg.emitSection(section);
-            else{
+            else {
                 //one cfg for each section
                 try {
-                    cfgs.add(cfgf.build(section));
+                    ControlFlowGraph cfg = cfgf.build(section);
+                    la.run(cfg);
+                    InterferenceGraph ig = igf.build(cfg);
+                    ig.writeDotRep();
+                    Map<Register, Register> map = gc.run(ig);
+
+                    final AssemblyProgram.Section newSection = newProg.newSection(AssemblyProgram.Section.Type.TEXT);
+                    section.items.forEach(item -> {
+                        switch (item) {
+                            case gen.asm.StaticAllocationDirective sad -> {
+                                newSection.emit(sad);
+                            }
+                            case gen.asm.StaticStringDirective ssd -> {
+                                newSection.emit(ssd);
+                            }
+                            case gen.asm.Comment c -> {
+                                newSection.emit(c);
+                            }
+                            case gen.asm.Directive d -> {
+                                newSection.emit(d);
+                            }
+                            case gen.asm.Label l -> {
+                                newSection.emit(l);
+                            }
+                            case Instruction insn -> {
+                                if (insn != Instruction.Nullary.pushRegisters &&
+                                        insn != Instruction.Nullary.popRegisters) {
+//                                    System.out.println("\nbefore: " + insn.registers());
+//                                    insn.registers().replaceAll(map::get);
+//                                    System.out.println("after: " + insn.registers());
+                                    newSection.emit(insn.rebuild(map));
+                                }
+                            }
+                        }
+                    });
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
             }
         });
-
-        LivenessAnalyzer la = new LivenessAnalyzer();
-        la.run(cfgs.get(0));
-
-        InterferenceGraphFactory igf = new InterferenceGraphFactory(cfgs.get(0));
-        InterferenceGraph ig = igf.build();
-        try {
-            ig.writeDotRep();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        //not destructive
-        GraphColourer gc = new GraphColourer(ig);
-        gc.run();
-
-//        for(var node: ig.vertice_list){
-//            System.out.println(node + ": " + node.color);
-//        }
-
-
         return newProg;
     }
-
-
-
 }

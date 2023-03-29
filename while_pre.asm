@@ -1,3 +1,8 @@
+
+.text
+j main
+
+
 .data
 
 
@@ -15,6 +20,11 @@ addi v1,$fp,-4
 li v3,5
 # storing rhs in lhs
 sw v3,0(v1)
+addi v7,$fp,-4
+lw v6,0(v7)
+addi $a0,v6,0
+li $v0,1
+syscall
 # Done with function body
 # Begin Epilogue
 popRegisters

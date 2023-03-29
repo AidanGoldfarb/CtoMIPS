@@ -11,10 +11,7 @@ import static gen.asm.OpCode.Kind.*;
 
 public class ControlFlowGraphFactory {
 
-    AssemblyProgram program;
-    public ControlFlowGraphFactory(AssemblyProgram program) {
-        this.program = program;
-    }
+    //AssemblyProgram program;
 
     public ControlFlowGraph build(AssemblyProgram.Section section) throws IOException {
         ControlFlowGraph cfg = new ControlFlowGraph();

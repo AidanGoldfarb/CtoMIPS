@@ -7,13 +7,8 @@ import regalloc.InterferenceGraph.*;
 
 public class InterferenceGraphFactory {
 
-    ControlFlowGraph cfg;
 
-    public InterferenceGraphFactory(ControlFlowGraph cfg){
-        this.cfg = cfg;
-    }
-
-    public InterferenceGraph build(){
+    public InterferenceGraph build(ControlFlowGraph cfg){
         InterferenceGraph ig = new InterferenceGraph();
         for(Node node: cfg.vertice_list){
             //add all virtual registers as nodes
