@@ -40,6 +40,7 @@ public class GraphColourer {
         }
         if(num_verts > 0){ //update
             System.out.println("We gotta spill (not implemented)");
+            assert false : "spill not implemented";
         }
         //System.out.println("Stack len: " + stack.size());
         while(!stack.empty()){

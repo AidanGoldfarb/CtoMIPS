@@ -145,12 +145,12 @@ public final class AssemblyProgram {
                         case Directive directive -> writer.println(directive);
                         case Instruction instruction -> writer.println(instruction);
                         case StaticAllocationDirective sad -> {
-                            writer.print(sad.label+":\t");
+                            writer.println(sad.label+":\t");
                             writer.print(sad.dir+" ");
                             writer.println(sad.size);
                         }
                         case StaticStringDirective ssd -> {
-                            writer.print(ssd.l+":\t");
+                            writer.println(ssd.l+":\t");
                             writer.print(ssd.dir+" ");
                             writer.println("\"" + ssd.str + "\"");
                         }

@@ -351,9 +351,7 @@
 
 
 void main() {
-    int a;
-    a = 5;
-    print_i(a);
+    print_s((char*)"hello world");
 //    int a;
 //    int b;
 //    int c;
@@ -365,9 +363,6 @@ void main() {
 //        a = b*2;
 //    }
 //    return c;
-
-
-
 //    int arr[5];
 //    arr[0] = 5;
 //    arr[1] = 6;
@@ -375,7 +370,7 @@ void main() {
 //    arr[3] = 8;
 //    arr[4] = 9;
 //    print_i(iter_bin_search(arr,7,0,4));
-//    print_i(rec_bin_search(arr,7,0,4));
+    //print_i(rec_bin_search(arr,7,0,4));
 //    while(a){
 //        if(a%2==0){
 //            print_i(0);
