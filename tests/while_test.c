@@ -349,13 +349,18 @@
 //
 //}
 
-void foo(){
-    print_i(5);
-}
+//void foo(){
+//    print_i(5);
+//}
 
 
 void main() {
-    foo();
+    int n;
+    n = 5;
+    while(n){
+        print_i(n);
+        n = n-1;
+    }
 //    int a;
 //    int b;
 //    int c;
@@ -374,7 +379,7 @@ void main() {
 //    arr[3] = 8;
 //    arr[4] = 9;
 //    print_i(iter_bin_search(arr,7,0,4));
-    //print_i(rec_bin_search(arr,7,0,4));
+//    print_i(rec_bin_search(arr,7,0,4));
 //    while(a){
 //        if(a%2==0){
 //            print_i(0);

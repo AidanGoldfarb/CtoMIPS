@@ -26,15 +26,31 @@ public class GraphColouringRegAlloc implements AssemblyPass {
         InterferenceGraphFactory igf = new InterferenceGraphFactory();
         GraphColourer gc = new GraphColourer();
 
-        ControlFlowGraph cfg = null;
-        InterferenceGraph ig;
+        ControlFlowGraph cfg;
+        InterferenceGraph ig = null;
         try {
+            /*
+                Control flow graph
+             */
             cfg = cfgf.build();
-            cfg.writeDotRep();
+            cfg.writeDotRep("cfg.dot");
+
+            /*
+                Liveness
+             */
+
+            System.out.println(cfg.preorderTraversal());
+            la.run(cfg);
+
+            /*
+                Interference graph
+             */
+            ig = igf.build(cfg);
+            ig.writeDotRep("ig.dot");
+
         } catch (Exception e) {e.printStackTrace();}
-        assert cfg != null;
-        la.run(cfg);
-        ig = igf.build(cfg);
+        assert ig != null;
+
         Map<Register, Register> map = gc.run(ig);
         //emit
 

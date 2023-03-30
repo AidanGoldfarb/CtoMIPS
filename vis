@@ -1,1 +1,1 @@
-dot -Tpdf graph.dot -o graph.pdf && open graph.pdf
+dot -Tpdf cfg.dot -o cfg.pdf && open cfg.pdf && dot -Tpdf ig.dot -o ig.pdf && open ig.pdf

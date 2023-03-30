@@ -20,13 +20,6 @@ public class InterferenceGraph extends Graph implements Cloneable{
     }
 
     /*
-    copy constr
-     */
-    public InterferenceGraph(InterferenceGraph ig){
-        this.adj_list = new ArrayList<>(ig.adj_list);
-        this.vertice_list = new HashSet<>(ig.vertice_list);
-    }
-    /*
         add undirected edge
      */
     public void updateAdjList(){
@@ -72,8 +65,8 @@ public class InterferenceGraph extends Graph implements Cloneable{
     }
 
     @Override
-    public void writeDotRep() throws IOException {
-        String filename = "graph.dot";
+    public void writeDotRep(String filename) throws IOException {
+        //String filename = "graph.dot";
         PrintWriter out = new PrintWriter(new FileWriter(filename));
 
         out.println("graph {");
@@ -82,7 +75,7 @@ public class InterferenceGraph extends Graph implements Cloneable{
             out.println("\""+ node +"\"");
         }
 
-        for(Pair p: this.edge_list){
+        for(var p: this.edge_list){
             InterferenceNode from = (InterferenceNode) p.fst;
             InterferenceNode to = (InterferenceNode) p.snd;
             out.println("\"" + from + "\"" + " -- " + "\"" + to + "\"");
@@ -91,41 +84,6 @@ public class InterferenceGraph extends Graph implements Cloneable{
         out.println("}");
         out.close();
     }
-
-//    public void remove(InterferenceNode node) {
-//        //remove node from adj lst, edge lst, and vert lst. Update each node's (in vert lst) neighbors
-//
-//        //remove from adj list
-//        this.adj_list = (ArrayList<ArrayList<InterferenceNode>>)
-//                this.adj_list.stream()
-//                        .filter(x -> !x.get(0).equals(node))
-//                        .collect(Collectors.toList());
-//
-//        for(var lst: this.adj_list){
-//            lst.removeIf(inner -> inner.equals(node));
-//        }
-//
-//        //remove from edge list
-//        this.edge_list.removeIf(x -> !x.fst.equals(node) && !x.snd.equals(node));
-////        for(var p: this.edge_list){
-////            InterferenceNode fst = (InterferenceNode) p.fst;
-////            InterferenceNode snd = (InterferenceNode) p.snd;
-////        }
-//
-//        //remove from vert list AND UPDATE ALL OTHER NEIGHBORS
-//        for(var inner: this.vertice_list){
-//            if(inner.equals(node)){
-//                //remove from neighbors' neighbor lst
-//                for(var neighbor: inner.neighbors){
-//                    neighbor.neighbors.remove(inner);
-//                }
-//                //remove
-//                //this.vertice_list.remove(inner);
-//            }
-//        }
-//        this.vertice_list.removeIf(x -> x.equals(node));
-//    }
-
 
     public static class InterferenceNode{
         Register register;

@@ -66,7 +66,7 @@ public class ControlFlowGraphFactory {
                             default -> {
                                 //add node w edge to prev
                                 if(lastInsnWasJAL){
-                                    cfg.addNode(cur, savedId);
+                                    cfg.addNode(cur, savedId, false);
                                     lastInsnWasJAL = false;
                                 }
                                 else{
@@ -78,7 +78,7 @@ public class ControlFlowGraphFactory {
                     case Label label -> {
                         Node cur = new Node(label);
                         if(lastInsnWasJR){
-                            cfg.addNode(cur,-1);
+                            cfg.addNode(cur,-1, false);
                             lastInsnWasJR = false;
                         }
                         else{
@@ -89,7 +89,7 @@ public class ControlFlowGraphFactory {
                 }
             }
         }
-        cfg.writeDotRep();
+        //cfg.writeDotRep("cfg.png");
         return cfg;
     }
 
@@ -116,11 +116,11 @@ public class ControlFlowGraphFactory {
      */
     private void add_to_bottom(Node cur, ControlFlowGraph cfg){
         if(cur.id > 0){
-            cfg.addNode(cur, cur.id-1);
+            cfg.addNode(cur, cur.id-1,false);
         }
         else{
             //fst node
-            cfg.addNode(cur,-1);
+            cfg.addNode(cur,-1,true);
         }
     }
 }

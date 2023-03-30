@@ -65,6 +65,7 @@ public class LivenessAnalyzer {
             oldLiveIns = new HashMap<>();
             oldLiveOuts = new HashMap<>();
         }
+
         System.out.println("Liveness analysis done: " + iter + " iters");
     }
 

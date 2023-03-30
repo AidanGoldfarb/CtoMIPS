@@ -33,14 +33,16 @@ public class Graph {
         this.adj_list = new ArrayList<>();
     }
 
-    public void addNode(Node n, int parent){
+    public void addNode(Node n, int parent, boolean isroot){
         V++;
         this.vertice_list.add(n);
         if(parent == -1){
             ArrayList<Node> ll = new ArrayList<>();
             ll.add(n);
             this.adj_list.add(ll);
-            this.root = n;
+            if(isroot){
+                this.root = n;
+            }
         }
         else{
             for(ArrayList<Node> lst: adj_list){
@@ -147,8 +149,8 @@ public class Graph {
         return adj_list_string();
     }
 
-    public void writeDotRep() throws IOException {
-        String filename = "graph.dot";
+    public void writeDotRep(String filename) throws IOException {
+        //String filename = "graph.dot";
         PrintWriter out = new PrintWriter(new FileWriter(filename));
 
         out.println("digraph {");
@@ -168,7 +170,7 @@ public class Graph {
             out.println();
         }
 
-        for(Pair p: this.edge_list){
+        for(var p: this.edge_list){
             Node from = (Node) p.fst;
             Node to = (Node) p.snd;
             out.println("\"" + from + "\"" + " -> " + "\"" + to + "\"");
