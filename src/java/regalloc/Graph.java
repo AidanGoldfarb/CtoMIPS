@@ -54,6 +54,7 @@ public class Graph {
                     }
                 }
             }
+            System.out.println("adding: " + n + " parent: " + parent);
             assert false;
         }
 

@@ -2,32 +2,3 @@
 .text
 j main
 
-
-.data
-
-
-.text
-main:
-# Begin Prologue
-addi $sp,$sp,-4
-sw $fp,0($sp)
-addi $fp,$sp,0
-addi $sp,$sp,-4
-# End Prologue
-# Emiting function body: main
-addi $s0,$fp,-4
-li $s1,5
-# storing rhs in lhs
-sw $s1,0($s0)
-addi $s0,$fp,-4
-lw $s0,0($s0)
-addi $a0,$s0,0
-li $v0,1
-syscall
-# Done with function body
-# Begin Epilogue
-addi $sp,$sp,4
-lw $fp,0($sp)
-addi $sp,$sp,4
-# End Epilogue
-

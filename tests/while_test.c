@@ -349,9 +349,13 @@
 //
 //}
 
+void foo(){
+    print_i(5);
+}
+
 
 void main() {
-    print_s((char*)"hello world");
+    foo();
 //    int a;
 //    int b;
 //    int c;

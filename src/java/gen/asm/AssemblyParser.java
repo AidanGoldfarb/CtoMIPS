@@ -35,7 +35,6 @@ public final class AssemblyParser {
         var program = new AssemblyProgram();
         AssemblyProgram.Section currentSection = null;
         for (var line : reader.lines().collect(Collectors.toList())) {
-            System.out.println("LINE: " + line);
             var item = parseAssemblyItem(line);
             if (item == null) {
                 continue;
