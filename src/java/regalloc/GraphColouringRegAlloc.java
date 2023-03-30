@@ -32,59 +32,46 @@ public class GraphColouringRegAlloc implements AssemblyPass {
             cfg = cfgf.build();
             cfg.writeDotRep();
         } catch (Exception e) {e.printStackTrace();}
-//        assert cfg != null;
-//        la.run(cfg);
-//        ig = igf.build(cfg);
-//        Map<Register, Register> map = gc.run(ig);
+        assert cfg != null;
+        la.run(cfg);
+        ig = igf.build(cfg);
+        Map<Register, Register> map = gc.run(ig);
         //emit
 
         // To complete
-//        program.sections.forEach(section -> {
-//            if (section.type == AssemblyProgram.Section.Type.DATA)
-//                newProg.emitSection(section);
-//            else {
-//                //one cfg for each section
-//                try {
-//                    ControlFlowGraph cfg = cfgf.build();
-//                    la.run(cfg);
-//                    InterferenceGraph ig = igf.build(cfg);
-//                    ig.writeDotRep();
-//                    Map<Register, Register> map = gc.run(ig);
-//
-//                    final AssemblyProgram.Section newSection = newProg.newSection(AssemblyProgram.Section.Type.TEXT);
-//                    section.items.forEach(item -> {
-//                        switch (item) {
-//                            case gen.asm.StaticAllocationDirective sad -> {
-//                                newSection.emit(sad);
-//                            }
-//                            case gen.asm.StaticStringDirective ssd -> {
-//                                newSection.emit(ssd);
-//                            }
-//                            case gen.asm.Comment c -> {
-//                                newSection.emit(c);
-//                            }
-//                            case gen.asm.Directive d -> {
-//                                newSection.emit(d);
-//                            }
-//                            case gen.asm.Label l -> {
-//                                newSection.emit(l);
-//                            }
-//                            case Instruction insn -> {
-//                                if (insn != Instruction.Nullary.pushRegisters &&
-//                                        insn != Instruction.Nullary.popRegisters) {
-////                                    System.out.println("\nbefore: " + insn.registers());
-////                                    insn.registers().replaceAll(map::get);
-////                                    System.out.println("after: " + insn.registers());
-//                                    newSection.emit(insn.rebuild(map));
-//                                }
-//                            }
-//                        }
-//                    });
-//                } catch (IOException e) {
-//                    throw new RuntimeException(e);
-//                }
-//            }
-//        });
+        program.sections.forEach(section -> {
+            if (section.type == AssemblyProgram.Section.Type.DATA)
+                newProg.emitSection(section);
+            else {
+                //one cfg for each section
+                final AssemblyProgram.Section newSection = newProg.newSection(AssemblyProgram.Section.Type.TEXT);
+                section.items.forEach(item -> {
+                    switch (item) {
+                        case gen.asm.StaticAllocationDirective sad -> {
+                            newSection.emit(sad);
+                        }
+                        case gen.asm.StaticStringDirective ssd -> {
+                            newSection.emit(ssd);
+                        }
+                        case gen.asm.Comment c -> {
+                            newSection.emit(c);
+                        }
+                        case gen.asm.Directive d -> {
+                            newSection.emit(d);
+                        }
+                        case gen.asm.Label l -> {
+                            newSection.emit(l);
+                        }
+                        case Instruction insn -> {
+                            if (insn != Instruction.Nullary.pushRegisters &&
+                                    insn != Instruction.Nullary.popRegisters) {
+                                newSection.emit(insn.rebuild(map));
+                            }
+                        }
+                    }
+                });
+            }
+        });
         return newProg;
     }
 }
