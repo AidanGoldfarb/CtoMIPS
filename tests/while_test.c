@@ -348,21 +348,19 @@
 //    }
 //
 //}
+int a;
 
 void foo(){
-
+    if(a){
+        print_i(a);
+        a = a-1;
+        foo();
+    }
 }
 
 void main() {
-    int a;
-    a = 5;
-
-    if(a < 4){
-        a = 6;
-    }
-    else{
-        a = 7;
-    }
+   a = 5;
+   foo();
 //    int a;
 //    a = 5;
 //    foo();

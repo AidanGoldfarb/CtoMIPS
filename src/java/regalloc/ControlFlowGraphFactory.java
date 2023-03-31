@@ -32,6 +32,8 @@ public class ControlFlowGraphFactory {
 
     private void addToCfg(Section section, ControlFlowGraph cfg){
         boolean lastInsnJ = false;
+        boolean isRecCall = false;
+        int saveId = -1;
         for(AssemblyItem ai: section.items){
             switch (ai){
                 case Instruction insn -> {
@@ -41,20 +43,37 @@ public class ControlFlowGraphFactory {
                             //do something smart
                             switch (insn.opcode.kind()) {
                                 case JUMP_REGISTER -> { //jr, jalr
-                                    add_to_bottom(cur, cfg);
+
+                                    if(isRecCall){
+                                        //cfg.addEdge(cur.id,Label.get(section.items.get(0).toString()));
+                                        cfg.addNode(cur,saveId+1,false);
+                                        isRecCall = false;
+                                    }
+                                    else{
+                                        add_to_bottom(cur, cfg);
+                                    }
                                 }
                                 case JUMP -> { //jal, j
                                     Label label = ((Instruction.ControlFlow.Jump) insn).label;
                                     add_to_bottom(cur, cfg);
-                                    cfg.addEdge(cur.id, label);
                                     if(insn.opcode.toString().equals("j")){
                                         //System.out.println("ITS A REG JUMP");
                                         lastInsnJ = true;
+                                        cfg.addEdge(cur.id, label);
                                     }
                                     else{
                                         //System.out.println("ITS A JAL");
                                         Section toAdd = this.label_section_map.get(label);
-                                        addToCfg(toAdd,cfg);
+                                        isRecCall = toAdd.items.get(0).toString().equals(section.items.get(0).toString());
+                                        if(isRecCall){
+                                            cfg.addEdge(cur.id, label);
+                                            lastInsnJ = true;
+                                            saveId = cur.id;
+                                        }
+                                        else{
+                                            addToCfg(toAdd,cfg);
+                                        }
+
                                     }
 
                                     //jump to label
@@ -75,6 +94,13 @@ public class ControlFlowGraphFactory {
                         }
                         default -> {
                             add_to_bottom(cur, cfg);
+//                            if(lastInsnJ){
+//                                cfg.addNode(cur,-1, false);
+//                                lastInsnJ = false;
+//                            }
+//                            else{
+//                                add_to_bottom(cur, cfg);
+//                            }
                         }
                     }
                 }

@@ -1,6 +1,7 @@
 digraph {
-"main" -> "addi $sp,$sp,-4_1" -> "sw $fp,0($sp)_2" -> "addi $fp,$sp,0_3" -> "addi $sp,$sp,-4_4" -> "pushRegisters_5" -> "addi v1,$fp,-4_6" -> "li v3,5_7" -> "sw v3,0(v1)_8" -> "addi v7,$fp,-4_9" -> "lw v6,0(v7)_10" -> "li v9,4_11" -> "slt v4,v6,v9_12" -> "beq v4,$zero,label_2_else_13" -> "addi v11,$fp,-4_14" -> "li v13,6_15" -> "sw v13,0(v11)_16" -> "j label_3_endif_17"
-"label_2_else" -> "addi v15,$fp,-4_19" -> "li v17,7_20" -> "sw v17,0(v15)_21" -> "label_3_endif" -> "popRegisters_23" -> "addi $sp,$sp,4_24" -> "lw $fp,0($sp)_25" -> "addi $sp,$sp,4_26"
-"j label_3_endif_17" -> "label_3_endif"
-"beq v4,$zero,label_2_else_13" -> "label_2_else"
+"main" -> "addi $sp,$sp,-4_1" -> "sw $fp,0($sp)_2" -> "addi $fp,$sp,0_3" -> "addi $sp,$sp,0_4" -> "pushRegisters_5" -> "la v17,label_1_a_6" -> "li v19,5_7" -> "sw v19,0(v17)_8" -> "addi $sp,$sp,0_9" -> "addi $sp,$sp,0_10" -> "addi $sp,$sp,-4_11" -> "sw $ra,0($sp)_12" -> "jal foo_13" -> "foo" -> "addi $sp,$sp,-4_15" -> "sw $fp,0($sp)_16" -> "addi $fp,$sp,0_17" -> "addi $sp,$sp,0_18" -> "pushRegisters_19" -> "la v2,label_1_a_20" -> "lw v1,0(v2)_21" -> "beq v1,$zero,label_3_else_22" -> "la v6,label_1_a_23" -> "lw v5,0(v6)_24" -> "addi $a0,v5,0_25" -> "li $v0,1_26" -> "syscall_27" -> "la v8,label_1_a_28" -> "la v12,label_1_a_29" -> "lw v11,0(v12)_30" -> "li v14,1_31" -> "sub v9,v11,v14_32" -> "sw v9,0(v8)_33" -> "addi $sp,$sp,0_34" -> "addi $sp,$sp,0_35" -> "addi $sp,$sp,-4_36" -> "sw $ra,0($sp)_37" -> "jal foo_38" -> "lw $ra,0($sp)_39" -> "addi $sp,$sp,4_40" -> "j label_4_endif_41" -> "jr $ra_48" -> "lw $ra,0($sp)_49" -> "addi $sp,$sp,4_50" -> "popRegisters_51" -> "addi $sp,$sp,0_52" -> "lw $fp,0($sp)_53" -> "addi $sp,$sp,4_54"
+"label_3_else" -> "label_4_endif" -> "popRegisters_44" -> "addi $sp,$sp,0_45" -> "lw $fp,0($sp)_46" -> "addi $sp,$sp,4_47"
+"j label_4_endif_41" -> "label_4_endif"
+"jal foo_38" -> "foo"
+"beq v1,$zero,label_3_else_22" -> "label_3_else"
 }
