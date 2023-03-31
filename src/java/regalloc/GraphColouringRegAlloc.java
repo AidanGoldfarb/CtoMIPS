@@ -39,7 +39,7 @@ public class GraphColouringRegAlloc implements AssemblyPass {
                 Liveness
              */
 
-            System.out.println(cfg.preorderTraversal());
+            //System.out.println(cfg.preorderTraversal());
             la.run(cfg);
 
             /*

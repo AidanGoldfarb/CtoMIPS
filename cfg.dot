@@ -1,6 +1,6 @@
 digraph {
-"main" -> "addi $sp,$sp,-4_1" -> "sw $fp,0($sp)_2" -> "addi $fp,$sp,0_3" -> "addi $sp,$sp,-4_4" -> "pushRegisters_5" -> "addi v1,$fp,-4_6" -> "li v3,5_7" -> "sw v3,0(v1)_8" -> "label_1_loop" -> "addi v6,$fp,-4_10" -> "lw v5,0(v6)_11" -> "beq v5,$zero,label_2_exitwhile_12" -> "addi v10,$fp,-4_13" -> "lw v9,0(v10)_14" -> "addi $a0,v9,0_15" -> "li $v0,1_16" -> "syscall_17" -> "addi v12,$fp,-4_18" -> "addi v16,$fp,-4_19" -> "lw v15,0(v16)_20" -> "li v18,1_21" -> "sub v13,v15,v18_22" -> "sw v13,0(v12)_23" -> "j label_1_loop_24" -> "label_2_exitwhile"
-"popRegisters_26" -> "addi $sp,$sp,4_27" -> "lw $fp,0($sp)_28" -> "addi $sp,$sp,4_29"
-"j label_1_loop_24" -> "label_1_loop"
-"beq v5,$zero,label_2_exitwhile_12" -> "label_2_exitwhile"
+"main" -> "addi $sp,$sp,-4_1" -> "sw $fp,0($sp)_2" -> "addi $fp,$sp,0_3" -> "addi $sp,$sp,-4_4" -> "pushRegisters_5" -> "addi v1,$fp,-4_6" -> "li v3,5_7" -> "sw v3,0(v1)_8" -> "addi v7,$fp,-4_9" -> "lw v6,0(v7)_10" -> "li v9,4_11" -> "slt v4,v6,v9_12" -> "beq v4,$zero,label_2_else_13" -> "addi v11,$fp,-4_14" -> "li v13,6_15" -> "sw v13,0(v11)_16" -> "j label_3_endif_17"
+"label_2_else" -> "addi v15,$fp,-4_19" -> "li v17,7_20" -> "sw v17,0(v15)_21" -> "label_3_endif" -> "popRegisters_23" -> "addi $sp,$sp,4_24" -> "lw $fp,0($sp)_25" -> "addi $sp,$sp,4_26"
+"j label_3_endif_17" -> "label_3_endif"
+"beq v4,$zero,label_2_else_13" -> "label_2_else"
 }

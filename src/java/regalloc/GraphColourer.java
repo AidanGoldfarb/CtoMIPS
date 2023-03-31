@@ -12,10 +12,6 @@ public class GraphColourer {
             Register.Arch.t0,Register.Arch.t1, Register.Arch.t2,Register.Arch.t3,Register.Arch.t4,
             Register.Arch.t5,Register.Arch.t6,Register.Arch.t7, Register.Arch.t8,Register.Arch.t9,};
 
-    private final int num_colors = 18;
-
-
-
 
     public Map<Register, Register> run(InterferenceGraph ig){
         Map<Register, Register> map = new HashMap<>();
@@ -87,6 +83,7 @@ public class GraphColourer {
 
     private InterferenceNode findColorableNode(InterferenceGraph ig) {
         for(var node: ig.vertice_list){
+            int num_colors = 18;
             if(!node.visited && node.neighbor_count < num_colors){
                 return node;
             }

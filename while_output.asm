@@ -13,27 +13,57 @@ j main
 
 .data
 # Allocated labels for virtual registers
-label_14_v9:
+
+
+.text
+foo:
+# Begin Prologue
+# Original instruction: addi $sp,$sp,-4
+addi $sp,$sp,-4
+# Original instruction: sw $fp,0($sp)
+sw $fp,0($sp)
+# Original instruction: addi $fp,$sp,0
+addi $fp,$sp,0
+# Original instruction: addi $sp,$sp,0
+addi $sp,$sp,0
+# End Prologue
+# Emiting function body: foo
+# Original instruction: pushRegisters
+# Done with function body
+# Begin Epilogue
+# Original instruction: popRegisters
+# Original instruction: addi $sp,$sp,0
+addi $sp,$sp,0
+# Original instruction: lw $fp,0($sp)
+lw $fp,0($sp)
+# Original instruction: addi $sp,$sp,4
+addi $sp,$sp,4
+# Original instruction: jr $ra
+jr $ra
+# End Epilogue
+
+
+.data
+# Allocated labels for virtual registers
+label_15_v4:
 .space 4
-label_23_v13:
+label_6_v3:
 .space 4
-label_5_v3:
+label_12_v6:
 .space 4
-label_10_v5:
+label_9_v7:
 .space 4
-label_8_v6:
+label_7_v1:
 .space 4
-label_6_v1:
+label_13_v9:
 .space 4
-label_12_v10:
+label_22_v17:
 .space 4
-label_21_v18:
+label_23_v15:
 .space 4
-label_20_v15:
+label_19_v11:
 .space 4
-label_24_v12:
-.space 4
-label_17_v16:
+label_18_v13:
 .space 4
 
 
@@ -51,180 +81,163 @@ addi $sp,$sp,-4
 # End Prologue
 # Emiting function body: main
 # Original instruction: pushRegisters
-la $t0,label_14_v9
+la $t0,label_15_v4
 lw $t0,0($t0)
 addi $sp,$sp,-4
 sw $t0,0($sp)
-la $t0,label_23_v13
+la $t0,label_6_v3
 lw $t0,0($t0)
 addi $sp,$sp,-4
 sw $t0,0($sp)
-la $t0,label_5_v3
+la $t0,label_12_v6
 lw $t0,0($t0)
 addi $sp,$sp,-4
 sw $t0,0($sp)
-la $t0,label_10_v5
+la $t0,label_9_v7
 lw $t0,0($t0)
 addi $sp,$sp,-4
 sw $t0,0($sp)
-la $t0,label_8_v6
+la $t0,label_7_v1
 lw $t0,0($t0)
 addi $sp,$sp,-4
 sw $t0,0($sp)
-la $t0,label_6_v1
+la $t0,label_13_v9
 lw $t0,0($t0)
 addi $sp,$sp,-4
 sw $t0,0($sp)
-la $t0,label_12_v10
+la $t0,label_22_v17
 lw $t0,0($t0)
 addi $sp,$sp,-4
 sw $t0,0($sp)
-la $t0,label_21_v18
+la $t0,label_23_v15
 lw $t0,0($t0)
 addi $sp,$sp,-4
 sw $t0,0($sp)
-la $t0,label_20_v15
+la $t0,label_19_v11
 lw $t0,0($t0)
 addi $sp,$sp,-4
 sw $t0,0($sp)
-la $t0,label_24_v12
-lw $t0,0($t0)
-addi $sp,$sp,-4
-sw $t0,0($sp)
-la $t0,label_17_v16
+la $t0,label_18_v13
 lw $t0,0($t0)
 addi $sp,$sp,-4
 sw $t0,0($sp)
 # Original instruction: addi v1,$fp,-4
 addi $t5,$fp,-4
-la $t0,label_6_v1
+la $t0,label_7_v1
 sw $t5,0($t0)
 # Original instruction: li v3,5
 li $t5,5
-la $t0,label_5_v3
+la $t0,label_6_v3
 sw $t5,0($t0)
 # storing rhs in lhs
 # Original instruction: sw v3,0(v1)
-la $t5,label_5_v3
+la $t5,label_6_v3
 lw $t5,0($t5)
-la $t4,label_6_v1
+la $t4,label_7_v1
 lw $t4,0($t4)
 sw $t5,0($t4)
-label_1_loop:
-# Original instruction: addi v6,$fp,-4
+# Original instruction: addi v7,$fp,-4
 addi $t5,$fp,-4
-la $t0,label_8_v6
+la $t0,label_9_v7
 sw $t5,0($t0)
-# Original instruction: lw v5,0(v6)
-la $t5,label_8_v6
+# Original instruction: lw v6,0(v7)
+la $t5,label_9_v7
 lw $t5,0($t5)
 lw $t4,0($t5)
-la $t0,label_10_v5
+la $t0,label_12_v6
 sw $t4,0($t0)
-# Original instruction: beq v5,$zero,label_2_exitwhile
-la $t5,label_10_v5
-lw $t5,0($t5)
-beq $t5,$zero,label_2_exitwhile
-# Original instruction: addi v10,$fp,-4
-addi $t5,$fp,-4
-la $t0,label_12_v10
+# Original instruction: li v9,4
+li $t5,4
+la $t0,label_13_v9
 sw $t5,0($t0)
-# Original instruction: lw v9,0(v10)
-la $t5,label_12_v10
+# Original instruction: slt v4,v6,v9
+la $t5,label_12_v6
 lw $t5,0($t5)
-lw $t4,0($t5)
-la $t0,label_14_v9
-sw $t4,0($t0)
-# Original instruction: addi $a0,v9,0
-la $t5,label_14_v9
-lw $t5,0($t5)
-addi $a0,$t5,0
-# Original instruction: li $v0,1
-li $v0,1
-# Original instruction: syscall
-syscall
-# Original instruction: addi v12,$fp,-4
-addi $t5,$fp,-4
-la $t0,label_24_v12
-sw $t5,0($t0)
-# Original instruction: addi v16,$fp,-4
-addi $t5,$fp,-4
-la $t0,label_17_v16
-sw $t5,0($t0)
-# Original instruction: lw v15,0(v16)
-la $t5,label_17_v16
-lw $t5,0($t5)
-lw $t4,0($t5)
-la $t0,label_20_v15
-sw $t4,0($t0)
-# Original instruction: li v18,1
-li $t5,1
-la $t0,label_21_v18
-sw $t5,0($t0)
-# Original instruction: sub v13,v15,v18
-la $t5,label_20_v15
-lw $t5,0($t5)
-la $t4,label_21_v18
+la $t4,label_13_v9
 lw $t4,0($t4)
-sub $t3,$t5,$t4
-la $t0,label_23_v13
+slt $t3,$t5,$t4
+la $t0,label_15_v4
 sw $t3,0($t0)
-# storing rhs in lhs
-# Original instruction: sw v13,0(v12)
-la $t5,label_23_v13
+# Original instruction: beq v4,$zero,label_2_else
+la $t5,label_15_v4
 lw $t5,0($t5)
-la $t4,label_24_v12
+beq $t5,$zero,label_2_else
+# Original instruction: addi v11,$fp,-4
+addi $t5,$fp,-4
+la $t0,label_19_v11
+sw $t5,0($t0)
+# Original instruction: li v13,6
+li $t5,6
+la $t0,label_18_v13
+sw $t5,0($t0)
+# storing rhs in lhs
+# Original instruction: sw v13,0(v11)
+la $t5,label_18_v13
+lw $t5,0($t5)
+la $t4,label_19_v11
 lw $t4,0($t4)
 sw $t5,0($t4)
-# Original instruction: j label_1_loop
-j label_1_loop
-label_2_exitwhile:
+# Original instruction: j label_3_endif
+j label_3_endif
+label_2_else:
+# Original instruction: addi v15,$fp,-4
+addi $t5,$fp,-4
+la $t0,label_23_v15
+sw $t5,0($t0)
+# Original instruction: li v17,7
+li $t5,7
+la $t0,label_22_v17
+sw $t5,0($t0)
+# storing rhs in lhs
+# Original instruction: sw v17,0(v15)
+la $t5,label_22_v17
+lw $t5,0($t5)
+la $t4,label_23_v15
+lw $t4,0($t4)
+sw $t5,0($t4)
+label_3_endif:
 # Done with function body
 # Begin Epilogue
 # Original instruction: popRegisters
 lw $t0,0($sp)
 addi $sp,$sp,4
-la $t1,label_17_v16
+la $t1,label_18_v13
 sw $t0,0($t1)
 lw $t0,0($sp)
 addi $sp,$sp,4
-la $t1,label_24_v12
+la $t1,label_19_v11
 sw $t0,0($t1)
 lw $t0,0($sp)
 addi $sp,$sp,4
-la $t1,label_20_v15
+la $t1,label_23_v15
 sw $t0,0($t1)
 lw $t0,0($sp)
 addi $sp,$sp,4
-la $t1,label_21_v18
+la $t1,label_22_v17
 sw $t0,0($t1)
 lw $t0,0($sp)
 addi $sp,$sp,4
-la $t1,label_12_v10
+la $t1,label_13_v9
 sw $t0,0($t1)
 lw $t0,0($sp)
 addi $sp,$sp,4
-la $t1,label_6_v1
+la $t1,label_7_v1
 sw $t0,0($t1)
 lw $t0,0($sp)
 addi $sp,$sp,4
-la $t1,label_8_v6
+la $t1,label_9_v7
 sw $t0,0($t1)
 lw $t0,0($sp)
 addi $sp,$sp,4
-la $t1,label_10_v5
+la $t1,label_12_v6
 sw $t0,0($t1)
 lw $t0,0($sp)
 addi $sp,$sp,4
-la $t1,label_5_v3
+la $t1,label_6_v3
 sw $t0,0($t1)
 lw $t0,0($sp)
 addi $sp,$sp,4
-la $t1,label_23_v13
-sw $t0,0($t1)
-lw $t0,0($sp)
-addi $sp,$sp,4
-la $t1,label_14_v9
+la $t1,label_15_v4
 sw $t0,0($t1)
 # Original instruction: addi $sp,$sp,4
 addi $sp,$sp,4

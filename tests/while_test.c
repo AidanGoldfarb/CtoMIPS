@@ -349,18 +349,26 @@
 //
 //}
 
-//void foo(){
-//    print_i(5);
-//}
+void foo(){
 
+}
 
 void main() {
-    int n;
-    n = 5;
-    while(n){
-        print_i(n);
-        n = n-1;
+    int a;
+    a = 5;
+
+    if(a < 4){
+        a = 6;
     }
+    else{
+        a = 7;
+    }
+//    int a;
+//    a = 5;
+//    foo();
+//    print_i(a);
+    //print_i(a);
+    //foo(a);
 //    int a;
 //    int b;
 //    int c;
