@@ -348,19 +348,53 @@
 //    }
 //
 //}
-int a;
 
-void foo(){
-    if(a){
-        print_i(a);
-        a = a-1;
-        foo();
-    }
-}
 
 void main() {
-   a = 5;
-   foo();
+    int n;
+    n = 11;
+    while(n){
+        if(n){
+            //n = n-1;
+        }
+        n = n-1;
+        print_i(n);
+    }
+
+//   int n;
+//     int first;
+//     int second;
+//     int next;
+//     int c;
+//     char t;
+//
+//     print_s((char*)"Enter n: ");
+//     // read n from the standard input
+//     n = read_i();
+//
+//     first = 0;
+//     second = 1;
+////
+//     print_s((char*)"First ");
+//     print_i(n);
+//     print_s((char*)" terms of Fibonacci series are : ");
+////
+//     c = 0;
+//     while (c < n) {
+////         if ( c <= 1 )
+////            next = c;
+////         else
+////         {
+////             next = first + second;
+////             first = second;
+////             second = next;
+////         }
+//         print_i(next);
+//         print_s((char*)" ");
+//         c = c+1;
+//     }
+
+
 //    int a;
 //    a = 5;
 //    foo();

@@ -35,12 +35,29 @@ public class GraphColouringRegAlloc implements AssemblyPass {
             cfg = cfgf.build();
             cfg.writeDotRep("cfg.dot");
 
+
             /*
                 Liveness
              */
-
+//            var vl = cfg.preorderTraversal().size();
+//            System.out.println(vl);
+//            var po = cfg.preorderTraversal();
+//            po.forEach(vl::remove);
+//            System.out.println(vl);
+//            System.exit(1);
             //System.out.println(cfg.preorderTraversal());
             la.run(cfg);
+            //System.out.println("size: " + cfg.preorderTraversal().size());
+
+            //System.out.println("Size: " + cfg.vertice_list.size());
+//            for(var e: cfg.preorderTraversal()){
+//                if(e.toString().contains("beq v5,$zero,label_2_exitwhile_12")){
+//                    System.out.println(e);
+//                    System.out.println("\t" + e.children);
+//                }
+//
+//                //System.out.println(e);
+//            }
 
             /*
                 Interference graph

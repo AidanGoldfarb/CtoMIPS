@@ -12,15 +12,11 @@ import java.util.*;
 public class Graph {
     static int V; //number of vertices
     int E; //number of edges
-
     Node root;
-
     HashSet<Node> vertice_list;
-
     ArrayList<Node> label_list;
     HashSet<Pair> edge_list;
     ArrayList<ArrayList<Node>> adj_list;
-
     ArrayList<Node> preorder;
 
     //for empty graph
@@ -34,8 +30,11 @@ public class Graph {
     }
 
     public void addNode(Node n, int parent, boolean isroot){
+        boolean flag = false;
+        if(parent == 31){
+            flag = true;
+        }
         V++;
-        this.vertice_list.add(n);
         if(parent == -1){
             ArrayList<Node> ll = new ArrayList<>();
             ll.add(n);
@@ -43,6 +42,7 @@ public class Graph {
             if(isroot){
                 this.root = n;
             }
+            this.vertice_list.add(n);
         }
         else{
             for(ArrayList<Node> lst: adj_list){
@@ -51,7 +51,12 @@ public class Graph {
                         par.children.add(n);
                         n.parents.add(par);
                         lst.add(n);
+//                        if(flag){
+//                            System.out.println("Par: " + par);
+//                            System.out.println("child: " + n);
+//                        }
                         //lst.add(0,n); //add to front
+                        this.vertice_list.add(n);
                         return;
                     }
                 }
@@ -59,7 +64,6 @@ public class Graph {
             System.out.println("adding: " + n + " parent: " + parent);
             assert false;
         }
-
     }
 
 //    public void addEdge(int from, int to) {
@@ -73,7 +77,7 @@ public class Graph {
         Node from_node = getNode(from);
         Node to_node = getNode(to.toString());
         Pair p = new Pair(from_node, to_node);
-        edge_list.add(p);
+        this.edge_list.add(p);
     }
 
     public Node getNode(int id){
@@ -115,34 +119,113 @@ public class Graph {
 
 
     public ArrayList<Node> preorderTraversal(){
+        replaceChildren();
+        HashSet<Node> visited = new HashSet<>();
         this.preorder = new ArrayList<>();
-        preorderTraversalHelper(this.root, new HashSet<Node>());
-        //resetVisited();
+        for(var node: this.vertice_list){
+            if(node.toString().equals("main")){
+                preorderTraversalHelper(node,visited);
+            }
+        }
+//        System.out.println("vlst size: " + this.vertice_list.size());
+//        System.out.println("pre size: " + this.preorder.size());
         return this.preorder;
     }
-    private void preorderTraversalHelper(Node rootNode, HashSet<Node> visited) {
-        if (rootNode == null) {
+
+    public void preorderTraversalHelper(Node node, HashSet<Node> visited){
+        if (node == null){
             return;
         }
 
-        //rootNode.visited = true;
-        visited.add(rootNode);
-        this.preorder.add(rootNode);
-        //System.out.println(rootNode);
+        visited.add(node);
+        this.preorder.add(node);
 
-        for (Node childNode : rootNode.children) {
-            if(!visited.contains(childNode)){
-                preorderTraversalHelper(childNode,visited);
-            }
-
-        }
-
-        for (Node parentNode : rootNode.parents) {
-            if(!visited.contains(parentNode)){
-                preorderTraversalHelper(parentNode,visited);
+        for(var child: node.children){
+//            System.out.println("node: " + node);
+//            System.out.println("\tkids: " + node.children);
+            if(!mapContains(child,visited)){
+//                if(child.toString().equals("label_2_exitwhile")){
+//                    //System.out.println("kids: " + child.children);
+//                    for(var inner: this.vertice_list){
+//                        if(inner.toString().equals("label_2_exitwhile")){
+//                            //System.out.println("kids: " + inner.children);
+//                        }
+//                    }
+//                }
+                preorderTraversalHelper(child,visited);
             }
         }
     }
+
+    private void replaceChildren(){
+        for(var node: this.vertice_list){
+            if(node.toString().equals("main")){
+                replaceChildrenHelper(node,new HashSet<>());
+            }
+        }
+    }
+
+    private void replaceChildrenHelper(Node node, HashSet<Node> visited){
+        if (node==null){
+            return;
+        }
+
+        visited.add(node);
+
+        for(var inner: this.vertice_list){
+            if(node.toString().equals(inner.toString())){
+                node.children = new ArrayList<>(inner.children);
+            }
+        }
+
+        for(var child: node.children){
+            if(!visited.contains(child)){
+                replaceChildrenHelper(child,visited);
+            }
+        }
+
+
+    }
+
+    private boolean mapContains(Node node, HashSet<Node> visited){
+//        if(node.toString().equals("label_2_exitwhile")){
+//            System.out.println("node: " + node);
+//        }
+        for(var e: visited){
+            if(node.toString().equals(e.toString())){
+                return true;
+            }
+        }
+        return false;
+    }
+//    public ArrayList<Node> preorderTraversal(){
+//        this.preorder = new ArrayList<>();
+//        for(var node: this.vertice_list){
+//            if(node.toString().equals("label_2_exitwhile")){
+//                System.out.println(node);
+//                System.out.println("\t" + node.children);
+//            }
+//        }
+//
+//        preorderTraversalHelper(this.root, new HashSet<>());
+//        //resetVisited();
+//        return this.preorder;
+//    }
+//    private void preorderTraversalHelper(Node rootNode, HashSet<Node> visited) {
+//        if (rootNode == null) {
+//            return;
+//        }
+//
+//
+//        visited.add(rootNode);
+//        this.preorder.add(rootNode);
+//
+//        for (Node childNode : rootNode.children) {
+//            if(!visited.contains(childNode)){
+//                preorderTraversalHelper(childNode,visited);
+//            }
+//        }
+//    }
 
     @Override
     public String toString(){
@@ -207,7 +290,6 @@ public class Graph {
         String name;
         List<Node> parents;
         List<Node> children;
-
         boolean visited;
 
         public Node(Instruction instruction, List<Register> operands){
@@ -237,17 +319,18 @@ public class Graph {
             return this.name;
         }
 
-        @Override
+        //@Override
         public boolean equals(Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
             Node node = (Node) o;
-            return id == node.id;
+//            return this.name.equals(node.name);
+            return this.id == node.id && this.name.equals(node.name);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(id);
+            return Objects.hash(this.id,this.name);
         }
 
     }

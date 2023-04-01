@@ -27,12 +27,14 @@ public class ControlFlowGraphFactory {
         //begin in main
         addToCfg(sections.get(0),cfg);
 
+        cfg.updateChildren();
         return cfg;
     }
 
     private void addToCfg(Section section, ControlFlowGraph cfg){
         boolean lastInsnJ = false;
         boolean isRecCall = false;
+        //boolean lastInsnBr = false;
         int saveId = -1;
         for(AssemblyItem ai: section.items){
             switch (ai){
@@ -83,20 +85,28 @@ public class ControlFlowGraphFactory {
                                     Label label = ((Instruction.ControlFlow.UnaryBranch) insn).label;
                                     add_to_bottom(cur, cfg);
                                     cfg.addEdge(cur.id, label);
+//                                    lastInsnBr = true;
+//                                    saveId = cur.id;
                                 }
                                 case BINARY_BRANCH -> {
                                     //jump to thrd operand
                                     Label label = ((Instruction.ControlFlow.BinaryBranch) insn).label;
                                     add_to_bottom(cur, cfg);
                                     cfg.addEdge(cur.id, label);
+//                                    lastInsnBr = true;
+//                                    saveId = cur.id;
                                 }
                             }
                         }
                         default -> {
+//                            if(cur.toString().equals("popRegisters_32")){
+//                                System.out.println("id: " + cur.id);
+//                                System.out.println("liwj: " + lastInsnJ);
+//                            }
                             add_to_bottom(cur, cfg);
-//                            if(lastInsnJ){
-//                                cfg.addNode(cur,-1, false);
-//                                lastInsnJ = false;
+//                            if(lastInsnBr){
+//                                cfg.addNode(cur,saveId, false);
+//                                lastInsnBr = false;
 //                            }
 //                            else{
 //                                add_to_bottom(cur, cfg);
@@ -105,7 +115,9 @@ public class ControlFlowGraphFactory {
                     }
                 }
                 case Label label -> {
+
                     Node cur = new Node(label);
+                    //add_to_bottom(cur, cfg);
                     if(lastInsnJ){
                         cfg.addNode(cur,-1, false);
                         lastInsnJ = false;
@@ -119,6 +131,71 @@ public class ControlFlowGraphFactory {
         }
     }
 
+    /*
+    robust add to bottom of graph
+     */
+    private void add_to_bottom(Node cur, ControlFlowGraph cfg){
+        if(cur.id > 0){
+            cfg.addNode(cur, cur.id-1,false);
+        }
+        else{
+            //fst node
+            cfg.addNode(cur,-1,true);
+        }
+    }
+
+    private List<Section> sort_sections(List<Section> sections) {
+        Comparator<Section> sectionsComparator = new Comparator<Section>() {
+            public int compare(Section s1, Section s2) {
+                String s1name = s1.items.get(0).toString();
+                String s2name = s2.items.get(0).toString();
+//                System.out.println("s1name: " + s1name);
+//                System.out.println("s2name: " + s2name);
+                if (s1name.equals("main")) {
+                    return -1; // s1 comes before s2
+                } else if (s2name.equals("main")) {
+                    return 1; // s2 comes before s1
+                } else {
+                    return 0; // preserve original order
+                }
+            }
+        };
+        sections.remove(0);
+        sections.sort(sectionsComparator);
+        return sections;
+    }
+
+    private void parse_labels(ControlFlowGraph cfg) {
+        program.sections.forEach(section -> {
+            for(AssemblyItem item: section.items) {
+                switch (item) {
+                    case Label label -> {
+                        //System.out.println("label: " + label);
+                        Node cur = new Node(label);
+                        cfg.label_list.add(cur);
+                        //cfg.V++;
+                    }
+                    default -> {
+                        //System.out.println("parselabel not implemented: " + item);
+                    }
+                }
+            }
+        });
+
+    }
+
+
+
+    private HashMap<Label, Section> populateMap() {
+        HashMap<Label,Section> res = new HashMap<>();
+        for(Section section: this.program.sections){
+            var items = section.items;
+            if(items.size() > 0){
+                res.put(Label.get(items.get(0).toString()),section);
+            }
+        }
+        return res;
+    }
 
 //    public ControlFlowGraph build() throws IOException {
 //        ControlFlowGraph cfg = new ControlFlowGraph();
@@ -196,66 +273,5 @@ public class ControlFlowGraphFactory {
 //        return cfg;
 //    }
 
-    private List<Section> sort_sections(List<Section> sections) {
-        Comparator<Section> sectionsComparator = new Comparator<Section>() {
-            public int compare(Section s1, Section s2) {
-                String s1name = s1.items.get(0).toString();
-                String s2name = s2.items.get(0).toString();
-//                System.out.println("s1name: " + s1name);
-//                System.out.println("s2name: " + s2name);
-                if (s1name.equals("main")) {
-                    return -1; // s1 comes before s2
-                } else if (s2name.equals("main")) {
-                    return 1; // s2 comes before s1
-                } else {
-                    return 0; // preserve original order
-                }
-            }
-        };
-        sections.remove(0);
-        Collections.sort(sections,sectionsComparator);
-        return sections;
-    }
 
-    private void parse_labels(ControlFlowGraph cfg) {
-        program.sections.forEach(section -> {
-            for(AssemblyItem item: section.items) {
-                switch (item) {
-                    case Label label -> {
-                        //System.out.println("label: " + label);
-                        Node cur = new Node(label);
-                        cfg.label_list.add(cur);
-                    }
-                    default -> {
-                        //System.out.println("parselabel not implemented: " + item);
-                    }
-                }
-            }
-        });
-
-    }
-
-    /*
-    robust add to bottom of graph
-     */
-    private void add_to_bottom(Node cur, ControlFlowGraph cfg){
-        if(cur.id > 0){
-            cfg.addNode(cur, cur.id-1,false);
-        }
-        else{
-            //fst node
-            cfg.addNode(cur,-1,true);
-        }
-    }
-
-    private HashMap<Label, Section> populateMap() {
-        HashMap<Label,Section> res = new HashMap<>();
-        for(Section section: this.program.sections){
-            var items = section.items;
-            if(items.size() > 0){
-                res.put(Label.get(items.get(0).toString()),section);
-            }
-        }
-        return res;
-    }
 }
