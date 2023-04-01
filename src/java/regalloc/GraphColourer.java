@@ -48,14 +48,15 @@ public class GraphColourer {
             if(num_verts > 0){
                 var node_to_spill = findNodeToSpill(ig);
                 //assert node_to_spill!=null; //could be null if found an ARC register, find solution to this
+                if(node_to_spill != null){
+                    System.out.println("node_to_spill: " + node_to_spill);
 
-                System.out.println("node_to_spill: " + node_to_spill);
-
-                node_to_spill.visited = true;
-                for(var inner: node_to_spill.neighbors){
-                    inner.neighbor_count--;
+                    node_to_spill.visited = true;
+                    for(var inner: node_to_spill.neighbors){
+                        inner.neighbor_count--;
+                    }
+                    this.to_spill.add(node_to_spill);
                 }
-                this.to_spill.add(node_to_spill);
                 num_verts--;
                 //assert false : "spill not implemented";
             }

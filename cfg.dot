@@ -1,3 +1,3 @@
 digraph {
-"main" -> "addi $sp,$sp,-4_1" -> "sw $fp,0($sp)_2" -> "addi $fp,$sp,0_3" -> "addi $sp,$sp,-4_4" -> "pushRegisters_5" -> "addi v735,$fp,-36_6" -> "li v737,5_7" -> "sw v737,0(v735)_8" -> "addi v741,$fp,-36_9" -> "lw v740,0(v741)_10" -> "addi $a0,v740,0_11" -> "li $v0,1_12" -> "syscall_13" -> "popRegisters_14" -> "addi $sp,$sp,4_15" -> "lw $fp,0($sp)_16" -> "addi $sp,$sp,4_17"
+"main" -> "addi $sp,$sp,-4_1" -> "sw $fp,0($sp)_2" -> "addi $fp,$sp,0_3" -> "addi $sp,$sp,-4_4" -> "pushRegisters_5" -> "addi v1,$fp,-4_6" -> "li v3,5_7" -> "sw v3,0(v1)_8" -> "addi v7,$fp,-4_9" -> "lw v6,0(v7)_10" -> "addi $a0,v6,0_11" -> "li $v0,1_12" -> "syscall_13" -> "popRegisters_14" -> "addi $sp,$sp,4_15" -> "lw $fp,0($sp)_16" -> "addi $sp,$sp,4_17"
 }
