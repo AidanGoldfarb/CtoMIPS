@@ -121,7 +121,6 @@ public class GraphColouringRegAlloc implements AssemblyPass {
                     }
                 });
             }
-
         });
         return newProg;
     }

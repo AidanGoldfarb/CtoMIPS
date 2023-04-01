@@ -63,138 +63,54 @@
    //    return stc;
    //}
 
-//#include "minic-stdlib.h"
-//// Board layout
-//char a11; char a12; char a13;
-//char a21; char a22; char a23;
-//char a31; char a32; char a33;
-//char empty; // Empty cell character
-//
-//// Resets the board
-//void reset() {
-// a11 = empty; a12 = empty;  a13 = empty;
-// a21 = empty; a22 = empty;  a23 = empty;
-// a31 = empty; a32 = empty;  a33 = empty;
-//}
-//
-//// Predicate indicating whether all board cells are filled.
-//// 1 => true
-//// 0 => false
-//int full() {
-//  int n;
-//  n = 0;
-//  if (a11 != empty)
-//    n = n + 1;
-//  if (a21 != empty)
-//    n = n + 1;
-//  if (a31 != empty)
-//    n = n + 1;
-//
-//  if (a12 != empty)
-//    n = n + 1;
-//  if (a22 != empty)
-//    n = n + 1;
-//  if (a32 != empty)
-//    n = n + 1;
-//
-//  if (a13 != empty)
-//    n = n + 1;
-//  if (a23 != empty)
-//    n = n + 1;
-//  if (a33 != empty)
-//    n = n + 1;
-//
-//  if (n == 9)
-//    return 1;
-//  else
-//    return 0;
-//}
-//
-//// Attempts to put mark in cell (row,col)
-//// Returns 1 on success, otherwise -1 is returned when the cell is already occupied, and 0 when the move is not within the board range.
-//int set(char row, int col, char mark) {
-//  int r;
-//  r = 1;
-//  if (row == 'a') {
-//     if (col == 1) {
-//        if (a11 == empty)
-//	    a11 = mark;
-//	else
-//	  r = -1;
-//     } else {
-//       if (col == 2) {
-//         if (a12 == empty)
-//           a12 = mark;
-//	 else
-//	   r = -1;
-//       } else {
-//         if (col == 3) {
-//	   if (a13 == empty)
-//              a13 = mark;
-//	   else
-//	     r = -1;
-//         } else {
-//           r = 0;
-//         }
-//       }
-//    }
-//  } else {
-//    if (row == 'b') {
-//       if (col == 1) {
-//          if (a21 == empty)
-//            a21 = mark;
-//	  else
-//	    r = -1;
-//       } else {
-//         if (col == 2) {
-//	    if (a22 == empty)
-//              a22 = mark;
-//	    else
-//	      r = -1;
-//         } else {
-//	    if (col == 3) {
-//	      if (a23 == empty)
-//                 a23 = mark;
-//              else
-//	       r = -1;
-//            } else {
-//	      r = 0;
-//	    }
-//	}
-//      }
-//    } else {
-//     if (row == 'c') {
-//        if (col == 1) {
-//	   if (a31 == empty)
-//             a31 = mark;
-//	   else
-//	     r = -1;
-//        } else {
-//           if (col == 2) {
-//	      if (a32 == empty)
-//                a32 = mark;
-//              else
-//	        r = -1;
-//           } else {
-//              if (col == 3) {
-//	        if (a33 == empty)
-//                   a33 = mark;
-//		else
-//		  r = -1;
-//	      } else {
-//	        r = 0;
-//	      }
-//          }
-//        }
-//     } else {
-//       r = 0;
-//     }
-//   }
-//  }
-// return r;
-//}
-//
-//// Prints the game board to stdout
+#include "minic-stdlib.h"
+// Board layout
+char a11; char a12; char a13;
+char a21; char a22; char a23;
+char a31; char a32; char a33;
+char empty; // Empty cell character
+
+// Resets the board
+void reset() {
+    a11 = empty; a12 = empty;  a13 = empty;
+    a21 = empty; a22 = empty;  a23 = empty;
+    a31 = empty; a32 = empty;  a33 = empty;
+}
+
+// Predicate indicating whether all board cells are filled.
+// 1 => true
+// 0 => false
+int full() {
+  int n;
+  n = 0;
+  if (a11 != empty)
+    n = n + 1;
+  if (a21 != empty)
+    n = n + 1;
+  if (a31 != empty)
+    n = n + 1;
+
+  if (a12 != empty)
+    n = n + 1;
+  if (a22 != empty)
+    n = n + 1;
+  if (a32 != empty)
+    n = n + 1;
+
+  if (a13 != empty)
+    n = n + 1;
+  if (a23 != empty)
+    n = n + 1;
+  if (a33 != empty)
+    n = n + 1;
+
+  if (n == 9)
+    return 1;
+  else
+    return 0;
+}
+
+// Prints the game board to stdout
 //void printGame() {
 //  print_s((char*)"\n");
 //  print_s((char*)"     1   2   3\n");
@@ -211,159 +127,277 @@
 //void printWinner(int player) {
 //  print_s((char*)"Player ");print_i(player);print_s((char*)" has won!\n");
 //}
-//
-//int switchPlayer(int currentPlayer) {
-//  if (currentPlayer == 1) return 2;
-//  else return 1;
-//}
-//
-//// Gets the mark for player 1 or 2
-//char get_mark(int player) {
-//  if (player == 1)
-//    return 'X';
-//  else
-//    return 'O';
-//}
-//
-//// Asks the current player to select his/her move.
-//void selectmove(int player) {
-//  char row; int col; int selected; int success;
-//  char mark;
-//  selected = 1;
-//  while(selected) {
-//    print_s((char*)"Player ");print_i(player);print_s((char*)" select move (e.g. a2)>");
-//    //row = read_c(); col = read_i();
-//    row = 'b';
-//    col = 2;
-//    mark = get_mark(player);
-//    success = set(row,col,mark);
-//      if (success == 0) {
-//      	 print_s((char*)"That is not a valid move!\n");
-//      } else {
-//        if (success == -1)
-//	  print_s((char*)"That move is not possible!\n");
-//        else
-//	  selected = 0;
-//      }
-//  }
-//}
-//
-//// Determines whether anybody has won.
-//// 0 => nobody has won yet
-//// 1 => there is a winner
-//int won(char mark) {
-//  int r;
-//  r = 0;
-//  if (a11 == mark) {
-//    if (a21 == mark) {
-//      if (a31 == mark) {
-//        r = 1;
-//      }
-//    } else {
-//      if (a22 == mark) {
-//        if (a33 == mark) {
-//	   r = 1;
-//	}
-//      } else {
-//        if (a12 == mark) {
-//	  if (a13 == mark) {
-//	     r = 1;
-//	  }
-//	}
-//      }
-//    }
-//  }
-//
-//  if (a12 == mark) {
-//    if (a22 == mark) {
-//      if (a32 == mark) {
-//         r = 1;
-//      }
-//    }
-//  }
-//
-//  if (a13 == mark) {
-//    if (a23 == mark) {
-//      if (a33 == mark) {
-//        r = 1;
-//      }
-//    } else {
-//      if (a22 == mark) {
-//        if (a31 == mark) {
-//	   r = 1;
-//	}
-//      }
-//    }
-//  }
-//
-//  if (a21 == mark) {
-//    if (a22 == mark) {
-//      if (a23 == mark) {
-//        r = 1;
-//      }
-//    }
-//  }
-//
-//  if (a31 == mark) {
-//    if (a32 == mark) {
-//       if (a33 == mark) {
-//          r = 1;
-//       }
-//    }
-//  }
-//  return r;
-//}
 
-int iter_bin_search(int* arr, int x, int low, int high){
-    int mid;
-    while(low!=high){
-        mid = (low+high)/2;
-        if(x == arr[mid]){
-            return mid;
-        }
-        if(x > arr[mid]){
-            low = mid+1;
-        }
-        else{
-            high = mid-1;
-        }
-    }
-}
-//
-int rec_bin_search(int* arr, int x, int low, int high){
-    int mid;
-    if (low > high){
-        return -1;
-    }else{
-        mid = (low+high)/2;
-        if(arr[mid]==x){
-            return mid;
-        }
-        if(x>arr[mid]){
-            return rec_bin_search(arr,x,mid+1,high);
-        }
-        else{
-            return rec_bin_search(arr,x,low,mid-1);
-        }
-    }
-
+int switchPlayer(int currentPlayer) {
+  if (currentPlayer == 1) return 2;
+  else return 1;
 }
 
+// Gets the mark for player 1 or 2
+char get_mark(int player) {
+  if (player == 1)
+    return 'X';
+  else
+    return 'O';
+}
+
+// Attempts to put mark in cell (row,col)
+// Returns 1 on success, otherwise -1 is returned when the cell is already occupied, and 0 when the move is not within the board range.
+
+int set(char row, int col, char mark){
+    int r;
+    r = 1;
+    if (row == 'a') {
+        if (col == 1) {
+            if (a11 == empty)
+                a11 = mark;
+            else
+                r = -1;
+        } else {
+            if (col == 2) {
+                if (a12 == empty)
+                    a12 = mark;
+                else
+                    r = -1;
+            }
+            else {
+                if (col == 3) {
+                    if (a13 == empty)
+                        a13 = mark;
+                    else
+                        r = -1;
+                } else {
+                    r = 0;
+                }
+            }
+        }
+    }
+    else {
+        if (row == 'b') {
+            if (col == 1) {
+                if (a21 == empty)
+                    a21 = mark;
+                else
+                    r = -1;
+            }
+            else {
+                if (col == 2) {
+                    if (a22 == empty)
+                        a22 = mark;
+                    else
+                        r = -1;
+                }
+                else {
+                    if (col == 3) {
+                        if (a23 == empty)
+                            a23 = mark;
+                        else
+                            r = -1;
+                    }
+                    else {
+                        r = 0;
+                    }
+                }
+            }
+        }
+        else {
+            if (row == 'c') {
+                if (col == 1) {
+                    if (a31 == empty)
+                    a31 = mark;
+                    else
+                    r = -1;
+                }
+                else {
+                    if (col == 2) {
+                        if (a32 == empty)
+                            a32 = mark;
+                        else
+                            r = -1;
+                    } else {
+                        if (col == 3) {
+                            if (a33 == empty)
+                                a33 = mark;
+                            else
+                                r = -1;
+                        } else {
+                            r = 0;
+                        }
+                    }
+                }
+            } else {
+                r = 0;
+            }
+        }
+    }
+    //print_s((char*)"HERE!");
+    return r;
+}
+
+// Asks the current player to select his/her move.
+void selectmove(int player) {
+    char row; int col; int selected; int success;
+    char mark;
+    selected = 1;
+    while(selected) {
+        print_s((char*)"Player ");print_i(player);print_s((char*)" select move (e.g. a2)>");
+        //row = read_c(); col = read_i();
+        row = 'b';
+        col = 2;
+        mark = get_mark(player);
+        success = set(row,col,mark);
+        if (success == 0) {
+            print_s((char*)"That is not a valid move!\n");
+        }
+        else {
+            if (success == -1)
+                print_s((char*)"That move is not possible!\n");
+            else
+                selected = 0;
+        }
+        //selected = 0;
+    }
+}
+
+// Determines whether anybody has won.
+// 0 => nobody has won yet
+// 1 => there is a winner
+int won(char mark) {
+  int r;
+  r = 0;
+  if (a11 == mark) {
+    if (a21 == mark) {
+      if (a31 == mark) {
+        r = 1;
+      }
+    } else {
+      if (a22 == mark) {
+        if (a33 == mark) {
+	   r = 1;
+	}
+      } else {
+        if (a12 == mark) {
+	  if (a13 == mark) {
+	     r = 1;
+	  }
+	}
+      }
+    }
+  }
+
+  if (a12 == mark) {
+    if (a22 == mark) {
+      if (a32 == mark) {
+         r = 1;
+      }
+    }
+  }
+
+  if (a13 == mark) {
+    if (a23 == mark) {
+      if (a33 == mark) {
+        r = 1;
+      }
+    } else {
+      if (a22 == mark) {
+        if (a31 == mark) {
+	   r = 1;
+	}
+      }
+    }
+  }
+
+  if (a21 == mark) {
+    if (a22 == mark) {
+      if (a23 == mark) {
+        r = 1;
+      }
+    }
+  }
+
+  if (a31 == mark) {
+    if (a32 == mark) {
+       if (a33 == mark) {
+          r = 1;
+       }
+    }
+  }
+  return r;
+}
+
+//int set(char row, int col, char mark)
 
 void main() {
-    int arr[5];
-    arr[0] = 5;
-    arr[1] = 6;
-    arr[2] = 7;
-    arr[3] = 8;
-    arr[4] = 9;
-    print_i(iter_bin_search(arr,7,0,4));
-    print_i(rec_bin_search(arr,7,0,4));
+    int a;
+    a = 5;
+    print_i(a);
+//    int res;
+//    res = set('a',1,'X');
+
+
+//    int playing; int player;
+//    char mark; char yesno;
+//
+//    empty = ' ';
+//    playing = 1;
+//    reset();
+//    print_i(playing);
+//    printGame();
+//    player = 1; // Begin with player one
+//    selectmove(player);
+
+
+
+    //mark = get_mark(player);
+    //printGame();
+
+
+//    int arr[5];
+//    arr[0] = 5;
+//    arr[1] = 6;
+//    arr[2] = 7;
+//    arr[3] = 8;
+//    arr[4] = 9;
+//    print_i(iter_bin_search(arr,7,0,4));
+//    print_i(rec_bin_search(arr,7,0,4));
 
 }
 
 
-
+//int iter_bin_search(int* arr, int x, int low, int high){
+//    int mid;
+//    while(low!=high){
+//        mid = (low+high)/2;
+//        if(x == arr[mid]){
+//            return mid;
+//        }
+//        if(x > arr[mid]){
+//            low = mid+1;
+//        }
+//        else{
+//            high = mid-1;
+//        }
+//    }
+//}
+////
+//int rec_bin_search(int* arr, int x, int low, int high){
+//    int mid;
+//    if (low > high){
+//        return -1;
+//    }else{
+//        mid = (low+high)/2;
+//        if(arr[mid]==x){
+//            return mid;
+//        }
+//        if(x>arr[mid]){
+//            return rec_bin_search(arr,x,mid+1,high);
+//        }
+//        else{
+//            return rec_bin_search(arr,x,low,mid-1);
+//        }
+//    }
+//
+//}
 
 
 

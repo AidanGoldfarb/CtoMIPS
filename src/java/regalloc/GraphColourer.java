@@ -13,10 +13,11 @@ public class GraphColourer {
         this.to_spill = new ArrayList<>();
     }
 
-    private final Register.Arch[] REGISTERS = new Register.Arch[]{Register.Arch.s0,Register.Arch.s1,
-            Register.Arch.s2,Register.Arch.s3,Register.Arch.s4,Register.Arch.s5,Register.Arch.s6,Register.Arch.s7,
-            Register.Arch.t4, Register.Arch.t5,Register.Arch.t6,Register.Arch.t7,Register.Arch.t8,Register.Arch.t9,};
+//    private final Register.Arch[] REGISTERS = new Register.Arch[]{Register.Arch.s0,Register.Arch.s1,
+//            Register.Arch.s2,Register.Arch.s3,Register.Arch.s4,Register.Arch.s5,Register.Arch.s6,Register.Arch.s7,
+//            Register.Arch.t4, Register.Arch.t5,Register.Arch.t6,Register.Arch.t7,Register.Arch.t8,Register.Arch.t9,};
 
+    private final Register.Arch[] REGISTERS = new Register.Arch[]{};
     private final Register.Arch[] SPILL_REGISTERS = new Register.Arch[]{Register.Arch.t0,Register.Arch.t1,Register.Arch.t2,Register.Arch.t3,};
 
 
@@ -46,7 +47,7 @@ public class GraphColourer {
             }
             if(num_verts > 0){
                 var node_to_spill = findNodeToSpill(ig);
-                assert node_to_spill!=null;
+                //assert node_to_spill!=null; //could be null if found an ARC register, find solution to this
 
                 System.out.println("node_to_spill: " + node_to_spill);
 
@@ -72,7 +73,7 @@ public class GraphColourer {
 
     private InterferenceNode findNodeToSpill(InterferenceGraph ig) {
         for(var node: ig.vertice_list){
-            if(!node.visited){
+            if(!node.visited && node.register.isVirtual()){
                 return node;
             }
         }
