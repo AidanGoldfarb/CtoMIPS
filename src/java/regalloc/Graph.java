@@ -169,15 +169,12 @@ public class Graph {
         if (node==null){
             return;
         }
-
         visited.add(node);
-
         for(var inner: this.vertice_list){
             if(node.toString().equals(inner.toString())){
                 node.children = new ArrayList<>(inner.children);
             }
         }
-
         for(var child: node.children){
             if(!visited.contains(child)){
                 replaceChildrenHelper(child,visited);

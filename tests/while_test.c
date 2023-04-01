@@ -351,15 +351,15 @@
 
 
 void main() {
-    int n;
-    n = 11;
-    while(n){
-        if(n){
-            //n = n-1;
-        }
-        n = n-1;
-        print_i(n);
-    }
+//    int n;
+//    n = 11;
+//    while(n){
+//        if(n){
+//            //n = n-1;
+//        }
+//        n = n-1;
+//        print_i(n);
+//    }
 
 //   int n;
 //     int first;
@@ -381,14 +381,14 @@ void main() {
 ////
 //     c = 0;
 //     while (c < n) {
-////         if ( c <= 1 )
-////            next = c;
-////         else
-////         {
-////             next = first + second;
-////             first = second;
-////             second = next;
-////         }
+//         if ( c <= 1 )
+//            next = c;
+//         else
+//         {
+//             next = first + second;
+//             first = second;
+//             second = next;
+//         }
 //         print_i(next);
 //         print_s((char*)" ");
 //         c = c+1;
