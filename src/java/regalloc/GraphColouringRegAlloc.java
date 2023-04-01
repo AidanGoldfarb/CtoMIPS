@@ -73,36 +73,38 @@ public class GraphColouringRegAlloc implements AssemblyPass {
 
         // To complete
         program.sections.forEach(section -> {
-            if (section.type == AssemblyProgram.Section.Type.DATA)
-                newProg.emitSection(section);
-            else {
-                //one cfg for each section
-                final AssemblyProgram.Section newSection = newProg.newSection(AssemblyProgram.Section.Type.TEXT);
-                section.items.forEach(item -> {
-                    switch (item) {
-                        case gen.asm.StaticAllocationDirective sad -> {
-                            newSection.emit(sad);
-                        }
-                        case gen.asm.StaticStringDirective ssd -> {
-                            newSection.emit(ssd);
-                        }
-                        case gen.asm.Comment c -> {
-                            newSection.emit(c);
-                        }
-                        case gen.asm.Directive d -> {
-                            newSection.emit(d);
-                        }
-                        case gen.asm.Label l -> {
-                            newSection.emit(l);
-                        }
-                        case Instruction insn -> {
-                            if (insn != Instruction.Nullary.pushRegisters &&
-                                    insn != Instruction.Nullary.popRegisters) {
-                                newSection.emit(insn.rebuild(map));
+            if(section.addedToCfg) {
+                if (section.type == AssemblyProgram.Section.Type.DATA)
+                    newProg.emitSection(section);
+                else {
+                    //one cfg for each section
+                    final AssemblyProgram.Section newSection = newProg.newSection(AssemblyProgram.Section.Type.TEXT);
+                    section.items.forEach(item -> {
+                        switch (item) {
+                            case gen.asm.StaticAllocationDirective sad -> {
+                                newSection.emit(sad);
+                            }
+                            case gen.asm.StaticStringDirective ssd -> {
+                                newSection.emit(ssd);
+                            }
+                            case gen.asm.Comment c -> {
+                                newSection.emit(c);
+                            }
+                            case gen.asm.Directive d -> {
+                                newSection.emit(d);
+                            }
+                            case gen.asm.Label l -> {
+                                newSection.emit(l);
+                            }
+                            case Instruction insn -> {
+                                if (insn != Instruction.Nullary.pushRegisters &&
+                                        insn != Instruction.Nullary.popRegisters) {
+                                    newSection.emit(insn.rebuild(map));
+                                }
                             }
                         }
-                    }
-                });
+                    });
+                }
             }
         });
         return newProg;

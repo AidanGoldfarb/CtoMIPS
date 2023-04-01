@@ -18,7 +18,7 @@ public class ControlFlowGraphFactory {
         this.label_section_map = populateMap();
     }
 
-    public ControlFlowGraph build() throws IOException {
+    public ControlFlowGraph build(){
         ControlFlowGraph cfg = new ControlFlowGraph();
         parse_labels(cfg);
 
@@ -32,6 +32,7 @@ public class ControlFlowGraphFactory {
     }
 
     private void addToCfg(Section section, ControlFlowGraph cfg){
+        section.addedToCfg = true;
         boolean lastInsnJ = false;
         boolean isRecCall = false;
         //boolean lastInsnBr = false;

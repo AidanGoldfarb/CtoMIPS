@@ -348,19 +348,17 @@
 //    }
 //
 //}
-
+void foo(){
+   int n;
+   n = 5;
+   while(n){
+        print_i(n);
+        n = n-1;
+   }
+}
 
 void main() {
-//    int n;
-//    n = 11;
-//    while(n){
-//        if(n){
-//            //n = n-1;
-//        }
-//        n = n-1;
-//        print_i(n);
-//    }
-
+    foo();
 //   int n;
 //     int first;
 //     int second;

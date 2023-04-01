@@ -26,6 +26,8 @@ public final class AssemblyProgram {
     public static final class Section {
 
 
+        public boolean addedToCfg = false;
+
         /**
          * An enumeration of section types.
          */
