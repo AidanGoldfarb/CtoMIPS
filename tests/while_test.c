@@ -314,159 +314,52 @@
 //  return r;
 //}
 
-//int iter_bin_search(int* arr, int x, int low, int high){
-//    int mid;
-//    while(low!=high){
-//        mid = (low+high)/2;
-//        if(x == arr[mid]){
-//            return mid;
-//        }
-//        if(x > arr[mid]){
-//            low = mid+1;
-//        }
-//        else{
-//            high = mid-1;
-//        }
-//    }
-//}
+int iter_bin_search(int* arr, int x, int low, int high){
+    int mid;
+    while(low!=high){
+        mid = (low+high)/2;
+        if(x == arr[mid]){
+            return mid;
+        }
+        if(x > arr[mid]){
+            low = mid+1;
+        }
+        else{
+            high = mid-1;
+        }
+    }
+}
 //
-//int rec_bin_search(int* arr, int x, int low, int high){
-//    int mid;
-//    if (low > high){
-//        return -1;
-//    }else{
-//        mid = (low+high)/2;
-//        if(arr[mid]==x){
-//            return mid;
-//        }
-//        if(x>arr[mid]){
-//            return rec_bin_search(arr,x,mid+1,high);
-//        }
-//        else{
-//            return rec_bin_search(arr,x,low,mid-1);
-//        }
-//    }
-//
-//}
-void foo(){
-   int n;
-   n = 5;
-   while(n){
-        print_i(n);
-        n = n-1;
-   }
+int rec_bin_search(int* arr, int x, int low, int high){
+    int mid;
+    if (low > high){
+        return -1;
+    }else{
+        mid = (low+high)/2;
+        if(arr[mid]==x){
+            return mid;
+        }
+        if(x>arr[mid]){
+            return rec_bin_search(arr,x,mid+1,high);
+        }
+        else{
+            return rec_bin_search(arr,x,low,mid-1);
+        }
+    }
+
 }
 
+
 void main() {
-    foo();
-//   int n;
-//     int first;
-//     int second;
-//     int next;
-//     int c;
-//     char t;
-//
-//     print_s((char*)"Enter n: ");
-//     // read n from the standard input
-//     n = read_i();
-//
-//     first = 0;
-//     second = 1;
-////
-//     print_s((char*)"First ");
-//     print_i(n);
-//     print_s((char*)" terms of Fibonacci series are : ");
-////
-//     c = 0;
-//     while (c < n) {
-//         if ( c <= 1 )
-//            next = c;
-//         else
-//         {
-//             next = first + second;
-//             first = second;
-//             second = next;
-//         }
-//         print_i(next);
-//         print_s((char*)" ");
-//         c = c+1;
-//     }
+    int arr[5];
+    arr[0] = 5;
+    arr[1] = 6;
+    arr[2] = 7;
+    arr[3] = 8;
+    arr[4] = 9;
+    print_i(iter_bin_search(arr,7,0,4));
+    print_i(rec_bin_search(arr,7,0,4));
 
-
-//    int a;
-//    a = 5;
-//    foo();
-//    print_i(a);
-    //print_i(a);
-    //foo(a);
-//    int a;
-//    int b;
-//    int c;
-//    c = 0;
-//    a = 0;
-//    if(a<9){
-//        b = a+1;
-//        c = c+b;
-//        a = b*2;
-//    }
-//    return c;
-//    int arr[5];
-//    arr[0] = 5;
-//    arr[1] = 6;
-//    arr[2] = 7;
-//    arr[3] = 8;
-//    arr[4] = 9;
-//    print_i(iter_bin_search(arr,7,0,4));
-//    print_i(rec_bin_search(arr,7,0,4));
-//    while(a){
-//        if(a%2==0){
-//            print_i(0);
-//        }
-//        else{
-//            print_i(1);
-//        }
-//    }
-    //foo(builder());
-
-
-
-    //print_s(str);
-//    print_s((char*)"\t");
-//    char b;
-//    b = read_c();
-//    print_c(b);
-    //print_c(b);
-//  int n;
-//  int first;
-//  int second;
-//  int next;
-//  int c;
-//  char t;
-//
-//  //read n from the standard input
-//  n = read_i();
-//
-//  first = 0;
-//  second = 1;
-//
-//  print_s((char*)"First ");
-//  print_i(n);
-//  print_s((char*)" terms of Fibonacci series are : ");
-//
-//  c = 0;
-//  while (c < n) {
-//    if ( c <= 1 )
-//        next = c;
-//    else
-//      {
-//        next = first + second;
-//        first = second;
-//        second = next;
-//      }
-//    print_i(next);
-//    print_s((char*)" ");
-//    c = c+1;
-//  }
 }
 
 

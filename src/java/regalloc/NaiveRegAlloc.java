@@ -124,7 +124,8 @@ public final class NaiveRegAlloc implements AssemblyPass {
                                     newSection.emit(OpCode.ADDI, Register.Arch.sp, Register.Arch.sp, -4);
                                     newSection.emit(OpCode.SW, Register.Arch.t0, Register.Arch.sp, 0);
                                 }
-                            } else if (insn == Instruction.Nullary.popRegisters) {
+                            }
+                            else if (insn == Instruction.Nullary.popRegisters) {
                                 newSection.emit("Original instruction: popRegisters");
                                 for (Label l : reverseVrLabels) {
                                     // pop from stack into $t0
