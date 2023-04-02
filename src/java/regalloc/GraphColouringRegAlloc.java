@@ -85,6 +85,14 @@ public class GraphColouringRegAlloc implements AssemblyPass {
                 assert map!=null;
                 assert spill_map!=null; //hmm
 
+                // allocate one label for each virtual register in a new data section
+                AssemblyProgram.Section dataSec = newProg.newSection(AssemblyProgram.Section.Type.DATA);
+                dataSec.emit("Allocated labels for virtual registers");
+                spill_map.forEach((vr, lbl) -> {
+                    dataSec.emit(lbl);
+                    dataSec.emit(new Directive("space " + 4));
+                });
+
                 List<Label> vrLabels = new LinkedList<>(spill_map.values());
                 List<Label> reverseVrLabels = new LinkedList<>(vrLabels);
                 Collections.reverse(reverseVrLabels);

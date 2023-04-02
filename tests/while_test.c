@@ -64,7 +64,7 @@
    //}
 
 //#include "minic-stdlib.h"
-// Board layout
+//// Board layout
 //char a11; char a12; char a13;
 //char a21; char a22; char a23;
 //char a31; char a32; char a33;
@@ -229,6 +229,7 @@
 //    return r;
 //}
 ////
+//
 //// Gets the mark for player 1 or 2
 //char get_mark(int player) {
 //  if (player == 1)
@@ -237,14 +238,6 @@
 //    return 'O';
 //}
 //
-//char foo(int player) {
-//  if (player == 1)
-//    return 'X';
-//  else
-//    return 'O';
-//}
-//
-////// Asks the current player to select his/her move.
 //void selectmove(int player) {
 //    char row; int col; int selected; int success;
 //    char mark;
@@ -255,23 +248,20 @@
 //        row = 'b';
 //        col = 2;
 //        mark = get_mark(player);
-//        success = set(row,col,mark);
-//        if (success == 0) {
-//            print_s((char*)"That is not a valid move!\n");
-//        }
-//        else {
-//            if (success == -1)
-//                print_s((char*)"That move is not possible!\n");
-//            else
-//                selected = 0;
-//        }
-//        //selected = 0;
+//        //success = set(row,col,mark);
+////        if (success == 0) {
+////            print_s((char*)"That is not a valid move!\n");
+////        }
+////        else {
+////            if (success == -1)
+////                print_s((char*)"That move is not possible!\n");
+////            else
+////                selected = 0;
+////        }
+//        selected = 0;
 //    }
 //}
 //
-//// Determines whether anybody has won.
-//// 0 => nobody has won yet
-//// 1 => there is a winner
 //int won(char mark) {
 //  int r;
 //  r = 0;
@@ -334,31 +324,20 @@
 //  }
 //  return r;
 //}
-void bar(){
-    print_s((char*)"hello from bar");
-}
-
-void foo(){
-    bar();
-}
-
-//int set(char row, int col, char mark)
-void main() {
-    foo();
-
-//    int player;
-//    char mark;
-//    player = 1;
-//    empty = ' ';
-//    reset();
-//    printGame();
-//    selectmove(player);
-//    print_c(foo(player));
-    //mark = get_mark(player);
-
-//    int playing; int player;
-//    char mark; char yesno;
 //
+
+
+int foo(int num){
+    if(num == 1)
+        return 3;
+    return 5;
+}
+
+void main() {
+    int a;
+    a = foo(6);
+//    char m;
+//    m = get_mark(10);
 //    empty = ' ';
 //    playing = 1;
 //    reset();
@@ -366,8 +345,8 @@ void main() {
 //    printGame();
 //    player = 1; // Begin with player one
 //    while(playing){
-//        selectmove(player);
-//        mark = get_mark(player);
+//        //selectmove(player);
+//        //mark = get_mark(player);
 //
 //
 //

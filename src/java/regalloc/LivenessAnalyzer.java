@@ -66,7 +66,7 @@ public class LivenessAnalyzer {
             oldLiveOuts = new HashMap<>();
         }
 
-        System.out.println("Liveness analysis done: " + iter + " iters");
+        //System.out.println("Liveness analysis done: " + iter + " iters");
     }
 
     private HashSet<Register> deepCopy(Set<Register> lst){
