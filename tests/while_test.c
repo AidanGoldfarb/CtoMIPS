@@ -65,11 +65,16 @@
 
 //#include "minic-stdlib.h"
 //// Board layout
-//char a11; char a12; char a13;
-//char a21; char a22; char a23;
-//char a31; char a32; char a33;
-//char empty; // Empty cell character
+char a11; char a12; char a13;
+char a21; char a22; char a23;
+char a31; char a32; char a33;
+char empty; // Empty cell character
 //
+
+void foo(){
+    int n;
+}
+
 //// Resets the board
 //void reset() {
 //    a11 = empty; a12 = empty;  a13 = empty;
@@ -110,23 +115,23 @@
 //    return 0;
 //}
 //
-//// Prints the game board to stdout
-////void printGame() {
-////  print_s((char*)"\n");
-////  print_s((char*)"     1   2   3\n");
-////  print_s((char*)"   +---+---+---+\n");
-////  print_s((char*)"a  | ");print_c(a11);print_s((char*)" | ");print_c(a12);print_s((char*)" | ");print_c(a13);print_s((char*)" |\n");
-////  print_s((char*)"   +---+---+---+\n");
-////  print_s((char*)"b  | ");print_c(a21);print_s((char*)" | ");print_c(a22);print_s((char*)" | ");print_c(a23);print_s((char*)" |\n");
-////  print_s((char*)"   +---+---+---+\n");
-////  print_s((char*)"c  | ");print_c(a31);print_s((char*)" | ");print_c(a32);print_s((char*)" | ");print_c(a33);print_s((char*)" |\n");
-////  print_s((char*)"   +---+---+---+\n");
-////  print_s((char*)"\n");
-////}
-////
-////void printWinner(int player) {
-////  print_s((char*)"Player ");print_i(player);print_s((char*)" has won!\n");
-////}
+////Prints the game board to stdout
+//void printGame() {
+//  print_s((char*)"\n");
+//  print_s((char*)"     1   2   3\n");
+//  print_s((char*)"   +---+---+---+\n");
+//  print_s((char*)"a  | ");print_c(a11);print_s((char*)" | ");print_c(a12);print_s((char*)" | ");print_c(a13);print_s((char*)" |\n");
+//  print_s((char*)"   +---+---+---+\n");
+//  print_s((char*)"b  | ");print_c(a21);print_s((char*)" | ");print_c(a22);print_s((char*)" | ");print_c(a23);print_s((char*)" |\n");
+//  print_s((char*)"   +---+---+---+\n");
+//  print_s((char*)"c  | ");print_c(a31);print_s((char*)" | ");print_c(a32);print_s((char*)" | ");print_c(a33);print_s((char*)" |\n");
+//  print_s((char*)"   +---+---+---+\n");
+//  print_s((char*)"\n");
+//}
+//
+//void printWinner(int player) {
+//  print_s((char*)"Player ");print_i(player);print_s((char*)" has won!\n");
+//}
 //
 //int switchPlayer(int currentPlayer) {
 //  if (currentPlayer == 1) return 2;
@@ -140,101 +145,102 @@
 //  else
 //    return 'O';
 //}
-//
-//// Attempts to put mark in cell (row,col)
-//// Returns 1 on success, otherwise -1 is returned when the cell is already occupied, and 0 when the move is not within the board range.
-//
-//int set(char row, int col, char mark){
-//    int r;
-//    r = 1;
-//    if (row == 'a') {
-//        if (col == 1) {
-//            if (a11 == empty)
-//                a11 = mark;
-//            else
-//                r = -1;
-//        } else {
-//            if (col == 2) {
-//                if (a12 == empty)
-//                    a12 = mark;
-//                else
-//                    r = -1;
-//            }
-//            else {
-//                if (col == 3) {
-//                    if (a13 == empty)
-//                        a13 = mark;
-//                    else
-//                        r = -1;
-//                } else {
-//                    r = 0;
-//                }
-//            }
-//        }
-//    }
-//    else {
-//        if (row == 'b') {
-//            if (col == 1) {
-//                if (a21 == empty)
-//                    a21 = mark;
-//                else
-//                    r = -1;
-//            }
-//            else {
-//                if (col == 2) {
-//                    if (a22 == empty)
-//                        a22 = mark;
-//                    else
-//                        r = -1;
-//                }
-//                else {
-//                    if (col == 3) {
-//                        if (a23 == empty)
-//                            a23 = mark;
-//                        else
-//                            r = -1;
-//                    }
-//                    else {
-//                        r = 0;
-//                    }
-//                }
-//            }
-//        }
-//        else {
-//            if (row == 'c') {
-//                if (col == 1) {
-//                    if (a31 == empty)
-//                    a31 = mark;
-//                    else
-//                    r = -1;
-//                }
-//                else {
-//                    if (col == 2) {
-//                        if (a32 == empty)
-//                            a32 = mark;
-//                        else
-//                            r = -1;
-//                    } else {
-//                        if (col == 3) {
-//                            if (a33 == empty)
-//                                a33 = mark;
-//                            else
-//                                r = -1;
-//                        } else {
-//                            r = 0;
-//                        }
-//                    }
-//                }
-//            } else {
-//                r = 0;
-//            }
-//        }
-//    }
-//    //print_s((char*)"HERE!");
-//    return r;
-//}
-//
-//// Asks the current player to select his/her move.
+
+
+// Attempts to put mark in cell (row,col)
+// Returns 1 on success, otherwise -1 is returned when the cell is already occupied, and 0 when the move is not within the board range.
+int set(char row, int col, char mark){
+    int r;
+    r = 1;
+    if (row == 'a') {
+        if (col == 1) {
+            if (a11 == empty)
+                a11 = mark;
+            else
+                r = -1;
+        }
+        else {
+            if (col == 2) {
+                if (a12 == empty)
+                    a12 = mark;
+                else
+                    r = -1;
+            }
+            else {
+                if (col == 3) {
+                    if (a13 == empty)
+                        a13 = mark;
+                    else
+                        r = -1;
+                } else {
+                    r = 0;
+                }
+            }
+        }
+    }
+    else {
+        if (row == 'b') {
+            if (col == 1) {
+                if (a21 == empty)
+                    a21 = mark;
+                else
+                    r = -1;
+            }
+            else {
+                if (col == 2) {
+                    if (a22 == empty)
+                        a22 = mark;
+                    else
+                        r = -1;
+                }
+                else {
+                    if (col == 3) {
+                        if (a23 == empty)
+                            a23 = mark;
+                        else
+                            r = -1;
+                    }
+                    else {
+                        r = 0;
+                    }
+                }
+            }
+        }
+        else {
+            if (row == 'c') {
+                if (col == 1) {
+                    if (a31 == empty)
+                    a31 = mark;
+                    else
+                    r = -1;
+                }
+                else {
+                    if (col == 2) {
+                        if (a32 == empty)
+                            a32 = mark;
+                        else
+                            r = -1;
+                    } else {
+                        if (col == 3) {
+                            if (a33 == empty)
+                                a33 = mark;
+                            else
+                                r = -1;
+                        } else {
+                            r = 0;
+                        }
+                    }
+                }
+            } else {
+                r = 0;
+            }
+        }
+    }
+    //print_s((char*)"HERE!");
+    return r;
+}
+
+// Asks the current player to select his/her move.
 //void selectmove(int player) {
 //    char row; int col; int selected; int success;
 //    char mark;
@@ -244,7 +250,7 @@
 //        //row = read_c(); col = read_i();
 //        row = 'b';
 //        col = 2;
-//        mark = get_mark(player);
+//        //mark = get_mark(player);
 //        success = set(row,col,mark);
 //        if (success == 0) {
 //            print_s((char*)"That is not a valid move!\n");
@@ -326,14 +332,100 @@
 //}
 
 //int set(char row, int col, char mark)
-
+//int set(char row, int col, char mark){
+//    int r;
+//    r = 1;
+//    if ('a' == 'a') {
+//        if (2 == 1) {
+//            if (1 == 1)
+//                col = 2;
+//            else
+//                r = -1;
+//        }
+//        else {
+//            if (col == 2) {
+//                if (col == col)
+//                    a11 = 'x';
+//                else
+//                    r = -1;
+//            }
+//            else {
+//                if (col == 3) {
+//                    if (col == 4)
+//                        col = col;
+//                    else
+//                        r = -1;
+//                } else {
+//                    r = 0;
+//                }
+//            }
+//        }
+//    }
+//    else {
+//        if (row == 'b') {
+//            if (col == 1) {
+//                if (a21 == empty)
+//                    a21 = mark;
+//                else
+//                    r = -1;
+//            }
+//            else {
+//                if (col == 2) {
+//                    if (a22 == empty)
+//                        a22 = mark;
+//                    else
+//                        r = -1;
+//                }
+//                else {
+//                    if (col == 3) {
+//                        if (a23 == empty)
+//                            a23 = mark;
+//                        else
+//                            r = -1;
+//                    }
+//                    else {
+//                        r = 0;
+//                    }
+//                }
+//            }
+//        }
+//        else {
+//            if (row == 'c') {
+//                if (col == 1) {
+//                    if (a31 == empty)
+//                    a31 = mark;
+//                    else
+//                    r = -1;
+//                }
+//                else {
+//                    if (col == 2) {
+//                        if (a32 == empty)
+//                            a32 = mark;
+//                        else
+//                            r = -1;
+//                    } else {
+//                        if (col == 3) {
+//                            if (a33 == empty)
+//                                a33 = mark;
+//                            else
+//                                r = -1;
+//                        } else {
+//                            r = 0;
+//                        }
+//                    }
+//                }
+//            } else {
+//                r = 0;
+//            }
+//        }
+//    }
+//    //print_s((char*)"HERE!");
+//    return r;
+//}
 void main() {
-    int a;
-    a = 5;
-    print_i(a);
-//    int res;
-//    res = set('a',1,'X');
-
+    int res;
+    res = set('a',1,'X');
+    print_i(res);
 
 //    int playing; int player;
 //    char mark; char yesno;

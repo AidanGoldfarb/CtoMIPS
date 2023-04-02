@@ -66,6 +66,7 @@ public class GraphColouringRegAlloc implements AssemblyPass {
                 newProg.emitSection(section);
 
             if(section.addedToCfg) {
+            //else{
                 //one cfg for each section
                 final AssemblyProgram.Section newSection = newProg.newSection(AssemblyProgram.Section.Type.TEXT);
                 List<Label> vrLabels = new LinkedList<>(spill_map.values());
