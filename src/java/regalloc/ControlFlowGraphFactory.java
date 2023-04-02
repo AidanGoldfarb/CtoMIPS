@@ -185,8 +185,6 @@ public class ControlFlowGraphFactory {
 
     }
 
-
-
     private HashMap<Label, Section> populateMap() {
         HashMap<Label,Section> res = new HashMap<>();
         for(Section section: this.program.sections){

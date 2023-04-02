@@ -62,6 +62,7 @@ public class InterferenceGraph extends Graph implements Cloneable{
             }
 
         }
+
     }
 
     @Override
