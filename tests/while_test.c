@@ -328,14 +328,16 @@
 
 
 int foo(int num){
-    if(num == 1)
-        return 3;
-    return 5;
+    while(num < 4){
+        return num;
+    }
+
 }
 
 void main() {
     int a;
-    a = foo(6);
+    a = foo(1);
+    print_i(a);
 //    char m;
 //    m = get_mark(10);
 //    empty = ' ';

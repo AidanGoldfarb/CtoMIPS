@@ -85,17 +85,29 @@ public class GraphColouringRegAlloc implements AssemblyPass {
                 assert map!=null;
                 assert spill_map!=null; //hmm
 
-                // allocate one label for each virtual register in a new data section
-                AssemblyProgram.Section dataSec = newProg.newSection(AssemblyProgram.Section.Type.DATA);
-                dataSec.emit("Allocated labels for virtual registers");
-                spill_map.forEach((vr, lbl) -> {
-                    dataSec.emit(lbl);
-                    dataSec.emit(new Directive("space " + 4));
-                });
+                boolean needToSpill = spill_map.size()>0;
 
+                //for nonspilled regs
+                ArrayList<Register> regToSave = collectRegistersToSave(section,map);
+                ArrayList<Register> revRegToSave = new ArrayList<>(regToSave);
+                Collections.reverse(revRegToSave);
+                System.out.println(regToSave);
+
+                //for spilled regs
                 List<Label> vrLabels = new LinkedList<>(spill_map.values());
                 List<Label> reverseVrLabels = new LinkedList<>(vrLabels);
                 Collections.reverse(reverseVrLabels);
+
+                if(needToSpill){
+                    // allocate one label for each virtual register in a new data section
+                    AssemblyProgram.Section dataSec = newProg.newSection(AssemblyProgram.Section.Type.DATA);
+                    dataSec.emit("Allocated labels for virtual registers");
+                    spill_map.forEach((vr, lbl) -> {
+                        dataSec.emit(lbl);
+                        dataSec.emit(new Directive("space " + 4));
+                    });
+                }
+
 
                 for(AssemblyItem item: section.items){
                     switch (item) {
@@ -116,6 +128,14 @@ public class GraphColouringRegAlloc implements AssemblyPass {
                                     newSection.emit(OpCode.ADDI, Register.Arch.sp, Register.Arch.sp, -4);
                                     newSection.emit(OpCode.SW, Register.Arch.t0, Register.Arch.sp, 0);
                                 }
+                                for(Register reg: regToSave){
+                                    //load reg value into t0 (should be 'move'?)
+                                    newSection.emit(OpCode.ADDI, Register.Arch.t0, reg, 0);
+
+                                    //push t0 onto stack
+                                    newSection.emit(OpCode.ADDI, Register.Arch.sp, Register.Arch.sp, -4);
+                                    newSection.emit(OpCode.SW, Register.Arch.t0, Register.Arch.sp, 0);
+                                }
                             }
                             else if (insn == Instruction.Nullary.popRegisters) {
                                 newSection.emit("Original instruction: popRegisters");
@@ -127,6 +147,14 @@ public class GraphColouringRegAlloc implements AssemblyPass {
                                     // store content of $t0 in memory at label
                                     newSection.emit(OpCode.LA, Register.Arch.t1, l);
                                     newSection.emit(OpCode.SW, Register.Arch.t0, Register.Arch.t1, 0);
+                                }
+                                for(Register reg: revRegToSave){
+                                    //pop from stack
+                                    newSection.emit(OpCode.LW, Register.Arch.t0, Register.Arch.sp, 0);
+                                    newSection.emit(OpCode.ADDI, Register.Arch.sp, Register.Arch.sp, 4);
+
+                                    //store in reg
+                                    newSection.emit(OpCode.ADDI, reg, Register.Arch.t0, 0);
                                 }
                             }
                             else
@@ -141,6 +169,39 @@ public class GraphColouringRegAlloc implements AssemblyPass {
                 }
             }
         }
+    }
+
+    private ArrayList<Register> collectRegistersToSave(AssemblyProgram.Section section, HashMap<Register, Register> map) {
+        ArrayList<Register> registers = new ArrayList<>();
+        for(AssemblyItem item: section.items){
+            switch (item) {
+                case Instruction insn -> {
+                    insn = insn.rebuild(map);
+                    var uses = insn.uses();
+                    var def = insn.def();
+
+                    if(def!= null &&!registers.contains(def) && isUsableReg(def)){
+                        registers.add(def);
+                    }
+                    for(var usesreg: uses){
+                        if(usesreg != null && !registers.contains(usesreg) && isUsableReg(usesreg)){
+                            registers.add(usesreg);
+                        }
+                    }
+                }
+                default -> {}
+            }
+        }
+        return registers;
+    }
+
+    private boolean isUsableReg(Register reg) {
+        for(var e: REGISTERS){
+            if(e.equals(reg)){
+                return true;
+            }
+        }
+        return false;
     }
 
     private boolean containsSpillReg(Instruction insn, HashMap<Virtual, Label> spill_map){

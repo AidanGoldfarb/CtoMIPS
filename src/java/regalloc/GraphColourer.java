@@ -1,11 +1,13 @@
 package regalloc;
 
+import gen.asm.AssemblyPass;
+import gen.asm.AssemblyProgram;
 import gen.asm.Register;
 import regalloc.InterferenceGraph.*;
 
 import java.util.*;
 
-public class GraphColourer {
+public class GraphColourer implements AssemblyPass {
 
     List<InterferenceNode> to_spill;
 
@@ -16,7 +18,7 @@ public class GraphColourer {
 //            Register.Arch.s2,Register.Arch.s3,Register.Arch.s4,Register.Arch.s5,Register.Arch.s6,Register.Arch.s7,
 //            Register.Arch.t4, Register.Arch.t5,Register.Arch.t6,Register.Arch.t7,Register.Arch.t8,Register.Arch.t9,};
 
-    private final Register.Arch[] REGISTERS = new Register.Arch[]{};
+    //private final Register.Arch[] REGISTERS = new Register.Arch[]{};
     private final Register.Arch[] SPILL_REGISTERS = new Register.Arch[]{Register.Arch.t0,Register.Arch.t1,Register.Arch.t2,Register.Arch.t3,};
 
     private void rebuildNeighbors(InterferenceGraph ig){
@@ -146,6 +148,12 @@ public class GraphColourer {
                 return node;
             }
         }
+        return null;
+    }
+
+    @Override
+    public AssemblyProgram apply(AssemblyProgram program) {
+        assert false;
         return null;
     }
 }
