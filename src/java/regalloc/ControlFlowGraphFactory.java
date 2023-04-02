@@ -18,21 +18,15 @@ public class ControlFlowGraphFactory {
         this.label_section_map = populateMap();
     }
 
-    public ControlFlowGraph build(){
+    public ControlFlowGraph build(Section section){
         ControlFlowGraph cfg = new ControlFlowGraph();
-        parse_labels(cfg);
-
-        List<Section> sectioncpy = new ArrayList<>(program.sections);
-        var sections = sort_sections(sectioncpy);
-        //begin in main
-        addToCfg(sections.get(0),cfg);
-
+        parse_labels(section,cfg);
+        addToCfg(section,cfg);
         cfg.updateChildren();
         return cfg;
     }
 
     private void addToCfg(Section section, ControlFlowGraph cfg){
-        section.addedToCfg = true;
         boolean lastInsnJ = false;
         boolean isRecCall = false;
         //boolean lastInsnBr = false;
@@ -46,7 +40,6 @@ public class ControlFlowGraphFactory {
                             //do something smart
                             switch (insn.opcode.kind()) {
                                 case JUMP_REGISTER -> { //jr, jalr
-
                                     if(isRecCall){
                                         //cfg.addEdge(cur.id,Label.get(section.items.get(0).toString()));
                                         cfg.addNode(cur,saveId+1,false);
@@ -73,12 +66,10 @@ public class ControlFlowGraphFactory {
                                             lastInsnJ = true;
                                             saveId = cur.id;
                                         }
-                                        else{
-                                            addToCfg(toAdd,cfg);
-                                        }
-
+//                                        else{
+//                                            addToCfg(toAdd,cfg);
+//                                        }
                                     }
-
                                     //jump to label
                                 }
                                 case UNARY_BRANCH -> {
@@ -100,23 +91,11 @@ public class ControlFlowGraphFactory {
                             }
                         }
                         default -> {
-//                            if(cur.toString().equals("popRegisters_32")){
-//                                System.out.println("id: " + cur.id);
-//                                System.out.println("liwj: " + lastInsnJ);
-//                            }
                             add_to_bottom(cur, cfg);
-//                            if(lastInsnBr){
-//                                cfg.addNode(cur,saveId, false);
-//                                lastInsnBr = false;
-//                            }
-//                            else{
-//                                add_to_bottom(cur, cfg);
-//                            }
                         }
                     }
                 }
                 case Label label -> {
-
                     Node cur = new Node(label);
                     //add_to_bottom(cur, cfg);
                     if(lastInsnJ){
@@ -166,22 +145,20 @@ public class ControlFlowGraphFactory {
         return sections;
     }
 
-    private void parse_labels(ControlFlowGraph cfg) {
-        program.sections.forEach(section -> {
-            for(AssemblyItem item: section.items) {
-                switch (item) {
-                    case Label label -> {
-                        //System.out.println("label: " + label);
-                        Node cur = new Node(label);
-                        cfg.label_list.add(cur);
-                        //cfg.V++;
-                    }
-                    default -> {
-                        //System.out.println("parselabel not implemented: " + item);
-                    }
+    private void parse_labels(Section section, ControlFlowGraph cfg) {
+        for(AssemblyItem item: section.items) {
+            switch (item) {
+                case Label label -> {
+                    //System.out.println("label: " + label);
+                    Node cur = new Node(label);
+                    cfg.label_list.add(cur);
+                    //cfg.V++;
+                }
+                default -> {
+                    //System.out.println("parselabel not implemented: " + item);
                 }
             }
-        });
+        }
 
     }
 
@@ -195,82 +172,5 @@ public class ControlFlowGraphFactory {
         }
         return res;
     }
-
-//    public ControlFlowGraph build() throws IOException {
-//        ControlFlowGraph cfg = new ControlFlowGraph();
-//        parse_labels(cfg);
-//        int savedId = -1;
-//        boolean lastInsnWasJAL = false;
-//        boolean lastInsnWasJR = false;
-//        Label lastJmp;
-//        var sections = sort_sections(program);
-//        for(Section section: sections){
-//            int sz = section.items.size() - 1;
-//            for (int i = 0; i <= sz; i++) {
-//                AssemblyItem item = section.items.get(i);
-//                switch (item) {
-//                    case Instruction insn -> {
-//                        Node cur = new Node(insn, insn.registers());
-//                        switch (insn) {
-//                            case Instruction.ControlFlow ignored -> {
-//                                //do something smart
-//                                switch (insn.opcode.kind()) {
-//                                    case JUMP_REGISTER -> { //jr, jalr
-//                                        add_to_bottom(cur, cfg);
-//                                        lastInsnWasJR = true;
-//                                        savedId = cur.id;//save ID here
-//                                    }
-//                                    case JUMP -> { //jal, j
-//                                        Label label = ((Instruction.ControlFlow.Jump) insn).label;
-//                                        //jump to label
-//                                        lastJmp = label;
-//                                        add_to_bottom(cur, cfg);
-//                                        cfg.addEdge(cur.id, label);
-//                                        lastInsnWasJAL = true;
-//                                    }
-//                                    case UNARY_BRANCH -> {
-//                                        //jump to snd operand
-//                                        Label label = ((Instruction.ControlFlow.UnaryBranch) insn).label;
-//                                        add_to_bottom(cur, cfg);
-//                                        cfg.addEdge(cur.id, label);
-//                                    }
-//                                    case BINARY_BRANCH -> {
-//                                        //jump to thrd operand
-//                                        Label label = ((Instruction.ControlFlow.BinaryBranch) insn).label;
-//                                        add_to_bottom(cur, cfg);
-//                                        cfg.addEdge(cur.id, label);
-//                                    }
-//                                }
-//                            }
-//                            default -> {
-//                                //add node w edge to prev
-//                                if(lastInsnWasJAL){
-//                                    cfg.addNode(cur, savedId, false);
-//                                    lastInsnWasJAL = false;
-//                                }
-//                                else{
-//                                    add_to_bottom(cur, cfg);
-//                                }
-//                            }
-//                        }
-//                    }
-//                    case Label label -> {
-//                        Node cur = new Node(label);
-//                        if(lastInsnWasJR){
-//                            cfg.addNode(cur,-1, false);
-//                            lastInsnWasJR = false;
-//                        }
-//                        else{
-//                            add_to_bottom(cur, cfg);
-//                        }
-//                    }
-//                    default -> {}
-//                }
-//            }
-//        }
-//        //cfg.writeDotRep("cfg.png");
-//        return cfg;
-//    }
-
 
 }

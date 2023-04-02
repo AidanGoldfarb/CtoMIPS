@@ -1,5 +1,6 @@
 package regalloc;
 
+import gen.asm.AssemblyProgram;
 import gen.asm.Instruction;
 import gen.asm.Label;
 import gen.asm.Register;
@@ -18,6 +19,8 @@ public class Graph {
     HashSet<Pair> edge_list;
     ArrayList<ArrayList<Node>> adj_list;
     ArrayList<Node> preorder;
+
+    AssemblyProgram.Section section;
 
     //for empty graph
     public Graph(){
@@ -122,11 +125,12 @@ public class Graph {
         replaceChildren();
         HashSet<Node> visited = new HashSet<>();
         this.preorder = new ArrayList<>();
-        for(var node: this.vertice_list){
-            if(node.toString().equals("main")){
-                preorderTraversalHelper(node,visited);
-            }
-        }
+//        for(var node: this.vertice_list){
+//            if(node.toString().equals("main")){
+//                preorderTraversalHelper(node,visited);
+//            }
+//        }
+        preorderTraversalHelper(this.root,visited);
 //        System.out.println("vlst size: " + this.vertice_list.size());
 //        System.out.println("pre size: " + this.preorder.size());
         return this.preorder;
@@ -195,34 +199,6 @@ public class Graph {
         }
         return false;
     }
-//    public ArrayList<Node> preorderTraversal(){
-//        this.preorder = new ArrayList<>();
-//        for(var node: this.vertice_list){
-//            if(node.toString().equals("label_2_exitwhile")){
-//                System.out.println(node);
-//                System.out.println("\t" + node.children);
-//            }
-//        }
-//
-//        preorderTraversalHelper(this.root, new HashSet<>());
-//        //resetVisited();
-//        return this.preorder;
-//    }
-//    private void preorderTraversalHelper(Node rootNode, HashSet<Node> visited) {
-//        if (rootNode == null) {
-//            return;
-//        }
-//
-//
-//        visited.add(rootNode);
-//        this.preorder.add(rootNode);
-//
-//        for (Node childNode : rootNode.children) {
-//            if(!visited.contains(childNode)){
-//                preorderTraversalHelper(childNode,visited);
-//            }
-//        }
-//    }
 
     @Override
     public String toString(){
@@ -277,6 +253,18 @@ public class Graph {
         return sb.toString();
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Graph graph = (Graph) o;
+        return E == graph.E && Objects.equals(root, graph.root) && Objects.equals(vertice_list, graph.vertice_list) && Objects.equals(label_list, graph.label_list) && Objects.equals(adj_list, graph.adj_list) && Objects.equals(preorder, graph.preorder);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(E, root, vertice_list, label_list, adj_list, preorder);
+    }
 
     public static class Node {
         Instruction instruction;

@@ -1,6 +1,7 @@
 package regalloc;
 
 import gen.asm.*;
+import gen.asm.Register.Virtual;
 
 import java.util.*;
 
@@ -23,73 +24,79 @@ public class GraphColouringRegAlloc implements AssemblyPass {
         InterferenceGraphFactory igf = new InterferenceGraphFactory();
         GraphColourer gc = new GraphColourer();
 
-        ControlFlowGraph cfg;
-        InterferenceGraph ig = null;
-        try {
-            /*
-                Control flow graph
-             */
-            cfg = cfgf.build();
-            cfg.writeDotRep("cfg.dot");
+        ArrayList<ControlFlowGraph> cfgs = new ArrayList<>();
+        ArrayList<InterferenceGraph> igs = new ArrayList<>();
 
-            /*
-                Liveness
-             */
+        HashMap<AssemblyProgram.Section,HashMap<Register, Register>> maps = new HashMap<>();
+        HashMap<AssemblyProgram.Section,HashMap<Virtual, Label>> spill_maps = new HashMap<>();
+
+
+
+        for(AssemblyProgram.Section section: program.sections){
+            if(section.type == AssemblyProgram.Section.Type.TEXT){
+                var cur = cfgf.build(section);
+                cur.section = section;
+                cfgs.add(cur);
+            }
+        }
+
+//        int counter = 0;
+//        for(ControlFlowGraph cfg: cfgs){
+//            System.out.println(cfg.preorderTraversal());
+//            try{
+//                cfg.writeDotRep("testgraph" + counter + ".dot");
+//                counter++;
+//            }catch (Exception e){
+//
+//            }
+//        }
+        //System.exit(1);
+
+        for(ControlFlowGraph cfg: cfgs){
             la.run(cfg);
+            var cur = igf.build(cfg);
+            cur.section = cfg.section;
+            igs.add(cur);
+        }
+        for(InterferenceGraph ig: igs){
+            var section = ig.section;
+            assert section!=null;
 
-            /*
-                Interference graph
-             */
-            ig = igf.build(cfg);
-            ig.writeDotRep("ig.dot");
+            var cur = (HashMap<Register, Register>)gc.run(ig); //virtual -> arch map
+            var sm = collectVirtualRegisters(gc.to_spill); //virtual -> label (for spilling)
 
-        } catch (Exception e) {e.printStackTrace();}
-        assert ig != null;
-
-        Map<Register, Register> map = gc.run(ig);
-        Map<Register.Virtual,Label> spill_map = collectVirtualRegisters(gc.to_spill);
-
-
+            maps.put(section,cur);
+            spill_maps.put(section,sm);
+        }
         //emit
+        emit(program,newProg,maps,spill_maps);
+        return newProg;
+    }
 
-        //spill_reg
-        AssemblyProgram.Section dataSec = newProg.newSection(AssemblyProgram.Section.Type.DATA);
-        dataSec.emit("Allocated labels for virtual registers");
-        spill_map.forEach((vr, lbl) -> {
-            dataSec.emit(lbl);
-            dataSec.emit(new Directive("space " + 4));
-        });
-
-        // To complete
-        program.sections.forEach(section -> {
-            if (section.type == AssemblyProgram.Section.Type.DATA)
+    private void emit(AssemblyProgram program, AssemblyProgram newProg, HashMap<AssemblyProgram.Section, HashMap<Register, Register>> maps, HashMap<AssemblyProgram.Section, HashMap<Virtual, Label>> spill_maps){
+        for(AssemblyProgram.Section section: program.sections){
+            if(section.type == AssemblyProgram.Section.Type.DATA){
                 newProg.emitSection(section);
+            }
+            else{
+                AssemblyProgram.Section newSection = newProg.newSection(AssemblyProgram.Section.Type.TEXT);
+                var map = maps.get(section);
+                var spill_map = spill_maps.get(section); //can be null
+                assert map!=null;
+                assert spill_map!=null; //hmm
 
-            if(section.addedToCfg) {
-            //else{
-                //one cfg for each section
-                final AssemblyProgram.Section newSection = newProg.newSection(AssemblyProgram.Section.Type.TEXT);
                 List<Label> vrLabels = new LinkedList<>(spill_map.values());
                 List<Label> reverseVrLabels = new LinkedList<>(vrLabels);
                 Collections.reverse(reverseVrLabels);
-                section.items.forEach(item -> {
+
+                for(AssemblyItem item: section.items){
                     switch (item) {
-                        case gen.asm.StaticAllocationDirective sad -> {
-                            newSection.emit(sad);
-                        }
-                        case gen.asm.StaticStringDirective ssd -> {
-                            newSection.emit(ssd);
-                        }
-                        case gen.asm.Comment c -> {
-                            newSection.emit(c);
-                        }
-                        case gen.asm.Directive d -> {
-                            newSection.emit(d);
-                        }
-                        case gen.asm.Label l -> {
-                            newSection.emit(l);
-                        }
-                        case Instruction insn -> {
+                        case (Comment comment) -> newSection.emit(comment);
+                        case (Label label) -> newSection.emit(label);
+                        case (Directive directive) -> newSection.emit(directive);
+                        case (StaticAllocationDirective sad) -> newSection.emit(sad);
+                        case (StaticStringDirective ssd) -> newSection.emit(ssd);
+                        case (Instruction insn) -> {
                             if (insn == Instruction.Nullary.pushRegisters) {
                                 newSection.emit("Original instruction: pushRegisters");
                                 for (Label l : vrLabels) {
@@ -114,16 +121,30 @@ public class GraphColouringRegAlloc implements AssemblyPass {
                                     newSection.emit(OpCode.SW, Register.Arch.t0, Register.Arch.t1, 0);
                                 }
                             }
-                            else {
-                                emitInstructionWithoutVirtualRegister(insn,map,spill_map,newSection);
-                                //newSection.emit(insn.rebuild(map));
-                            }
+                            else
+                                if(containsSpillReg(insn,spill_map)){
+                                    emitInstructionWithoutVirtualRegister(insn,map,spill_map,newSection);
+                                }
+                                else{
+                                    newSection.emit(insn.rebuild(map));
+                                }
                         }
                     }
-                });
+                }
             }
-        });
-        return newProg;
+        }
+    }
+
+    private boolean containsSpillReg(Instruction insn, HashMap<Virtual, Label> spill_map){
+        if(spill_map==null){
+            return false;
+        }
+        for(var reg: insn.registers()){
+            if(reg.isVirtual() && spill_map.containsKey((Virtual) reg)){
+                return true;
+            }
+        }
+        return false;
     }
 
     private static void emitInstructionWithoutVirtualRegister(Instruction insn, Map<Register, Register> map, Map<Register.Virtual, Label> vrMap, AssemblyProgram.Section section) {
@@ -180,8 +201,8 @@ public class GraphColouringRegAlloc implements AssemblyPass {
     }
 
 
-    private Map<Register.Virtual,Label> collectVirtualRegisters(List<InterferenceGraph.InterferenceNode> to_spill){
-        final Map<Register.Virtual, Label> vrMap = new HashMap<>();
+    private HashMap<Register.Virtual,Label> collectVirtualRegisters(List<InterferenceGraph.InterferenceNode> to_spill){
+        final HashMap<Register.Virtual, Label> vrMap = new HashMap<>();
         for(var node: to_spill){
             Register.Virtual vr = (Register.Virtual) node.register;
             Label l = Label.create(node.register.toString());

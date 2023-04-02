@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.FileWriter;
 import java.util.*;
+import gen.asm.*;
+
 
 public class ControlFlowGraph extends Graph{
 

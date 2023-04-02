@@ -335,7 +335,7 @@
 //  return r;
 //}
 void bar(){
-
+    print_s((char*)"hello from bar");
 }
 
 void foo(){

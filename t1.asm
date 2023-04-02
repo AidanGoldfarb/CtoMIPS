@@ -1,3 +1,4 @@
+
 .text
 pushRegisters
 addi v0,$zero,4
