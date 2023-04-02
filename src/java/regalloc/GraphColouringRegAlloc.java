@@ -40,17 +40,19 @@ public class GraphColouringRegAlloc implements AssemblyPass {
             }
         }
 
-//        int counter = 0;
-//        for(ControlFlowGraph cfg: cfgs){
-//            System.out.println(cfg.preorderTraversal());
-//            try{
-//                cfg.writeDotRep("testgraph" + counter + ".dot");
-//                counter++;
-//            }catch (Exception e){
-//
-//            }
-//        }
-        //System.exit(1);
+        {//print CFG
+            for(ControlFlowGraph cfg: cfgs){
+                //System.out.println(cfg.preorderTraversal());
+                try{
+                    String name = cfg.section.toString().split("\n")[2];
+                    int len = name.length();
+                    name = name.substring(0,len-1);
+                    cfg.writeDotRep(name+"_cfg" + ".dot");
+                }catch (Exception e){
+
+                }
+            }
+        }
 
         for(ControlFlowGraph cfg: cfgs){
             la.run(cfg);
@@ -58,6 +60,24 @@ public class GraphColouringRegAlloc implements AssemblyPass {
             cur.section = cfg.section;
             igs.add(cur);
         }
+
+        //System.out.println("size: " + cfgs.get(0).preorderTraversal().size());
+
+
+        { //Print IG
+            for(InterferenceGraph ig: igs){
+                //System.out.println(cfg.preorderTraversal());
+                try{
+                    String name = ig.section.toString().split("\n")[2];
+                    int len = name.length();
+                    name = name.substring(0,len-1);
+                    ig.writeDotRep(name+"_ig" + ".dot");
+                }catch (Exception e){
+
+                }
+            }
+        }
+
         for(InterferenceGraph ig: igs){
             var section = ig.section;
             assert section!=null;
@@ -91,7 +111,6 @@ public class GraphColouringRegAlloc implements AssemblyPass {
                 ArrayList<Register> regToSave = collectRegistersToSave(section,map);
                 ArrayList<Register> revRegToSave = new ArrayList<>(regToSave);
                 Collections.reverse(revRegToSave);
-                System.out.println(regToSave);
 
                 //for spilled regs
                 List<Label> vrLabels = new LinkedList<>(spill_map.values());
@@ -136,6 +155,7 @@ public class GraphColouringRegAlloc implements AssemblyPass {
                                     newSection.emit(OpCode.ADDI, Register.Arch.sp, Register.Arch.sp, -4);
                                     newSection.emit(OpCode.SW, Register.Arch.t0, Register.Arch.sp, 0);
                                 }
+                                newSection.emit("Done saving regs");
                             }
                             else if (insn == Instruction.Nullary.popRegisters) {
                                 newSection.emit("Original instruction: popRegisters");
@@ -156,6 +176,7 @@ public class GraphColouringRegAlloc implements AssemblyPass {
                                     //store in reg
                                     newSection.emit(OpCode.ADDI, reg, Register.Arch.t0, 0);
                                 }
+                                newSection.emit("Done restoring regs");
                             }
                             else
                                 if(containsSpillReg(insn,spill_map)){

@@ -65,10 +65,10 @@
 
 //#include "minic-stdlib.h"
 //// Board layout
-//char a11; char a12; char a13;
-//char a21; char a22; char a23;
-//char a31; char a32; char a33;
-//char empty; // Empty cell character
+char a11; char a12; char a13;
+char a21; char a22; char a23;
+char a31; char a32; char a33;
+char empty; // Empty cell character
 //////
 ////
 ////
@@ -325,19 +325,30 @@
 //  return r;
 //}
 //
-
-
-int foo(int num){
-    while(num < 4){
-        return num;
+int set(char row, int col, char mark){
+    int r;
+    r = 1;
+    if (0) {
     }
-
+    else {
+        if (1) {
+            if (1) {
+                if (0){
+                }
+                else{
+                    r = -1;
+                }
+            }
+        }
+    }
+    //print_s((char*)"HERE!");
+    return 0;
 }
 
+//int set(char row, int col, char mark){
 void main() {
     int a;
-    a = foo(1);
-    print_i(a);
+    a = set('b',1,'X');
 //    char m;
 //    m = get_mark(10);
 //    empty = ' ';

@@ -1,1 +1,12 @@
-dot -Tpdf cfg.dot -o cfg.pdf && open cfg.pdf && dot -Tpdf ig.dot -o ig.pdf && open ig.pdf
+#!/bin/bash
+
+# Loop through all .dot files in the directory
+for file in *.dot
+do
+  # Convert each .dot file to a .pdf file
+  dot -Tpdf "$file" -o "${file%.dot}.pdf"
+  
+  # Open the resulting .pdf file
+  open "${file%.dot}.pdf"
+done
+

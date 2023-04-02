@@ -54,11 +54,6 @@ public class Graph {
                         par.children.add(n);
                         n.parents.add(par);
                         lst.add(n);
-//                        if(flag){
-//                            System.out.println("Par: " + par);
-//                            System.out.println("child: " + n);
-//                        }
-                        //lst.add(0,n); //add to front
                         this.vertice_list.add(n);
                         return;
                     }
@@ -68,13 +63,6 @@ public class Graph {
             assert false;
         }
     }
-
-//    public void addEdge(int from, int to) {
-//        Node from_node = getNode(from);
-//        Node to_node = getNode(to);
-//        Pair p = new Pair(from_node,to_node);
-//        edge_list.add(p);
-//    }
 
     public void addEdge(int from, Label to){
         Node from_node = getNode(from);
@@ -122,17 +110,10 @@ public class Graph {
 
 
     public ArrayList<Node> preorderTraversal(){
-        replaceChildren();
+        //replaceChildren();
         HashSet<Node> visited = new HashSet<>();
         this.preorder = new ArrayList<>();
-//        for(var node: this.vertice_list){
-//            if(node.toString().equals("main")){
-//                preorderTraversalHelper(node,visited);
-//            }
-//        }
         preorderTraversalHelper(this.root,visited);
-//        System.out.println("vlst size: " + this.vertice_list.size());
-//        System.out.println("pre size: " + this.preorder.size());
         return this.preorder;
     }
 
@@ -144,20 +125,18 @@ public class Graph {
         visited.add(node);
         this.preorder.add(node);
 
+        //most concise and least error prone java graph traversal
         for(var child: node.children){
-//            System.out.println("node: " + node);
-//            System.out.println("\tkids: " + node.children);
-            if(!mapContains(child,visited)){
-//                if(child.toString().equals("label_2_exitwhile")){
-//                    //System.out.println("kids: " + child.children);
-//                    for(var inner: this.vertice_list){
-//                        if(inner.toString().equals("label_2_exitwhile")){
-//                            //System.out.println("kids: " + inner.children);
-//                        }
-//                    }
-//                }
-                preorderTraversalHelper(child,visited);
+            for(var inner: this.vertice_list){
+                if(child.toString().equals(inner.toString())){
+                    if(!mapContains(inner,visited)){
+                        preorderTraversalHelper(inner,visited);
+                    }
+                }
             }
+//            if(!mapContains(child,visited)){
+//                preorderTraversalHelper(child,visited);
+//            }
         }
     }
 
@@ -189,9 +168,6 @@ public class Graph {
     }
 
     private boolean mapContains(Node node, HashSet<Node> visited){
-//        if(node.toString().equals("label_2_exitwhile")){
-//            System.out.println("node: " + node);
-//        }
         for(var e: visited){
             if(node.toString().equals(e.toString())){
                 return true;
