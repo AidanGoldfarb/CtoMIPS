@@ -60,6 +60,9 @@ public class ControlFlowGraphFactory {
                                     else{
                                         //System.out.println("ITS A JAL");
                                         Section toAdd = this.label_section_map.get(label);
+                                        if(toAdd == null){
+                                            continue;
+                                        }
                                         isRecCall = toAdd.items.get(0).toString().equals(section.items.get(0).toString());
                                         if(isRecCall){
                                             cfg.addEdge(cur.id, label);
