@@ -54,6 +54,7 @@ public class MemAllocCodeGen extends CodeGen {
                 }
 
                 visit(fd.block);
+                this.fpOffset = 0;
             }
             case Block b -> {
                 for(VarDecl vd: b.vds){

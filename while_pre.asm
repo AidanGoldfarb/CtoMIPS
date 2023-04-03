@@ -398,7 +398,7 @@ addi $sp,$sp,-4
 # End Prologue
 # Emiting function body: set
 pushRegisters
-addi v195,$fp,-8
+addi v195,$fp,-4
 li v197,1
 # storing rhs in lhs
 sw v197,0(v195)
@@ -428,7 +428,7 @@ lw v220,0(v221)
 sw v220,0(v218)
 j label_88_endif
 label_87_else:
-addi v223,$fp,-8
+addi v223,$fp,-4
 li v226,0
 li v228,1
 sub v224,v226,v228
@@ -457,7 +457,7 @@ lw v245,0(v246)
 sw v245,0(v243)
 j label_92_endif
 label_91_else:
-addi v248,$fp,-8
+addi v248,$fp,-4
 li v251,0
 li v253,1
 sub v249,v251,v253
@@ -486,7 +486,7 @@ lw v270,0(v271)
 sw v270,0(v268)
 j label_96_endif
 label_95_else:
-addi v273,$fp,-8
+addi v273,$fp,-4
 li v276,0
 li v278,1
 sub v274,v276,v278
@@ -495,7 +495,7 @@ sw v274,0(v273)
 label_96_endif:
 j label_94_endif
 label_93_else:
-addi v280,$fp,-8
+addi v280,$fp,-4
 li v282,0
 # storing rhs in lhs
 sw v282,0(v280)
@@ -530,7 +530,7 @@ lw v305,0(v306)
 sw v305,0(v303)
 j label_102_endif
 label_101_else:
-addi v308,$fp,-8
+addi v308,$fp,-4
 li v311,0
 li v313,1
 sub v309,v311,v313
@@ -559,7 +559,7 @@ lw v330,0(v331)
 sw v330,0(v328)
 j label_106_endif
 label_105_else:
-addi v333,$fp,-8
+addi v333,$fp,-4
 li v336,0
 li v338,1
 sub v334,v336,v338
@@ -588,7 +588,7 @@ lw v355,0(v356)
 sw v355,0(v353)
 j label_110_endif
 label_109_else:
-addi v358,$fp,-8
+addi v358,$fp,-4
 li v361,0
 li v363,1
 sub v359,v361,v363
@@ -597,7 +597,7 @@ sw v359,0(v358)
 label_110_endif:
 j label_108_endif
 label_107_else:
-addi v365,$fp,-8
+addi v365,$fp,-4
 li v367,0
 # storing rhs in lhs
 sw v367,0(v365)
@@ -632,7 +632,7 @@ lw v390,0(v391)
 sw v390,0(v388)
 j label_116_endif
 label_115_else:
-addi v393,$fp,-8
+addi v393,$fp,-4
 li v396,0
 li v398,1
 sub v394,v396,v398
@@ -661,7 +661,7 @@ lw v415,0(v416)
 sw v415,0(v413)
 j label_120_endif
 label_119_else:
-addi v418,$fp,-8
+addi v418,$fp,-4
 li v421,0
 li v423,1
 sub v419,v421,v423
@@ -690,7 +690,7 @@ lw v440,0(v441)
 sw v440,0(v438)
 j label_124_endif
 label_123_else:
-addi v443,$fp,-8
+addi v443,$fp,-4
 li v446,0
 li v448,1
 sub v444,v446,v448
@@ -699,7 +699,7 @@ sw v444,0(v443)
 label_124_endif:
 j label_122_endif
 label_121_else:
-addi v450,$fp,-8
+addi v450,$fp,-4
 li v452,0
 # storing rhs in lhs
 sw v452,0(v450)
@@ -708,14 +708,14 @@ label_118_endif:
 label_114_endif:
 j label_112_endif
 label_111_else:
-addi v454,$fp,-8
+addi v454,$fp,-4
 li v456,0
 # storing rhs in lhs
 sw v456,0(v454)
 label_112_endif:
 label_98_endif:
 label_84_endif:
-addi v459,$fp,-8
+addi v459,$fp,-4
 lw v458,0(v459)
 sw v458,8($fp)
 # should jump back here
@@ -1023,12 +1023,12 @@ addi $sp,$sp,-20
 # End Prologue
 # Emiting function body: selectmove
 pushRegisters
-addi v584,$fp,-20
+addi v584,$fp,-12
 li v586,1
 # storing rhs in lhs
 sw v586,0(v584)
 label_134_loop:
-addi v589,$fp,-20
+addi v589,$fp,-12
 lw v588,0(v589)
 beq v588,$zero,label_135_exitwhile
 la v592,label_52_str
@@ -1044,19 +1044,19 @@ la v599,label_53_str
 addi $a0,v599,0
 li $v0,4
 syscall
-addi v601,$fp,-12
+addi v601,$fp,-4
 li $v0,12
 syscall
 addi v602,$v0,0
 # storing rhs in lhs
 sw v602,0(v601)
-addi v604,$fp,-16
+addi v604,$fp,-8
 li $v0,5
 syscall
 addi v605,$v0,0
 # storing rhs in lhs
 sw v605,0(v604)
-addi v607,$fp,-28
+addi v607,$fp,-20
 # res space for args
 addi $sp,$sp,-4
 addi v611,$fp,8
@@ -1073,16 +1073,16 @@ lw $ra,0($sp)
 addi $sp,$sp,12
 # storing rhs in lhs
 sw v608,0(v607)
-addi v613,$fp,-24
+addi v613,$fp,-16
 # res space for args
 addi $sp,$sp,-12
-addi v617,$fp,-12
+addi v617,$fp,-4
 lw v616,0(v617)
 sw v616,0($sp)
-addi v620,$fp,-16
+addi v620,$fp,-8
 lw v619,0(v620)
 sw v619,4($sp)
-addi v623,$fp,-28
+addi v623,$fp,-20
 lw v622,0(v623)
 sw v622,8($sp)
 # space for ret value
@@ -1096,7 +1096,7 @@ lw $ra,0($sp)
 addi $sp,$sp,20
 # storing rhs in lhs
 sw v614,0(v613)
-addi v627,$fp,-24
+addi v627,$fp,-16
 lw v626,0(v627)
 li v629,0
 xor v624,v626,v629
@@ -1108,7 +1108,7 @@ li $v0,4
 syscall
 j label_137_endif
 label_136_else:
-addi v636,$fp,-24
+addi v636,$fp,-16
 lw v635,0(v636)
 li v639,0
 li v641,1
@@ -1122,7 +1122,7 @@ li $v0,4
 syscall
 j label_139_endif
 label_138_else:
-addi v646,$fp,-20
+addi v646,$fp,-12
 li v648,0
 # storing rhs in lhs
 sw v648,0(v646)
@@ -1150,7 +1150,7 @@ addi $sp,$sp,-4
 # End Prologue
 # Emiting function body: won
 pushRegisters
-addi v650,$fp,-32
+addi v650,$fp,-4
 li v652,0
 # storing rhs in lhs
 sw v652,0(v650)
@@ -1175,7 +1175,7 @@ lw v672,0(v673)
 xor v667,v669,v672
 sltiu v667,v667,1
 beq v667,$zero,label_145_else
-addi v675,$fp,-32
+addi v675,$fp,-4
 li v677,1
 # storing rhs in lhs
 sw v677,0(v675)
@@ -1198,7 +1198,7 @@ lw v690,0(v691)
 xor v685,v687,v690
 sltiu v685,v685,1
 beq v685,$zero,label_149_else
-addi v693,$fp,-32
+addi v693,$fp,-4
 li v695,1
 # storing rhs in lhs
 sw v695,0(v693)
@@ -1221,7 +1221,7 @@ lw v708,0(v709)
 xor v703,v705,v708
 sltiu v703,v703,1
 beq v703,$zero,label_153_else
-addi v711,$fp,-32
+addi v711,$fp,-4
 li v713,1
 # storing rhs in lhs
 sw v713,0(v711)
@@ -1257,7 +1257,7 @@ lw v733,0(v734)
 xor v728,v730,v733
 sltiu v728,v728,1
 beq v728,$zero,label_159_else
-addi v736,$fp,-32
+addi v736,$fp,-4
 li v738,1
 # storing rhs in lhs
 sw v738,0(v736)
@@ -1291,7 +1291,7 @@ lw v758,0(v759)
 xor v753,v755,v758
 sltiu v753,v753,1
 beq v753,$zero,label_165_else
-addi v761,$fp,-32
+addi v761,$fp,-4
 li v763,1
 # storing rhs in lhs
 sw v763,0(v761)
@@ -1314,7 +1314,7 @@ lw v776,0(v777)
 xor v771,v773,v776
 sltiu v771,v771,1
 beq v771,$zero,label_169_else
-addi v779,$fp,-32
+addi v779,$fp,-4
 li v781,1
 # storing rhs in lhs
 sw v781,0(v779)
@@ -1349,7 +1349,7 @@ lw v801,0(v802)
 xor v796,v798,v801
 sltiu v796,v796,1
 beq v796,$zero,label_175_else
-addi v804,$fp,-32
+addi v804,$fp,-4
 li v806,1
 # storing rhs in lhs
 sw v806,0(v804)
@@ -1383,7 +1383,7 @@ lw v826,0(v827)
 xor v821,v823,v826
 sltiu v821,v821,1
 beq v821,$zero,label_181_else
-addi v829,$fp,-32
+addi v829,$fp,-4
 li v831,1
 # storing rhs in lhs
 sw v831,0(v829)
@@ -1396,7 +1396,7 @@ label_180_endif:
 j label_178_endif
 label_177_else:
 label_178_endif:
-addi v834,$fp,-32
+addi v834,$fp,-4
 lw v833,0(v834)
 sw v833,8($fp)
 # should jump back here
@@ -1432,7 +1432,7 @@ la v836,label_19_empty
 li v838,32
 # storing rhs in lhs
 sw v838,0(v836)
-addi v840,$fp,-36
+addi v840,$fp,-4
 li v842,1
 # storing rhs in lhs
 sw v842,0(v840)
@@ -1446,7 +1446,7 @@ sw $ra,0($sp)
 jal reset
 lw $ra,0($sp)
 addi $sp,$sp,4
-addi v847,$fp,-36
+addi v847,$fp,-4
 lw v846,0(v847)
 addi $a0,v846,0
 li $v0,1
@@ -1461,17 +1461,17 @@ sw $ra,0($sp)
 jal printGame
 lw $ra,0($sp)
 addi $sp,$sp,4
-addi v850,$fp,-40
+addi v850,$fp,-8
 li v852,1
 # storing rhs in lhs
 sw v852,0(v850)
 label_183_loop:
-addi v855,$fp,-36
+addi v855,$fp,-4
 lw v854,0(v855)
 beq v854,$zero,label_184_exitwhile
 # res space for args
 addi $sp,$sp,-4
-addi v859,$fp,-40
+addi v859,$fp,-8
 lw v858,0(v859)
 sw v858,0($sp)
 # space for ret value
@@ -1482,10 +1482,10 @@ sw $ra,0($sp)
 jal selectmove
 lw $ra,0($sp)
 addi $sp,$sp,8
-addi v861,$fp,-44
+addi v861,$fp,-12
 # res space for args
 addi $sp,$sp,-4
-addi v865,$fp,-40
+addi v865,$fp,-8
 lw v864,0(v865)
 sw v864,0($sp)
 # space for ret value
@@ -1511,7 +1511,7 @@ lw $ra,0($sp)
 addi $sp,$sp,4
 # res space for args
 addi $sp,$sp,-4
-addi v870,$fp,-44
+addi v870,$fp,-12
 lw v869,0(v870)
 sw v869,0($sp)
 # space for ret value
@@ -1526,7 +1526,7 @@ addi $sp,$sp,12
 beq v867,$zero,label_185_else
 # res space for args
 addi $sp,$sp,-4
-addi v874,$fp,-40
+addi v874,$fp,-8
 lw v873,0(v874)
 sw v873,0($sp)
 # space for ret value
@@ -1537,7 +1537,7 @@ sw $ra,0($sp)
 jal printWinner
 lw $ra,0($sp)
 addi $sp,$sp,8
-addi v876,$fp,-36
+addi v876,$fp,-4
 li v878,0
 # storing rhs in lhs
 sw v878,0(v876)
@@ -1562,16 +1562,16 @@ la v885,label_57_str
 addi $a0,v885,0
 li $v0,4
 syscall
-addi v887,$fp,-36
+addi v887,$fp,-4
 li v889,0
 # storing rhs in lhs
 sw v889,0(v887)
 j label_188_endif
 label_187_else:
-addi v891,$fp,-40
+addi v891,$fp,-8
 # res space for args
 addi $sp,$sp,-4
-addi v895,$fp,-40
+addi v895,$fp,-8
 lw v894,0(v895)
 sw v894,0($sp)
 # space for ret value
@@ -1587,7 +1587,7 @@ addi $sp,$sp,12
 sw v892,0(v891)
 label_188_endif:
 label_186_endif:
-addi v899,$fp,-36
+addi v899,$fp,-4
 lw v898,0(v899)
 li v901,0
 xor v896,v898,v901
@@ -1597,19 +1597,19 @@ la v904,label_59_str
 addi $a0,v904,0
 li $v0,4
 syscall
-addi v906,$fp,-48
+addi v906,$fp,-16
 li $v0,12
 syscall
 addi v907,$v0,0
 # storing rhs in lhs
 sw v907,0(v906)
-addi v911,$fp,-48
+addi v911,$fp,-16
 lw v910,0(v911)
 li v913,121
 xor v908,v910,v913
 sltiu v908,v908,1
 beq v908,$zero,label_191_else
-addi v915,$fp,-36
+addi v915,$fp,-4
 li v917,1
 # storing rhs in lhs
 sw v917,0(v915)
@@ -1625,13 +1625,13 @@ lw $ra,0($sp)
 addi $sp,$sp,4
 j label_192_endif
 label_191_else:
-addi v922,$fp,-48
+addi v922,$fp,-16
 lw v921,0(v922)
 li v924,89
 xor v919,v921,v924
 sltiu v919,v919,1
 beq v919,$zero,label_193_else
-addi v926,$fp,-36
+addi v926,$fp,-4
 li v928,1
 # storing rhs in lhs
 sw v928,0(v926)

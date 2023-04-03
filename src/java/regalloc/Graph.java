@@ -110,7 +110,7 @@ public class Graph {
 
 
     public ArrayList<Node> preorderTraversal(){
-        //replaceChildren();
+        replaceChildren();
         HashSet<Node> visited = new HashSet<>();
         this.preorder = new ArrayList<>();
         preorderTraversalHelper(this.root,visited);

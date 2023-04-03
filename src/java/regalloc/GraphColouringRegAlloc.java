@@ -61,8 +61,13 @@ public class GraphColouringRegAlloc implements AssemblyPass {
             igs.add(cur);
         }
 
-        //System.out.println("size: " + cfgs.get(0).preorderTraversal().size());
-
+//        for(ControlFlowGraph cfg: cfgs){
+//            String name = cfg.section.toString().split("\n")[2];
+//            int len = name.length();
+//            name = name.substring(0,len-1);
+//            System.out.println(name + ": " + cfg.preorderTraversal().size());
+//            System.out.println(name + ": " + cfg.vertice_list.size());
+//        }
 
         { //Print IG
             for(InterferenceGraph ig: igs){
@@ -112,6 +117,8 @@ public class GraphColouringRegAlloc implements AssemblyPass {
                 ArrayList<Register> revRegToSave = new ArrayList<>(regToSave);
                 Collections.reverse(revRegToSave);
 
+                System.out.println(regToSave);
+
                 //for spilled regs
                 List<Label> vrLabels = new LinkedList<>(spill_map.values());
                 List<Label> reverseVrLabels = new LinkedList<>(vrLabels);
@@ -148,7 +155,7 @@ public class GraphColouringRegAlloc implements AssemblyPass {
                                     newSection.emit(OpCode.SW, Register.Arch.t0, Register.Arch.sp, 0);
                                 }
                                 for(Register reg: regToSave){
-                                    //load reg value into t0 (should be 'move'?)
+                                    //load reg value into t0
                                     newSection.emit(OpCode.ADDI, Register.Arch.t0, reg, 0);
 
                                     //push t0 onto stack

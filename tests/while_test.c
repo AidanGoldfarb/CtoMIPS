@@ -63,25 +63,21 @@
    //    return stc;
    //}
 
-//#include "minic-stdlib.h"
-//// Board layout
-char a11; char a12; char a13;
-char a21; char a22; char a23;
-char a31; char a32; char a33;
-char empty; // Empty cell character
-//////
-////
-////
-//////// Resets the board
-//void reset() {
-//    a11 = empty; a12 = empty;  a13 = empty;
-//    a21 = empty; a22 = empty;  a23 = empty;
-//    a31 = empty; a32 = empty;  a33 = empty;
-//}
-//////
-//////// Predicate indicating whether all board cells are filled.
-//////// 1 => true
-//////// 0 => false
+#include "minic-stdlib.h"
+// Board layout
+//char a11; char a12; char a13;
+//char a21; char a22; char a23;
+//char a31; char a32; char a33;
+//char empty; // Empty cell character
+//
+//
+////void reset() {
+////    a11 = empty; a12 = empty;  a13 = empty;
+////    a21 = empty; a22 = empty;  a23 = empty;
+////    a31 = empty; a32 = empty;  a33 = empty;
+////}
+//
+//
 //int full() {
 //  int n;
 //  n = 0;
@@ -111,8 +107,7 @@ char empty; // Empty cell character
 //  else
 //    return 0;
 //}
-////
-//////Prints the game board to stdout
+//
 //void printGame() {
 //  print_s((char*)"\n");
 //  print_s((char*)"     1   2   3\n");
@@ -125,19 +120,16 @@ char empty; // Empty cell character
 //  print_s((char*)"   +---+---+---+\n");
 //  print_s((char*)"\n");
 //}
-////
+//
 //void printWinner(int player) {
 //  print_s((char*)"Player ");print_i(player);print_s((char*)" has won!\n");
 //}
-////
+//
 //int switchPlayer(int currentPlayer) {
 //  if (currentPlayer == 1) return 2;
 //  else return 1;
 //}
-////
-////
-////// Attempts to put mark in cell (row,col)
-////// Returns 1 on success, otherwise -1 is returned when the cell is already occupied, and 0 when the move is not within the board range.
+//
 //int set(char row, int col, char mark){
 //    int r;
 //    r = 1;
@@ -228,9 +220,7 @@ char empty; // Empty cell character
 //    //print_s((char*)"HERE!");
 //    return r;
 //}
-////
 //
-//// Gets the mark for player 1 or 2
 //char get_mark(int player) {
 //  if (player == 1)
 //    return 'X';
@@ -248,20 +238,20 @@ char empty; // Empty cell character
 //        row = 'b';
 //        col = 2;
 //        mark = get_mark(player);
-//        //success = set(row,col,mark);
-////        if (success == 0) {
-////            print_s((char*)"That is not a valid move!\n");
-////        }
-////        else {
-////            if (success == -1)
-////                print_s((char*)"That move is not possible!\n");
-////            else
-////                selected = 0;
-////        }
+//        success = set(row,col,mark);
+//        if (success == 0) {
+//            print_s((char*)"That is not a valid move!\n");
+//        }
+//        else {
+//            if (success == -1)
+//                print_s((char*)"That move is not possible!\n");
+//            else
+//                selected = 0;
+//        }
 //        selected = 0;
 //    }
 //}
-//
+
 //int won(char mark) {
 //  int r;
 //  r = 0;
@@ -324,33 +314,30 @@ char empty; // Empty cell character
 //  }
 //  return r;
 //}
+void foo(){
+    int d;
+    int e;
+    int f;
+    d = 5;
+    e = 6;
+    f = 7;
+}
 //
-int set(char row, int col, char mark){
-    int r;
-    r = 1;
-    if (0) {
-    }
-    else {
-        if (1) {
-            if (1) {
-                if (0){
-                }
-                else{
-                    r = -1;
-                }
-            }
-        }
-    }
-    //print_s((char*)"HERE!");
+int bar(){
+    int a;
+    a = 5;
+    foo();
+    print_i(a);
     return 0;
 }
-
 //int set(char row, int col, char mark){
 void main() {
-    int a;
-    a = set('b',1,'X');
-//    char m;
-//    m = get_mark(10);
+    bar();
+//    int a;
+//    a = set('b',2,'X');
+//    int playing; int player;
+//    char mark; char yesno;
+//
 //    empty = ' ';
 //    playing = 1;
 //    reset();
@@ -358,9 +345,9 @@ void main() {
 //    printGame();
 //    player = 1; // Begin with player one
 //    while(playing){
-//        //selectmove(player);
+//        selectmove(player);
 //        //mark = get_mark(player);
-//
+//        //printGame();
 //
 //
 //        playing = 0;
@@ -383,6 +370,8 @@ void main() {
 //    print_i(rec_bin_search(arr,7,0,4));
 
 }
+
+
 
 
 //int iter_bin_search(int* arr, int x, int low, int high){
@@ -417,10 +406,7 @@ void main() {
 //            return rec_bin_search(arr,x,low,mid-1);
 //        }
 //    }
-//
 //}
-
-
 
 
 
