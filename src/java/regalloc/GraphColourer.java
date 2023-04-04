@@ -99,12 +99,17 @@ public class GraphColourer implements AssemblyPass {
     }
 
     private InterferenceNode findNodeToSpill(InterferenceGraph ig) {
+        int max_degrees = 0;
+        InterferenceNode best_node = null;
         for(var node: ig.vertice_list){
             if(!node.visited && node.register.isVirtual()){
-                return node;
+                if(node.neighbor_count > max_degrees){
+                    max_degrees = node.neighbor_count;
+                    best_node = node;
+                }
             }
         }
-        return null;
+        return best_node;
     }
 
     private void addArchRegs(Map<Register, Register> map) {
