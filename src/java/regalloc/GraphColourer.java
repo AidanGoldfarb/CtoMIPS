@@ -74,8 +74,7 @@ public class GraphColourer implements AssemblyPass {
             if(num_verts > 0){
                 var node_to_spill = findNodeToSpill(ig);
                 System.out.println("spilling: " + node_to_spill);
-
-                if(node_to_spill != null){
+                if(node_to_spill != null){ //null if arch register
                     //System.out.println("node_to_spill: " + node_to_spill);
                     node_to_spill.visited = true;
                     for(var inner: node_to_spill.neighbors){
@@ -109,6 +108,8 @@ public class GraphColourer implements AssemblyPass {
                 }
             }
         }
+        if(best_node==null) for (var node : ig.vertice_list)
+            assert node.visited || !node.register.isVirtual();
         return best_node;
     }
 

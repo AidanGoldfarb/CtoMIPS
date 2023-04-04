@@ -61,14 +61,6 @@ public class GraphColouringRegAlloc implements AssemblyPass {
             igs.add(cur);
         }
 
-//        for(ControlFlowGraph cfg: cfgs){
-//            String name = cfg.section.toString().split("\n")[2];
-//            int len = name.length();
-//            name = name.substring(0,len-1);
-//            System.out.println(name + ": " + cfg.preorderTraversal().size());
-//            System.out.println(name + ": " + cfg.vertice_list.size());
-//        }
-
         { //Print IG
             for(InterferenceGraph ig: igs){
                 //System.out.println(cfg.preorderTraversal());
