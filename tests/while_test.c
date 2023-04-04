@@ -315,19 +315,10 @@
 //  return r;
 //}
 //int set(char row, int col, char mark){
-int counter;
 
-void foo(int n){
-    if(n){
-        counter = counter*n;
-        n = n-1;
-    }
-}
 
 void main() {
-    counter = 1;
-    foo(5);
-    print_i(counter);
+
 //    int a;
 //    a = set('b',2,'X');
 //    int playing; int player;

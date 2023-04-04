@@ -103,7 +103,7 @@ public class GraphColourer implements AssemblyPass {
         InterferenceNode best_node = null;
         for(var node: ig.vertice_list){
             if(!node.visited && node.register.isVirtual()){
-                if(node.neighbor_count > max_degrees){
+                if(node.neighbor_count >= max_degrees){
                     max_degrees = node.neighbor_count;
                     best_node = node;
                 }
