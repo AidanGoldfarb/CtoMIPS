@@ -12,12 +12,12 @@ public class GraphColouringRegAlloc implements AssemblyPass {
 
     @Override
     public AssemblyProgram apply(AssemblyProgram program) {
-        program.sections.remove(0);//remove first jump to main
+        //program.sections.remove(0);//remove first jump to main
 
         AssemblyProgram newProg = new AssemblyProgram();
 
-        final AssemblyProgram.Section jmpToMainSection = newProg.newSection(AssemblyProgram.Section.Type.TEXT);
-        jmpToMainSection.emit(OpCode.J, Label.get("main")); //re-add fst jmp
+//        final AssemblyProgram.Section jmpToMainSection = newProg.newSection(AssemblyProgram.Section.Type.TEXT);
+//        jmpToMainSection.emit(OpCode.J, Label.get("main")); //re-add fst jmp
 
         ControlFlowGraphFactory cfgf = new ControlFlowGraphFactory(program);
         LivenessAnalyzer la = new LivenessAnalyzer();
@@ -34,9 +34,12 @@ public class GraphColouringRegAlloc implements AssemblyPass {
 
         for(AssemblyProgram.Section section: program.sections){
             if(section.type == AssemblyProgram.Section.Type.TEXT){
-                var cur = cfgf.build(section);
-                cur.section = section;
-                cfgs.add(cur);
+                System.out.println("size: " + section.items.size());
+                if(section.items.size() > 1){
+                    var cur = cfgf.build(section);
+                    cur.section = section;
+                    cfgs.add(cur);
+                }
             }
         }
 
@@ -93,6 +96,9 @@ public class GraphColouringRegAlloc implements AssemblyPass {
     private void emit(AssemblyProgram program, AssemblyProgram newProg, HashMap<AssemblyProgram.Section, HashMap<Register, Register>> maps, HashMap<AssemblyProgram.Section, HashMap<Virtual, Label>> spill_maps){
         for(AssemblyProgram.Section section: program.sections){
             if(section.type == AssemblyProgram.Section.Type.DATA){
+                newProg.emitSection(section);
+            }
+            else if(section.type == AssemblyProgram.Section.Type.TEXT && section.items.size() == 1){
                 newProg.emitSection(section);
             }
             else{
