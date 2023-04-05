@@ -73,7 +73,7 @@ public class GraphColourer implements AssemblyPass {
             }
             if(num_verts > 0){
                 var node_to_spill = findNodeToSpill(ig);
-                System.out.println("spilling: " + node_to_spill);
+                //System.out.println("spilling: " + node_to_spill);
                 if(node_to_spill != null){ //null if arch register
                     //System.out.println("node_to_spill: " + node_to_spill);
                     node_to_spill.visited = true;

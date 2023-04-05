@@ -38,82 +38,83 @@ addi v4,$fp,-8
 li v6,0
 # storing rhs in lhs
 sw v6,0(v4)
-addi v8,$fp,-12
-li v10,1
-# storing rhs in lhs
-sw v10,0(v8)
-la v13,label_1_str
-addi $a0,v13,0
+addi v10,$fp,-12
+lw v9,0(v10)
+li v12,1
+xor v7,v9,v12
+sltiu v7,v7,1
+la v15,label_1_str
+addi $a0,v15,0
 li $v0,4
 syscall
-addi v17,$fp,-4
-lw v16,0(v17)
-addi $a0,v16,0
+addi v19,$fp,-4
+lw v18,0(v19)
+addi $a0,v18,0
 li $v0,1
 syscall
-la v20,label_3_str
-addi $a0,v20,0
+la v22,label_3_str
+addi $a0,v22,0
 li $v0,4
 syscall
-addi v22,$fp,-20
-li v24,0
+addi v24,$fp,-20
+li v26,0
 # storing rhs in lhs
-sw v24,0(v22)
+sw v26,0(v24)
 label_7_loop:
-addi v28,$fp,-20
-lw v27,0(v28)
-addi v31,$fp,-4
-lw v30,0(v31)
-slt v25,v27,v30
-beq v25,$zero,label_8_exitwhile
-addi v35,$fp,-20
-lw v34,0(v35)
-li v37,1
-slt v32,v37,v34
-xori v32,v32,1
-beq v32,$zero,label_9_else
-addi v39,$fp,-16
-addi v42,$fp,-20
-lw v41,0(v42)
+addi v30,$fp,-20
+lw v29,0(v30)
+addi v33,$fp,-4
+lw v32,0(v33)
+slt v27,v29,v32
+beq v27,$zero,label_8_exitwhile
+addi v37,$fp,-20
+lw v36,0(v37)
+li v39,1
+slt v34,v39,v36
+xori v34,v34,1
+beq v34,$zero,label_9_else
+addi v41,$fp,-16
+addi v44,$fp,-20
+lw v43,0(v44)
 # storing rhs in lhs
-sw v41,0(v39)
+sw v43,0(v41)
 j label_10_endif
 label_9_else:
-addi v44,$fp,-16
-addi v48,$fp,-8
-lw v47,0(v48)
-addi v51,$fp,-12
-lw v50,0(v51)
-add v45,v47,v50
+addi v46,$fp,-16
+addi v50,$fp,-8
+lw v49,0(v50)
+addi v53,$fp,-12
+lw v52,0(v53)
+add v47,v49,v52
 # storing rhs in lhs
-sw v45,0(v44)
-addi v53,$fp,-8
-addi v56,$fp,-12
-lw v55,0(v56)
-# storing rhs in lhs
-sw v55,0(v53)
+sw v47,0(v46)
+addi v55,$fp,-8
 addi v58,$fp,-12
-addi v61,$fp,-16
-lw v60,0(v61)
+lw v57,0(v58)
 # storing rhs in lhs
-sw v60,0(v58)
+sw v57,0(v55)
+addi v60,$fp,-12
+addi v63,$fp,-16
+lw v62,0(v63)
+# storing rhs in lhs
+sw v62,0(v60)
 label_10_endif:
-addi v65,$fp,-16
-lw v64,0(v65)
-addi $a0,v64,0
+addi v67,$fp,-16
+lw v66,0(v67)
+addi $a0,v66,0
 li $v0,1
 syscall
-la v68,label_5_str
-addi $a0,v68,0
+la v70,label_5_str
+addi $a0,v70,0
 li $v0,4
 syscall
-addi v70,$fp,-20
-addi v74,$fp,-20
-lw v73,0(v74)
-li v76,1
-add v71,v73,v76
+addi v72,$fp,-20
+addi v76,$fp,-20
+lw v75,0(v76)
+li v78,1
+add v73,v75,v78
 # storing rhs in lhs
-sw v71,0(v70)
+sw v73,0(v72)
 j label_7_loop
 label_8_exitwhile:
 # Done with function body

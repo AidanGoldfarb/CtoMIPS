@@ -278,8 +278,8 @@ public class GraphColouringRegAlloc implements AssemblyPass {
                 }
             });
 
-            System.out.println("insn before: " + insn);
-            System.out.println("insn after: " + insn.rebuild(vrToAr).rebuild(map));
+//            System.out.println("insn before: " + insn);
+//            System.out.println("insn after: " + insn.rebuild(vrToAr).rebuild(map));
             // emit new instructions where all virtual register have been replaced by architectural ones
             section.emit(insn.rebuild(vrToAr).rebuild(map));
 
