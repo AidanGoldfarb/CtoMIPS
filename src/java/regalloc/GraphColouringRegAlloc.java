@@ -177,13 +177,16 @@ public class GraphColouringRegAlloc implements AssemblyPass {
                                 }
                                 newSection.emit("Done restoring regs");
                             }
-                            else
-                                if(containsSpillReg(insn,spill_map)){
-                                    emitInstructionWithoutVirtualRegister(insn,map,spill_map,newSection);
+                            else{
+                                var spill_lst = containsSpillReg(insn,spill_map);
+                                if(spill_lst.size() > 0){
+                                    emitInstructionWithoutVirtualRegister(insn,map,spill_map,newSection,spill_lst);
                                 }
                                 else{
                                     newSection.emit(insn.rebuild(map));
                                 }
+                            }
+
                         }
                     }
                 }
@@ -224,19 +227,21 @@ public class GraphColouringRegAlloc implements AssemblyPass {
         return false;
     }
 
-    private boolean containsSpillReg(Instruction insn, HashMap<Virtual, Label> spill_map){
+    private ArrayList<Register> containsSpillReg(Instruction insn, HashMap<Virtual, Label> spill_map){
+        ArrayList<Register> res = new ArrayList<>();
         if(spill_map==null){
-            return false;
+            return res;
         }
         for(var reg: insn.registers()){
             if(reg.isVirtual() && spill_map.containsKey((Virtual) reg)){
-                return true;
+                //return true;
+                res.add(reg);
             }
         }
-        return false;
+        return res;
     }
 
-    private static void emitInstructionWithoutVirtualRegister(Instruction insn, Map<Register, Register> map, Map<Register.Virtual, Label> vrMap, AssemblyProgram.Section section) {
+    private static void emitInstructionWithoutVirtualRegister(Instruction insn, Map<Register, Register> map, Map<Virtual, Label> vrMap, AssemblyProgram.Section section, ArrayList<Register> spill_lst) {
         boolean contains_spilled = false;
         for(Register r: insn.registers()){
             if(r.isVirtual() && vrMap.containsKey((Register.Virtual) r))
@@ -246,18 +251,22 @@ public class GraphColouringRegAlloc implements AssemblyPass {
             section.emit("Original instruction: "+insn);
 
             final Map<Register, Register> vrToAr = new HashMap<>();
-            Register[] tempRegs = {Register.Arch.t0, Register.Arch.t1, Register.Arch.t2, Register.Arch.t3}; // 6 temporaries should be more than enough. old: Register.Arch.t2, Register.Arch.t3, Register.Arch.t4, Register.Arch.t5
+            Register[] tempRegs = {Register.Arch.t0,Register.Arch.t1, Register.Arch.t2}; // 6 temporaries should be more than enough. old: Register.Arch.t2, Register.Arch.t3, Register.Arch.t4, Register.Arch.t5
             final Stack<Register> freeTempRegs = new Stack<>();
             freeTempRegs.addAll(Arrays.asList(tempRegs));
 
+            //System.out.println("spilling: " + insn + " sz: " + freeTempRegs.size());
+
             // creates a map from virtual register to temporary architecture register for all registers appearing in the instructions
-            insn.registers().forEach(reg -> {
+            spill_lst.forEach(reg -> {
                 if (reg.isVirtual() && vrMap.containsKey((Register.Virtual) reg)) {
                     Register tmp = freeTempRegs.pop();
                     //Label label = vrMap.get(reg);
                     vrToAr.put(reg, tmp);
                 }
             });
+
+            //System.out.println("\tsize after: " + freeTempRegs.size());
 
             // load the values of any virtual registers used by the instruction from memory into a temporary architectural register
             insn.uses().forEach(reg -> {
@@ -269,15 +278,23 @@ public class GraphColouringRegAlloc implements AssemblyPass {
                 }
             });
 
+            System.out.println("insn before: " + insn);
+            System.out.println("insn after: " + insn.rebuild(vrToAr).rebuild(map));
             // emit new instructions where all virtual register have been replaced by architectural ones
             section.emit(insn.rebuild(vrToAr).rebuild(map));
 
             if (insn.def() != null) {
                 if (insn.def().isVirtual() && vrMap.containsKey((Register.Virtual) insn.def())) {
                     Register tmpVal = vrToAr.get(insn.def());
-                    Register tmpAddr = freeTempRegs.remove(0);
+                    //Register tmpAddr = freeTempRegs.remove(0);
+                    Register tmpAddr;
+                    if(tmpVal.toString().equals("$t0")){
+                        tmpAddr = Register.Arch.t1;
+                    }
+                    else{
+                        tmpAddr = Register.Arch.t0;
+                    }
                     Label label = vrMap.get(insn.def());
-
                     section.emit(OpCode.LA, tmpAddr, label);
                     section.emit(OpCode.SW, tmpVal, tmpAddr, 0);
                 }
