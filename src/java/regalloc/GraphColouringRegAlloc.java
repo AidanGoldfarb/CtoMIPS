@@ -12,12 +12,8 @@ public class GraphColouringRegAlloc implements AssemblyPass {
 
     @Override
     public AssemblyProgram apply(AssemblyProgram program) {
-        //program.sections.remove(0);//remove first jump to main
 
         AssemblyProgram newProg = new AssemblyProgram();
-
-//        final AssemblyProgram.Section jmpToMainSection = newProg.newSection(AssemblyProgram.Section.Type.TEXT);
-//        jmpToMainSection.emit(OpCode.J, Label.get("main")); //re-add fst jmp
 
         ControlFlowGraphFactory cfgf = new ControlFlowGraphFactory(program);
         LivenessAnalyzer la = new LivenessAnalyzer();
@@ -206,17 +202,17 @@ public class GraphColouringRegAlloc implements AssemblyPass {
             switch (item) {
                 case Instruction insn -> {
                     insn = insn.rebuild(map);
-                    var uses = insn.uses();
+                    //var uses = insn.uses();
                     var def = insn.def();
 
                     if(def!= null &&!registers.contains(def) && isUsableReg(def)){
                         registers.add(def);
                     }
-                    for(var usesreg: uses){
-                        if(usesreg != null && !registers.contains(usesreg) && isUsableReg(usesreg)){
-                            registers.add(usesreg);
-                        }
-                    }
+//                    for(var usesreg: uses){
+//                        if(usesreg != null && !registers.contains(usesreg) && isUsableReg(usesreg)){
+//                            registers.add(usesreg);
+//                        }
+//                    }
                 }
                 default -> {}
             }
