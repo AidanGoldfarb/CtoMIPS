@@ -30,7 +30,6 @@ public class GraphColouringRegAlloc implements AssemblyPass {
 
         for(AssemblyProgram.Section section: program.sections){
             if(section.type == AssemblyProgram.Section.Type.TEXT){
-                System.out.println("size: " + section.items.size());
                 if(section.items.size() > 1){
                     var cur = cfgf.build(section);
                     cur.section = section;

@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 public class LivenessAnalyzer {
 
     public void run(ControlFlowGraph cfg){
-        int iter = 0;
+        //int iter = 0;
         ArrayList<Node> preorder = cfg.preorderTraversal();
         ArrayList<Node> preorder_rev = new ArrayList<>(preorder);//cfg.preorderTraversal(); //did this wrong
         Collections.reverse(preorder_rev);
@@ -21,7 +21,7 @@ public class LivenessAnalyzer {
 
         boolean done = false;
         while(!done){
-            iter++;
+            //iter++;
             for(int i = 0; i<size; i++){
                 Node n = preorder_rev.get(i);
                 HashSet<Register> oldLiveIn = deepCopy(n.liveIn); //deep copy needed?
@@ -65,8 +65,21 @@ public class LivenessAnalyzer {
             oldLiveIns = new HashMap<>();
             oldLiveOuts = new HashMap<>();
         }
-
         //System.out.println("Liveness analysis done: " + iter + " iters");
+        //check
+        for(var node: cfg.preorderTraversal()){
+            if(node.instruction != null){
+                Register def = node.instruction.def();
+                if(def != null){
+                    if(!node.liveOut.contains(def)){
+                        //System.out.println("patching");
+                        node.liveOut.add(def);
+                    }
+                    //assert node.liveOut.contains(def);
+                }
+            }
+
+        }
     }
 
     private HashSet<Register> deepCopy(Set<Register> lst){
