@@ -54,32 +54,20 @@ public class GraphColourer implements AssemblyPass {
                 num_verts--;
 
                 //decr neighbors
-                for(var inner: node.neighbors){
-//                    if(inner.toString().equals("v267")){
-//                        System.out.println("found: " + inner.neighbor_count);
-//                    }
-                    inner.neighbor_count--;
-                    for(var nde: ig.vertice_list){ //cleanest java code
-                        if(nde.toString().equals(inner.toString())){
-                            nde.neighbor_count--;
-                        }
-                    }
-                    rebuildNeighbors(ig);
-//                    if(inner.toString().equals("v267")){
-//                        System.out.println("after: " + inner.neighbor_count);
-//                    }
-                }
+                decr_neigh(node,ig);
+
                 node = findColorableNode(ig);
             }
             if(num_verts > 0){
                 var node_to_spill = findNodeToSpill(ig);
-                //System.out.println("spilling: " + node_to_spill);
+                System.out.println("spilling: " + node_to_spill);
                 if(node_to_spill != null){ //null if arch register
                     //System.out.println("node_to_spill: " + node_to_spill);
                     node_to_spill.visited = true;
-                    for(var inner: node_to_spill.neighbors){
-                        inner.neighbor_count--;
-                    }
+                    decr_neigh(node_to_spill,ig);
+//                    for(var inner: node_to_spill.neighbors){
+//                        inner.neighbor_count--;
+//                    }
                     this.to_spill.add(node_to_spill);
                 }
                 num_verts--;
@@ -95,6 +83,18 @@ public class GraphColourer implements AssemblyPass {
         }
         addArchRegs(map);
         return map;
+    }
+
+    private void decr_neigh(InterferenceNode node, InterferenceGraph ig){
+        for(var inner: node.neighbors){
+            inner.neighbor_count--;
+            for(var nde: ig.vertice_list){ //cleanest java code
+                if(nde.toString().equals(inner.toString())){
+                    nde.neighbor_count--;
+                }
+            }
+            rebuildNeighbors(ig);
+        }
     }
 
     private InterferenceNode findNodeToSpill(InterferenceGraph ig) {

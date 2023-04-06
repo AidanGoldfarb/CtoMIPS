@@ -318,37 +318,10 @@
 
 
 void main() {
-    int n;
-  int first;
-  int second;
-  int next;
-  int c;
-  char t;
-
-  // read n from the standard input
-  n = read_i();
-
-  first = 0;
-  second = 1;
-
-  print_s((char*)"First ");
-  print_i(n);
-  print_s((char*)" terms of Fibonacci series are : ");
-
-  c = 0;
-  while (c < n) {
-    if ( c <= 1 )
-      next = c;
-    else
-      {
-	next = first + second;
-	first = second;
-	second = next;
-      }
-    print_i(next);
-    print_s((char*)" ");
-    c = c+1;
-  }
+    int a;
+    a = (1+(2+(3+(4+(5+(6+(7+(8+(9+
+        (10+(11+(12+(13+(14+(15)))))))))))))));
+}
 //    int a;
 //    a = set('b',2,'X');
 //    int playing; int player;
@@ -385,7 +358,6 @@ void main() {
 //    print_i(iter_bin_search(arr,7,0,4));
 //    print_i(rec_bin_search(arr,7,0,4));
 
-}
 
 
 
