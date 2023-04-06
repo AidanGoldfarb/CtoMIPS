@@ -31,7 +31,7 @@ public class StringParser extends CodeGen{
                 }
             }
             case null -> {
-                System.out.println("null: " + p);
+                //System.out.println("null: " + p);
             }
             default -> {
                 if(p.children() != null){

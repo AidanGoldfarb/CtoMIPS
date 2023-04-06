@@ -110,7 +110,7 @@ public class GraphColouringRegAlloc implements AssemblyPass {
                 ArrayList<Register> revRegToSave = new ArrayList<>(regToSave);
                 Collections.reverse(revRegToSave);
 
-                System.out.println(regToSave);
+                //System.out.println(regToSave);
 
                 //for spilled regs
                 List<Label> vrLabels = new LinkedList<>(spill_map.values());

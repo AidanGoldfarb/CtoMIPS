@@ -74,7 +74,7 @@ public class StmtCodeGen extends CodeGen {
                         //System.out.println("FIX ME (place j $ra)");
                     }
                     else{
-                        System.out.println("returning struct by value");
+                        //System.out.println("returning struct by value");
                         int sizeInWords = getSize(aReturn.expr.type)/4;
 
                         Register lhsReg = Register.Virtual.create(); //make this point to fp+8

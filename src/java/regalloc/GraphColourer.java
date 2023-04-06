@@ -65,9 +65,6 @@ public class GraphColourer implements AssemblyPass {
                     //System.out.println("node_to_spill: " + node_to_spill);
                     node_to_spill.visited = true;
                     decr_neigh(node_to_spill,ig);
-//                    for(var inner: node_to_spill.neighbors){
-//                        inner.neighbor_count--;
-//                    }
                     this.to_spill.add(node_to_spill);
                 }
                 num_verts--;
