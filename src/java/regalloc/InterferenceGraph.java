@@ -13,6 +13,7 @@ public class InterferenceGraph extends Graph implements Cloneable{
     ArrayList<ArrayList<InterferenceNode>> adj_list;
     Set<InterferenceNode> vertice_list;
 
+    ControlFlowGraph cfg; // to be filled
 
     public InterferenceGraph(){
         this.adj_list = new ArrayList<>();

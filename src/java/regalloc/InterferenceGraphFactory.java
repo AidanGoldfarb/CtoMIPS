@@ -29,6 +29,7 @@ public class InterferenceGraphFactory {
         }
         ig.updateAdjList();
         ig.updateNeighbors();
+        ig.cfg = cfg;
         return ig;
     }
 

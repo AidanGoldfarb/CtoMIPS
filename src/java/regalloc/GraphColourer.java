@@ -97,14 +97,47 @@ public class GraphColourer implements AssemblyPass {
     private InterferenceNode findNodeToSpill(InterferenceGraph ig) {
         int max_degrees = 0;
         InterferenceNode best_node = null;
+        ArrayList<InterferenceNode> candidates = new ArrayList<>();
         for(var node: ig.vertice_list){
             if(!node.visited && node.register.isVirtual()){
                 if(node.neighbor_count >= max_degrees){
+                    candidates.add((node));
                     max_degrees = node.neighbor_count;
-                    best_node = node;
                 }
             }
         }
+        int least_app = Integer.MAX_VALUE;
+        for(InterferenceNode candidate: candidates){
+            Register reg = candidate.register;
+            int app_count = 0;
+            for(Graph.Node n: ig.cfg.preorderTraversal()){
+                /*
+                    Find number of appearences in section
+                 */
+                if(n.instruction != null){
+                    var uses = n.instruction.uses();
+                    var def = n.instruction.def();
+                    if(uses != null){
+                        for(var use: uses){
+                            if(use.toString().equals(reg.toString())){
+                                app_count++;
+                            }
+                        }
+                    }
+                    if(def!=null){
+                        if(def.toString().equals(reg.toString())){
+                            app_count++;
+                        }
+                    }
+                    if(app_count < least_app){
+                        least_app = app_count;
+                        best_node = candidate;
+                    }
+                }
+
+            }
+        }
+
         if(best_node==null) for (var node : ig.vertice_list)
             assert node.visited || !node.register.isVirtual();
         return best_node;
