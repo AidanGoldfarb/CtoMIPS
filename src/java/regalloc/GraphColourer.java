@@ -35,7 +35,7 @@ public class GraphColourer implements AssemblyPass {
         }
     }
     public Map<Register, Register> run(InterferenceGraph ig){
-
+        //System.out.println("calling run");
         Map<Register, Register> map = new HashMap<>();
         Stack<InterferenceNode> stack = new Stack<>();
         //set all neighbor counts
@@ -60,7 +60,8 @@ public class GraphColourer implements AssemblyPass {
             }
             if(num_verts > 0){
                 var node_to_spill = findNodeToSpill(ig);
-                System.out.println("spilling: " + node_to_spill);
+                //System.out.println("spilling: " + node_to_spill);
+                //System.out.println(num_verts);
                 if(node_to_spill != null){ //null if arch register
                     //System.out.println("node_to_spill: " + node_to_spill);
                     node_to_spill.visited = true;
@@ -134,7 +135,6 @@ public class GraphColourer implements AssemblyPass {
                         best_node = candidate;
                     }
                 }
-
             }
         }
 
