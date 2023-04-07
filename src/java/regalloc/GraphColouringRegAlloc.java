@@ -127,7 +127,6 @@ public class GraphColouringRegAlloc implements AssemblyPass {
                     });
                 }
 
-
                 for(AssemblyItem item: section.items){
                     switch (item) {
                         case (Comment comment) -> newSection.emit(comment);

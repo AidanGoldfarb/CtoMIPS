@@ -23,14 +23,43 @@ public class InterferenceGraphFactory {
                 //add edges
                 addInsAndOuts(node.liveIn,ig);
                 addInsAndOuts(node.liveOut,ig);
-
-
             }
         }
         ig.updateAdjList();
         ig.updateNeighbors();
-        ig.cfg = cfg;
+        addNumApperences(ig,cfg);
         return ig;
+    }
+
+    private void addNumApperences(InterferenceGraph ig, ControlFlowGraph cfg) {
+        HashMap<Register, Integer> rta = new HashMap<>();
+
+        for(var cfg_node: cfg.vertice_list){
+            var insn = cfg_node.instruction;
+            if(insn==null){ //label
+                continue;
+            }
+            var uses = cfg_node.instruction.uses();
+            var def = cfg_node.instruction.def();
+            for(var use: uses){
+                if(rta.containsKey(use)){
+                    rta.put(use,rta.get(use)+1);
+                }else{
+                    rta.put(use,0);
+                }
+            }
+            if(def != null){
+                if(rta.containsKey(def)){
+                    rta.put(def,rta.get(def)+1);
+                }else{
+                    rta.put(def,0);
+                }
+            }
+        }
+        for(var ig_node: ig.vertice_list){
+            var reg = ig_node.register;
+            ig_node.num_apperences = rta.get(reg);
+        }
     }
 
     private void addInsAndOuts(Set<Register> live, InterferenceGraph ig) {

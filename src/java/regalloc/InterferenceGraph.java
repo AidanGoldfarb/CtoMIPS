@@ -13,7 +13,7 @@ public class InterferenceGraph extends Graph implements Cloneable{
     ArrayList<ArrayList<InterferenceNode>> adj_list;
     Set<InterferenceNode> vertice_list;
 
-    ControlFlowGraph cfg; // to be filled
+    //ControlFlowGraph cfg; // to be filled
 
     public InterferenceGraph(){
         this.adj_list = new ArrayList<>();
@@ -97,6 +97,8 @@ public class InterferenceGraph extends Graph implements Cloneable{
         int neighbor_count; //for inplace Chaitin
 
         boolean visited = false; //for inplace Chaitin
+
+        int num_apperences; //number of times register appears in section
 
         public InterferenceNode(Register r){
             this.register = r;
