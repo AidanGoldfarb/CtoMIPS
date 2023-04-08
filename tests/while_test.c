@@ -332,6 +332,11 @@ class Course {
     }
 }
 
+void main(){
+    class Course comp520;
+    comp520 = new class Course();
+}
+
 //    int a;
 //    a = set('b',2,'X');
 //    int playing; int player;

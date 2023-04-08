@@ -26,8 +26,8 @@ public class Parser {
     private final TokenClass [] first_program = {TokenClass.INCLUDE,TokenClass.STRUCT,TokenClass.INT,TokenClass.CHAR,TokenClass.VOID};
     //private final TokenClass [] first_include = {TokenClass.INCLUDE};
     //private final TokenClass [] first_structdelc = {TokenClass.STRUCT};
-    private final TokenClass [] first_vardecl = {TokenClass.INT,TokenClass.CHAR,TokenClass.VOID, TokenClass.STRUCT};
-    private final TokenClass [] first_fundecl = {TokenClass.INT,TokenClass.CHAR,TokenClass.VOID, TokenClass.STRUCT};
+    private final TokenClass [] first_vardecl = {TokenClass.INT,TokenClass.CHAR,TokenClass.VOID, TokenClass.STRUCT, TokenClass.CLASS};
+    private final TokenClass [] first_fundecl = {TokenClass.INT,TokenClass.CHAR,TokenClass.VOID, TokenClass.STRUCT, TokenClass.CLASS};
     private final TokenClass [] first_type = {TokenClass.INT,TokenClass.CHAR,TokenClass.VOID, TokenClass.STRUCT};
     //private final TokenClass [] first_structype = {TokenClass.STRUCT};
     private final TokenClass [] first_params = {TokenClass.INT,TokenClass.CHAR,TokenClass.VOID, TokenClass.STRUCT};
@@ -172,6 +172,10 @@ public class Parser {
                     lookAhead(2).tokenClass == TokenClass.LBRA) {
                 decls.add(parseStructDecl());
             }
+            //classdecl
+            else if(token.tokenClass == TokenClass.CLASS){
+                decls.add(parseClassdecl());
+            }
             //fundecl
             else if(contains(first_fundecl,token.tokenClass)
                             && (lookAhead(2).tokenClass == TokenClass.LPAR
@@ -184,10 +188,6 @@ public class Parser {
             else if(contains(first_vardecl,token.tokenClass)){
                 decls.add(parseVardecl());
             }
-            //classdecl
-            else if(token.tokenClass == TokenClass.CLASS){
-                decls.add(parseClassdecl());
-            }
             else {
                 if(!accept(TokenClass.EOF)) {
                     error(first_program);
@@ -196,13 +196,14 @@ public class Parser {
             }
         }
         expect(TokenClass.EOF);
-        print("\n");
-        print("Program(");
-        for(Decl e: decls){
-            System.out.println(e);
-        }
-        print(")");
-        print("\n");
+
+        //        print("\n");
+//        print("Program(");
+//        for(Decl e: decls){
+//            System.out.println(e);
+//        }
+//        print(")");
+//        print("\n");
         return new Program(decls);
     }
     // includes are ignored, so does not need to return an AST node
@@ -234,7 +235,6 @@ public class Parser {
         return new StructTypeDecl(new StructType(id), vardecls);
     }
     private VarDecl parseVardecl() {
-        //print("parseVardecl");
         //type
         Type t = parseType();
         Type base = t;
@@ -251,7 +251,6 @@ public class Parser {
         }
         t = invert(t,base);
         expect(TokenClass.SC);
-        //print("exit parseVardecl");
         return new VarDecl(t,id);
     }
     private Type invert(Type arr, Type base){
@@ -564,7 +563,7 @@ public class Parser {
             return parseI();
         }
     }
-    //Contains funcall, arrayaccess, fieldaccess, varexp, (exp)
+    //Contains funcall, arrayaccess, fieldaccess, classinstance, varexp, (exp)
     private Expr parseI(){
         ///print("parseI");
         if(accept(TokenClass.INT_LITERAL)){
@@ -607,7 +606,7 @@ public class Parser {
         else if(accept(TokenClass.NEW)){
             expect(TokenClass.NEW);
             ClassType classType = parseClassType();
-            expect(TokenClass.RPAR);
+            expect(TokenClass.LPAR);
             expect(TokenClass.RPAR);
             return new ClassInstantiationExpr(classType);
 
@@ -753,6 +752,12 @@ public class Parser {
             expect(TokenClass.STRUCT);
             String id = parseIdentifier();
             roottype = new StructType(id);
+        }
+        else if(accept(TokenClass.CLASS)){
+
+            expect(TokenClass.CLASS);
+            String name = parseIdentifier();
+            roottype = new ClassType(name);
         }
         else {
             TokenClass t = token.tokenClass;
