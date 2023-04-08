@@ -4,7 +4,6 @@ import lexer.Token.TokenClass;
 
 import java.io.EOFException;
 import java.io.IOException;
-import java.util.Arrays;
 
 /**
  * @author cdubach
@@ -63,12 +62,9 @@ public class Tokeniser {
         }catch (EOFException e){
             return new Token(TokenClass.EOF, line,column);
         }
-
         // skip white spaces
         if (Character.isWhitespace(c))
             return next();
-
-
         /*
             DELIMITERS
         */
@@ -103,7 +99,6 @@ public class Tokeniser {
         // recognises the comma
         if (c == ',')
             return new Token(TokenClass.COMMA, line, column);
-
         /*
             COMPARISON
          */
@@ -113,36 +108,27 @@ public class Tokeniser {
             scanner.next(); //consume next char
             return new Token(TokenClass.NE, line, column);
         }
-
-
         /*
             OPERATORS
          */
         // recognises the plus operator
         if (c == '+')
             return new Token(TokenClass.PLUS, line, column);
-
         // recognises the minus operator
         if (c == '-')
             return new Token(TokenClass.MINUS, line, column);
-
         // recognises the asterix operator
         if (c == '*')
             return new Token(TokenClass.ASTERIX, line, column);
-
-        // recognises the div operator -> AMB
-
         // recognises the mod operator
         if (c == '%')
             return new Token(TokenClass.REM, line, column);
-
         /*
             STRUCT MEMBER ACCESS
          */
         // recognises the period operator
         if (c == '.')
             return new Token(TokenClass.DOT, line, column);
-
         /*
             AMBIGUOUS
          */
@@ -170,7 +156,6 @@ public class Tokeniser {
             //division
             return new Token(TokenClass.DIV, line, column);
         }
-
         //handle '&' char
         if (c == '&'){
             //&& logical
@@ -181,7 +166,6 @@ public class Tokeniser {
             // & bitwise
             return new Token(TokenClass.AND, line, column);
         }
-
         //handle '|' char
         if (c == '|'){
             //|| logical
@@ -193,7 +177,6 @@ public class Tokeniser {
             error(c,line,column);
             return new Token(TokenClass.INVALID, line, column);
         }
-
         //handle '=' char
         if (c == '='){
             //==
@@ -204,7 +187,6 @@ public class Tokeniser {
             // = assign
             return new Token(TokenClass.ASSIGN, line, column);
         }
-
         //handle '<' char
         if (c == '<'){
             // <=
@@ -215,7 +197,6 @@ public class Tokeniser {
             //  <
             return new Token(TokenClass.LT, line, column);
         }
-
         //handle '>' char
         if (c == '>'){
             // >=
@@ -226,7 +207,6 @@ public class Tokeniser {
             //  >
             return new Token(TokenClass.GT, line, column);
         }
-
         //handle 'i' char (int, if)
         if( c == 'i'){
             StringBuilder sb = new StringBuilder();
@@ -258,7 +238,6 @@ public class Tokeniser {
             //identifier
             return handle_ident(line, column, sb);
         }
-
         //handle 'v' char (void)
         if( c == 'v' ){
             StringBuilder sb = new StringBuilder();
@@ -276,7 +255,6 @@ public class Tokeniser {
             //identifier
             return handle_ident(line, column, sb);
         }
-
         //handle 'e' char (else)
         if( c == 'e' ){
             StringBuilder sb = new StringBuilder();
@@ -290,11 +268,13 @@ public class Tokeniser {
                         && len==4 && sb.toString().equals("else")) {
                     return new Token(TokenClass.ELSE, line, column);
                 }
+                else if(len==7 && sb.toString().equals("extends") && Character.isWhitespace(scanner.peek())){
+                    return new Token(TokenClass.EXTENDS, line, column);
+                }
             }
             //identifier
             return handle_ident(line, column, sb);
         }
-
         //handle 'w' char (while)
         if( c == 'w' ){
             StringBuilder sb = new StringBuilder();
@@ -312,7 +292,6 @@ public class Tokeniser {
             //identifier
             return handle_ident(line, column, sb);
         }
-
         //handle 'r' char (return)
         if( c == 'r' ){
             StringBuilder sb = new StringBuilder();
@@ -330,7 +309,6 @@ public class Tokeniser {
             //identifier
             return handle_ident(line, column, sb);
         }
-
         //handle 's' char (struct,sizeof)
         if( c == 's' ){
             StringBuilder sb = new StringBuilder();
@@ -352,8 +330,7 @@ public class Tokeniser {
             //identifier
             return handle_ident(line, column, sb);
         }
-
-        //handle 'c' char (char)
+        //handle 'c' char (char, class)
         if( c == 'c'){
             StringBuilder sb = new StringBuilder();
             sb.append(c);
@@ -366,11 +343,13 @@ public class Tokeniser {
                         && len==4 && sb.toString().equals("char")) {
                     return new Token(TokenClass.CHAR, line, column);
                 }
+                else if(len==5 && sb.toString().equals("class") && Character.isWhitespace(scanner.peek())){
+                    return new Token(TokenClass.CLASS, line, column);
+                }
             }
             //identifier
             return handle_ident(line, column, sb);
         }
-
         //handle '#' char (#include)
         if( c == '#'){
             StringBuilder sb = new StringBuilder();
@@ -395,7 +374,22 @@ public class Tokeniser {
             error(c,line,column);
             return new Token(TokenClass.INVALID, sb.toString(), line, column);
         }
-
+        //handle 'n' char (new)
+        if( c == 'n'){
+            StringBuilder sb = new StringBuilder();
+            sb.append(c);
+            short len = 1;
+            while(Character.isLetterOrDigit(scanner.peek())){
+                sb.append(scanner.next());
+                len++;
+                //char token
+                if(len==3 && sb.toString().equals("new") && Character.isWhitespace(scanner.peek())){
+                    return new Token(TokenClass.NEW, line, column);
+                }
+            }
+            //identifier
+            return handle_ident(line, column, sb);
+        }
         /*
             LITERALS
          */
@@ -531,18 +525,4 @@ public class Tokeniser {
         }
         return false;
     }
-
-
-//    private Token handle_id(StringBuilder sb, char c,int line, int column) throws IOException {
-//        //identifier
-//        while(Character.isLetterOrDigit(scanner.peek()) || scanner.peek() == '_'){
-//            sb.append(scanner.next());
-//        }
-//        if(is_valid_id(sb.toString())){
-//            return new Token(TokenClass.IDENTIFIER, sb.toString(), line, column);
-//        }
-//        error(c,line,column);
-//        return new Token(TokenClass.INVALID, sb.toString(), line, column);
-//    }
-
 }

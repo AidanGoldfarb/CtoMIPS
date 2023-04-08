@@ -1,1 +1,2 @@
+cd ..
 ant build && java --enable-preview -cp bin Main -regalloc colour tests/while_test.c while_output.asm

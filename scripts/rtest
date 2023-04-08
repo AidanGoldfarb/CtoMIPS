@@ -1,1 +1,2 @@
+cd ..
 java -jar desc/part3/Mars4_5.jar sm nc me while_post.asm

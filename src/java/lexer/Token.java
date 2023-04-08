@@ -72,7 +72,12 @@ public class Token {
 
         // special tokens
         EOF,    // signal end of file DONE
-        INVALID // DONE, in case we cannot recognise a character as part of a valid token
+        INVALID, // DONE, in case we cannot recognise a character as part of a valid token
+
+        //object orient tokens
+        CLASS,
+        NEW,
+        EXTENDS
     }
 
 

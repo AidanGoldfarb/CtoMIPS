@@ -1,0 +1,2 @@
+cd ..
+java --enable-preview -cp bin Main -gen naive tests/while_test.c while_output.asm
