@@ -164,7 +164,7 @@ public class Parser {
     private Program parseProgram() { //return program
         parseIncludes();
         List<Decl> decls = new ArrayList<>();
-        while (accept(TokenClass.STRUCT, TokenClass.INT, TokenClass.CHAR, TokenClass.VOID)) {
+        while (accept(TokenClass.STRUCT, TokenClass.INT, TokenClass.CHAR, TokenClass.VOID, TokenClass.CLASS)) {
 
             //structdecl
             if (token.tokenClass == TokenClass.STRUCT &&
@@ -311,7 +311,7 @@ public class Parser {
         }
         expect(TokenClass.LBRA); // { not [ i hope
 
-        while(contains(first_vardecl,token.tokenClass) && error==0){
+        while(contains(first_vardecl,token.tokenClass) && lookAhead(2).tokenClass != TokenClass.LPAR && error==0){
             varDecls.add(parseVardecl());
         }
         while(contains(first_fundecl,token.tokenClass)

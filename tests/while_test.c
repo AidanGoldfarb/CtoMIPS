@@ -316,7 +316,21 @@
 //}
 //int set(char row, int col, char mark){
 
-new class Thing extends Other
+class Course {
+    char name[20];
+    int credit;
+    int courseWorkScore;
+
+    void whereToAttend(){
+        print_s((char*)"Not determined! The course will be held virtually or in person!\n");
+    }
+    int hasExam(){
+        if(courseWorkScore == 100)
+            return 0;
+        else
+            return 1;
+    }
+}
 
 //    int a;
 //    a = set('b',2,'X');
