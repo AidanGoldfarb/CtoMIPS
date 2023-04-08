@@ -11,6 +11,7 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 
 	private static final int WORD_SIZE = 4;
 	List<Boolean> ret_found = new ArrayList<>();
+
 	public Type visit(ASTNode node) {
 		return switch(node) {
 			case Decl decl -> {
@@ -51,8 +52,7 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 							case StructType structType -> {
 								if(!struct_sym_table.containsKey(structType)){
 									error("Struct '" + structType + "' undefined");
-								}
-								else{
+								} else{
 
 									structType.std = struct_sym_table.get(structType);
 								}
@@ -67,6 +67,10 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 							}
 							default -> {yield vd.type;}
 						}
+					}
+					case ClassDecl classDecl -> {
+						System.out.println("TypeAnalyzer Class Decl not implemented");
+						yield null;
 					}
 				};
 
@@ -123,14 +127,11 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 
 						if(!is_valid_lvalue(assign.lhs)){
 							error("Invalid lvalue: '" + assign.lhs + "'");
-						}
-						else if(lhs == BaseType.VOID || lhs instanceof ArrayType){
+						} else if(lhs == BaseType.VOID || lhs instanceof ArrayType){
 							error("cannot assign to VOID | ArrayType");
-						}
-						else if(rhs == BaseType.VOID || rhs instanceof ArrayType){
+						} else if(rhs == BaseType.VOID || rhs instanceof ArrayType){
 							error("cannot assign from VOID | ArrayType");
-						}
-						else if(!lhs.equals(rhs)){
+						} else if(!lhs.equals(rhs)){
 							error(lhs + " != " + rhs);
 						}
 						yield lhs;
@@ -142,21 +143,17 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 							//can be int or char
 							if(lhs != BaseType.INT && lhs != BaseType.CHAR){
 								error(lhs + " not of type INT | CHAR");
-							}
-							else if(rhs != BaseType.INT && rhs != BaseType.CHAR){
+							} else if(rhs != BaseType.INT && rhs != BaseType.CHAR){
 								error(rhs + " not of type INT | CHAR");
-							}
-							else if(!lhs.equals(rhs)){
+							} else if(!lhs.equals(rhs)){
 								error("invalid cond: lhs != rhs");
 							}
 							yield BaseType.INT;
-						}
-						else{
+						} else{
 							if(!lhs.equals(rhs)){
 								error(lhs + " != " + rhs);
 								yield BaseType.UNKNOWN;
-							}
-							else if(lhs != BaseType.INT){
+							} else if(lhs != BaseType.INT){
 								error(lhs + " != INT");
 								yield BaseType.UNKNOWN;
 							}
@@ -201,7 +198,12 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 								}
 								yield t;
 							}
+							case ClassType classType -> {
+								System.out.println("TA: Class type not implemented");
+								yield classType;
+							}
 							case null -> {yield BaseType.UNKNOWN;}
+
 						}
 						yield BaseType.INT; //wrong
 					} //TODO
@@ -243,12 +245,10 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 							if(to_type != BaseType.INT){
 								error("invalid typecast: CHAR to non INT");
 							}
-						}
-						else if(from_type instanceof ArrayType){
+						} else if(from_type instanceof ArrayType){
 							if(!(to_type instanceof PointerType)){
 								error("invalid typecase: Array to non PTR");
-							}
-							else{
+							} else{
 //								if(!ptr_array_same_depth((ArrayType)from_type,(PointerType)to_type)){
 //									error("invalid typecast, PTR depth or type");
 //								}
@@ -256,12 +256,10 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 									error("invalid typecast, PTR depth or type");
 								}
 							}
-						}
-						else if(from_type instanceof PointerType){
+						} else if(from_type instanceof PointerType){
 							if(!(to_type instanceof PointerType)){
 								error("invalid typecast: PTR to non PTR");
-							}
-							else{
+							} else{
 								if(!from_type.equals(to_type)){
 									error("invalid typecast, PTR depth or type");
 								}
@@ -286,12 +284,16 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 						if(v.vd == null){
 							//error("\'"+ v + "\' not defined");
 							yield v.type;
-						}
-						else{
+						} else{
 							//System.out.println("not null: " + v.vd);
 							yield visit(v.vd);
 						}
 					}
+					case ClassFunCallExpr classFunCallExpr -> {
+						System.out.println("TA: class funcallexpr not implemented");
+						yield null;
+					}
+					case ClassInstantiationExpr classInstantiationExpr -> null;
 				};
 				expr.type = tout; //important
 				yield tout;
@@ -375,28 +377,30 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 //		}
 //		return fst==snd;
 //	}
-	private void ensure_type_exists(Type type) {
-		switch (type){
-			case ArrayType arrayType -> {
-				ensure_type_exists(arrayType.t);
-			}
-			case BaseType baseType -> {
-				//do nothing
-			}
-			case PointerType pointerType -> {
-				explore_ptr(pointerType);
-			}
-			case StructType structType -> {
-				if(!struct_sym_table.containsKey(structType)){
-					error("Struct does not exist");
-				}
-				else{
+private void ensure_type_exists(Type type) {
+	switch (type){
+		case ArrayType arrayType -> {
+			ensure_type_exists(arrayType.t);
+		}
+		case BaseType baseType -> {
+			//do nothing
+		}
+		case PointerType pointerType -> {
+			explore_ptr(pointerType);
+		}
+		case StructType structType -> {
+			if(!struct_sym_table.containsKey(structType)){
+				error("Struct does not exist");
+			} else{
 //					System.out.println("decl: " + struct_sym_table.get(structType));
-					structType.std = struct_sym_table.get(structType);
-				}
+				structType.std = struct_sym_table.get(structType);
 			}
 		}
+		case ClassType classType -> {
+			System.out.println("TA: class type not implemented (ete)");
+		}
 	}
+}
 
 	private void explore_ptr(PointerType pointerType) {
 		ensure_type_exists(pointerType.type);
@@ -467,6 +471,14 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 			}
 			case StructType structType -> {
 			}
+			case ClassDecl classDecl -> {
+			}
+			case ClassFunCallExpr classFunCallExpr -> {
+			}
+			case ClassInstantiationExpr classInstantiationExpr -> {
+			}
+			case ClassType classType -> {
+			}
 		}
 	}
 
@@ -491,8 +503,7 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 				Type rt;
 				if(aReturn.expr != null){
 					rt = visit(aReturn.expr);
-				}
-				else{
+				} else{
 					rt = BaseType.VOID;
 				}
 				if(!rt.equals(goal)){
@@ -512,6 +523,7 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 			explore_stmt(anIf.estmt,goal,fd);
 		}
 	}
+
 	public void explore_while(While aWhile, Type goal, FunDecl fd){
 		explore_stmt(aWhile.stmt,goal,fd);
 	}
@@ -525,13 +537,12 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 					+ "' which expects return type '" + fd.type +"'");
 		}
 		Type rt = visit(r.expr);
-		 if(!rt.equals(fd.type)){
-			 error("No return statement in function '" + fd.name
-					 + "' which expects return type '" + fd.type +"'");
-		 }
-		 else{
-			 return;
-		 }
+		if(!rt.equals(fd.type)){
+			error("No return statement in function '" + fd.name
+					+ "' which expects return type '" + fd.type +"'");
+		} else{
+			return;
+		}
 	}
 
 	private void no_return(FunDecl fd) {
@@ -665,6 +676,7 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 		}
 		return cpy.t;
 	}
+
 	private Type basetype_ptr(PointerType pt){
 		PointerType cpy = new PointerType(pt.type);
 		while(cpy.type instanceof PointerType){
@@ -696,6 +708,7 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 			default -> {assert false; return -1;}
 		}
 	}
+
 	private int padding(int sz){
 		return (WORD_SIZE - (sz % WORD_SIZE)) % WORD_SIZE;
 	}
