@@ -9,6 +9,11 @@ public final class ClassInstantiationExpr extends Expr{
     public ClassInstantiationExpr(ClassType classType){
         this.classType=classType;
     }
+
+    @Override
+    public String toString(){
+        return "ClassInstantiationExpr(" + this.classType + ")";
+    }
     @Override
     public List<ASTNode> children() {
         return null;

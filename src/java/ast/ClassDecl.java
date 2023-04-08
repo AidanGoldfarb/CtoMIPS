@@ -18,6 +18,17 @@ public final class ClassDecl extends Decl {
     }
 
     @Override
+    public String toString(){
+        if(this.parent_type != null){
+            return "ClassDecl(" + this.type + "," + this.parent_type + "," + this.varDecls + "," + this.methods + ")";
+        }
+        else{
+            return "ClassDecl(" + this.type + ","+ this.varDecls + "," + this.methods + ")";
+        }
+
+    }
+
+    @Override
     public List<ASTNode> children() {
         ArrayList<ASTNode> children = new ArrayList<>();
         children.add(type);

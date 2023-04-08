@@ -13,6 +13,11 @@ public final class ClassFunCallExpr extends Expr{
     }
 
     @Override
+    public String toString(){
+        return "ClassFunCallExpr(" + this.class_expr + "," + this.fce + ")";
+    }
+
+    @Override
     public List<ASTNode> children() {
         return null;
     }
