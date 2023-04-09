@@ -6,7 +6,6 @@ import java.util.*;
 
 public class NameAnalyzer extends BaseSemanticAnalyzer {
 
-	//Map<StructType,StructTypeDecl> func_sym_table = new HashMap<>(); //<fun type, fun decl>
 	Scope scope;
 
 	public NameAnalyzer(Scope scope){
@@ -15,13 +14,24 @@ public class NameAnalyzer extends BaseSemanticAnalyzer {
 
 	public void visit(ASTNode node) {
 		switch(node) {
-			case null -> {
-				throw new IllegalStateException("Unexpected null value");
+			case Program p -> {
+				addBuiltIns();
+				for(ASTNode child: p.children()){
+					visit(child);
+				}
+			}
+			case ClassDecl cd -> {
+				/*
+				ClassType type;
+				ClassType parent_type;
+				List<VarDecl> varDecls;
+				List<FunDecl> methods;
+				 */
+				for(ASTNode child: cd.children()){
+					visit(child);
+				}
 			}
 			case Block b -> {
-//				Scope oldScope = scope;
-//				scope = new Scope(oldScope); //new scope with old as parent
-
 				// visit children
 				for(ASTNode child: b.children()){
 					if(child instanceof Block){
@@ -35,13 +45,11 @@ public class NameAnalyzer extends BaseSemanticAnalyzer {
 					}
 
 				}
-
-				//scope = oldScope;
 			}
 			case FunDecl fd -> {
 				Symbol s = scope.lookup(fd.name); //function decl are only global?
 				if(s != null){
-					error("Function already defined");
+					error("Function '" + fd.name + "' already defined");
 				}
 				else{
 					Scope oldScope = scope;
@@ -54,16 +62,9 @@ public class NameAnalyzer extends BaseSemanticAnalyzer {
 					oldScope.put(new FunSymbol(fd)); //for circular fun defs
 					visit(fd.block);
 					scope = oldScope;
-					//scope.put(new FunSymbol(fd));
 				}
 			}
-			case Program p -> {
-				addBuiltIns();
-				for(ASTNode child: p.children()){
-					visit(child);
-				}
-			}
-			case (VarDecl vd) -> {
+			case VarDecl vd -> {
 				Symbol s = scope.lookupCurrent(vd.name); //current bc of shadowing
 				if( s != null){
 					error("Variable \'" + vd.name + "\' redefined");
@@ -78,7 +79,7 @@ public class NameAnalyzer extends BaseSemanticAnalyzer {
 					scope.put(new VarSymbol(vd));
 				}
 			}
-			case (VarExpr v) -> {
+			case VarExpr v -> {
 				Symbol s = scope.lookup(v.name); //can use a var defined in a higher scope
 				switch (s){
 					case VarSymbol vs -> v.vd = vs.vd;
@@ -87,13 +88,12 @@ public class NameAnalyzer extends BaseSemanticAnalyzer {
 					}
 				}
 			}
-			case (StructTypeDecl std) -> {
+			case StructTypeDecl std -> {
 				Symbol s = scope.lookup(std.name); //only global?
 				if(s != null){
 					error("Struct \'" + std.name +  "\' redefined");
 				}
 				std.st.std = std; //update struct type field
-				//ensure no repeated names (needs some thinking)
 				Scope oldScope = scope;
 				scope = new Scope(oldScope); //no parents allowed
 				for(VarDecl vd: std.vardecls){
@@ -102,12 +102,11 @@ public class NameAnalyzer extends BaseSemanticAnalyzer {
 				scope = oldScope;
 				scope.put(new StructSymbol(std));
 			}
-			case (Assign a) -> {
+			case Assign a -> {
 				visit(a.lhs);
 				visit(a.rhs);
 			}
-			case (Type t) -> {}
-			case (ExprStmt es) -> {
+			case ExprStmt es -> {
 				for(ASTNode child: es.children()){
 					visit(child);
 				}
@@ -126,7 +125,6 @@ public class NameAnalyzer extends BaseSemanticAnalyzer {
 			case FieldAccessExpr fae -> {
 				visit(fae.struct); //ensure struct is defined
 				//ensure the string is part of struct, need to get the name to lookup
-
 			}
 			case FunCallExpr fce -> {
 				//ensure function exists
@@ -139,7 +137,6 @@ public class NameAnalyzer extends BaseSemanticAnalyzer {
 					visit(arg);
 				}
 			}
-			case SizeOfExpr sizeOfExpr -> {}
 			case TypecastExpr tce -> {
 				//ensure expr exists
 				visit(tce.expr);
@@ -169,9 +166,14 @@ public class NameAnalyzer extends BaseSemanticAnalyzer {
 				visit(aw.expr);
 				visit(aw.stmt);
 			}
-			case IntLiteral i -> {}
-			case ChrLiteral c -> {}
-			case StrLiteral s -> {}
+			case IntLiteral ignored -> {}
+			case ChrLiteral ignored -> {}
+			case StrLiteral ignored -> {}
+			case SizeOfExpr ignored -> {}
+			case Type ignored -> {}
+			case null -> {
+				throw new IllegalStateException("Unexpected null value");
+			}
 			default -> {
 				error("unexpected ASTNODE");//TBD
 				println(node);

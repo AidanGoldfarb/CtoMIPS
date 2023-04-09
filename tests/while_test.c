@@ -333,10 +333,10 @@ class Course extends Thing{
 }
 
 void main(){
-    class Course comp520;
-    comp520 = new class Course();
-    comp520.whereToAttend();
-    comp520.hasExam();
+//    class Course comp520;
+//    comp520 = new class Course();
+//    comp520.whereToAttend();
+//    comp520.hasExam();
 }
 
 //    int a;
