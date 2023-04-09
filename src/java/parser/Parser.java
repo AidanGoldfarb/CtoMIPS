@@ -628,11 +628,9 @@ public class Parser {
                     expect(TokenClass.DOT);
                     String identifier = parseIdentifier();
 
-                    //class funcall
+                    //classfuncall
                     if(accept(TokenClass.LPAR)){
-                        expect(TokenClass.LPAR);
                         List<Expr> params = parseFuncallArgs();
-                        expect(TokenClass.LPAR);
                         res = new ClassFunCallExpr(res,new FunCallExpr(identifier,params));
                     }
                     else{

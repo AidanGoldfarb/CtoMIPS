@@ -316,7 +316,7 @@
 //}
 //int set(char row, int col, char mark){
 
-class Course {
+class Course extends Thing{
     char name[20];
     int credit;
     int courseWorkScore;
@@ -335,6 +335,8 @@ class Course {
 void main(){
     class Course comp520;
     comp520 = new class Course();
+    comp520.whereToAttend();
+    comp520.hasExam();
 }
 
 //    int a;
