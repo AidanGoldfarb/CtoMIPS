@@ -8,7 +8,7 @@ public final class ClassDecl extends Decl {
 
     public ClassType class_type;
     public ClassType parent_type;
-    List<VarDecl> varDecls;
+    public List<VarDecl> varDecls;
     public List<FunDecl> methods;
 
     public ClassDecl(ClassType class_type, ClassType parent_type, List<VarDecl> varDecls, List<FunDecl> methods) {

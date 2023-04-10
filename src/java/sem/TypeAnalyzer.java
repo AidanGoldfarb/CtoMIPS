@@ -172,15 +172,15 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 						String fieldname = fae.field;
 						Type t = visit(fae.object);
 						switch (t){
-							case ArrayType arrayType -> {
+							case ArrayType ignored -> {
 								error("attempting to field access an array");
 								yield t;
 							}
-							case BaseType baseType -> {
+							case BaseType ignored -> {
 								error("attempting to field access an basetype");
 								yield t;
 							}
-							case PointerType pointerType -> {
+							case PointerType ignored -> {
 								error("attempting to field access an pointertype");
 								yield t;
 							}
@@ -203,9 +203,29 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 								}
 								yield t;
 							}
-							case ClassType classType -> {
-								System.out.println("TA: Class type not implemented");
-								yield classType;
+							case ClassType ct -> {
+								//check class and parent if exists
+								ClassDecl cd = class_sym_table.get(ct);
+								assert cd!=null;
+								boolean found = false;
+								for(VarDecl vd: cd.varDecls){
+									if(vd.name.equals(fieldname)){
+										found = true;
+									}
+								}
+								if(cd.parent_type!=null){
+									ClassDecl pd = class_sym_table.get(cd.parent_type);
+									assert pd!=null;
+
+									for(VarDecl vd: pd.varDecls){
+										if(vd.name.equals(fieldname)){
+											found = true;
+										}
+									}
+								}
+								if(!found)
+									error("Field '" + fieldname + "' does not exist in class '"
+											+ cd.name + "' or parent");
 							}
 							case null -> {yield BaseType.UNKNOWN;}
 

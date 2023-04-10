@@ -317,6 +317,7 @@
 //int set(char row, int col, char mark){
 
 class Thing{
+    int hello;
     void thingcall(){
     }
 }
@@ -341,8 +342,7 @@ class Course extends Thing{
 void main(){
     class Course comp520;
     comp520 = new class Course();
-    comp520.whereToAttend();
-    comp520.thingcall();
+    comp520.hello;
 }
 
 //    int a;
