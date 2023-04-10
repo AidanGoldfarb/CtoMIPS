@@ -8,73 +8,83 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 
 	Map<StructType,StructTypeDecl> struct_sym_table = new HashMap<>(); //<struct type, struct def>
 	Map<String,FunDecl> func_sym_table = new HashMap<>(); //<fun name, fun decl>
+	Map<ClassType,ClassDecl> class_sym_table = new HashMap<>();
 
 	private static final int WORD_SIZE = 4;
 	List<Boolean> ret_found = new ArrayList<>();
 
 	public Type visit(ASTNode node) {
 		return switch(node) {
-			case Decl decl -> {
-				yield switch (decl){
-					case FunDecl fd -> {
-						ensure_type_exists(fd.type);
-						for(VarDecl vd: fd.params){
-							Type t = visit(vd);
-							if(t instanceof PointerType || t instanceof ArrayType){
-								//System.out.println("setting isArgByRef to true in: " + vd);
-								vd.isArgByRef = true;
-							}
+			case Decl decl -> switch (decl){
+				case FunDecl fd -> {
+					ensure_type_exists(fd.type);
+					for(VarDecl vd: fd.params){
+						Type t = visit(vd);
+						if(t instanceof PointerType || t instanceof ArrayType){
+							//System.out.println("setting isArgByRef to true in: " + vd);
+							vd.isArgByRef = true;
 						}
-						func_sym_table.put(fd.name,fd); //redecl handed in name analyzer
-						visit(fd.block);
-						yield BaseType.NONE;
 					}
-					case StructTypeDecl std -> {
-						//ensure decl vars are valid
-						for(ASTNode child: std.vardecls){
-							visit(child);
-						}
-						struct_sym_table.put(std.st,std);
-						yield BaseType.NONE; // to change
+					func_sym_table.put(fd.name,fd); //redecl handed in name analyzer
+					visit(fd.block);
+					yield BaseType.NONE;
+				}
+				case StructTypeDecl std -> {
+					//ensure decl vars are valid
+					for(ASTNode child: std.vardecls){
+						visit(child);
 					}
-					case VarDecl vd -> {
-						switch (vd.type){
-							case BaseType bT -> {
-								switch (bT){
-									case VOID -> {
-										error("cannot declair var '" + vd +"' as 'void'");
-										yield BaseType.VOID;
-									}
-									default -> {yield bT;}
-								}
+					struct_sym_table.put(std.st,std);
+					yield BaseType.NONE;
+				}
+				case VarDecl vd -> {
+					switch (vd.type){
+						case BaseType bT -> {
+							if (bT == BaseType.VOID) {
+								error("cannot declair var '" + vd + "' as 'void'");
+								yield BaseType.VOID;
 							}
-							//check that the type exists
-							case StructType structType -> {
-								if(!struct_sym_table.containsKey(structType)){
-									error("Struct '" + structType + "' undefined");
-								} else{
+							yield bT;
+						}
+						//check that the type exists
+						case StructType structType -> {
+							if(!struct_sym_table.containsKey(structType)){
+								error("Struct '" + structType + "' undefined");
+							} else{
 
-									structType.std = struct_sym_table.get(structType);
-								}
-								yield vd.type;
+								structType.std = struct_sym_table.get(structType);
 							}
-							case ArrayType aT -> {
-								//explore inside
-								VarDecl cpy = new VarDecl(vd.type,vd.name); //just for type
-								cpy.type = aT.t;
-								visit(cpy);
-								yield aT;
-							}
-							default -> {yield vd.type;}
+							yield vd.type;
 						}
+						case ArrayType aT -> {
+							//explore inside
+							VarDecl cpy = new VarDecl(vd.type,vd.name); //just for type
+							cpy.type = aT.t;
+							visit(cpy);
+							yield aT;
+						}
+						case ClassType cT -> {
+							if(!class_sym_table.containsKey(cT)){
+								error("Class '" + cT + "' undefined");
+							}
+							else{
+								cT.classTypeDecl = class_sym_table.get(cT);
+							}
+							yield cT;
+						}
+						default -> {yield vd.type;}
 					}
-					case ClassDecl classDecl -> {
-						System.out.println("TypeAnalyzer Class Decl not implemented");
-						yield null;
+				}
+				case ClassDecl cd -> {
+					if(class_sym_table.containsKey(cd.type)){
+						error("class '" + cd + "' already declared");
+					} else{
+						//System.out.println("putting: " + cd.name);
+						class_sym_table.put(cd.class_type,cd);
 					}
-				};
-
-			}
+					yield BaseType.NONE;
+				}
+			};
 			case Expr expr -> {
 				Type tout = switch (expr){
 					case AddressOfExpr aoe -> {
@@ -86,17 +96,14 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 						Type inx_type = visit(aae.indx); //must be int
 						aae.type = arr_type;
 						aae.ele_sz = getArrElSize(arr_type);
-						switch (inx_type){
-							case BaseType bt -> {
-								switch (bt){
-									case INT -> {}
-									default -> error("Array index is non-scaler");
-								}
-							}
-							default -> {
+						if (Objects.requireNonNull(inx_type) instanceof BaseType bt) {
+							if (bt == BaseType.INT) {
+							} else {
 								error("Array index is non-scaler");
-								yield BaseType.UNKNOWN;
 							}
+						} else {
+							error("Array index is non-scaler");
+							yield BaseType.UNKNOWN;
 						}
 						switch (arr_type){
 							case ArrayType arrayType -> {
@@ -160,12 +167,10 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 							yield lhs;
 						}
 					}
-					case ChrLiteral chrLiteral -> {
-						yield BaseType.CHAR;
-					}
+					case ChrLiteral ignored -> BaseType.CHAR;
 					case FieldAccessExpr fae -> {
 						String fieldname = fae.field;
-						Type t = visit(fae.struct);
+						Type t = visit(fae.object);
 						switch (t){
 							case ArrayType arrayType -> {
 								error("attempting to field access an array");
@@ -194,7 +199,7 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 									}
 								}
 								if(!legal){
-									error("field \'" + fieldname + "\' does not exist in struct \'" + st + "\'");
+									error("field '" + fieldname + "' does not exist in struct '" + st + "'");
 								}
 								yield t;
 							}
@@ -206,13 +211,13 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 
 						}
 						yield BaseType.INT; //wrong
-					} //TODO
+					}
 					case FunCallExpr fce -> {
 						//fun not exist handled in name analyzer
 						//need to check args and ret type
 						//number of args first
 						if (fce.args.size() != func_sym_table.get(fce.name).params.size()){
-							error("Invalid number of args supplied to \'" + fce.name + "\'");
+							error("Invalid number of args supplied to '" + fce.name + "'");
 						}
 						//arg type equality
 						int index = 0;
@@ -220,7 +225,7 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 							Type param_t = visit(arg);
 							Type arg_t = visit(func_sym_table.get(fce.name).params.get(index));
 							if(!arg_t.equals(param_t)){
-								error("Incorrect arg type supplied to \'" + fce.name + "\'." +
+								error("Incorrect arg type supplied to '" + fce.name + "'." +
 										"Expected + '" + arg_t +"' got '" + param_t +"'");
 							}
 							index++;
@@ -229,15 +234,9 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 
 						yield func_sym_table.get(fce.name).type;
 					}
-					case IntLiteral intLiteral -> {
-						yield BaseType.INT;
-					}
-					case SizeOfExpr sizeOfExpr -> {
-						yield BaseType.INT;
-					}
-					case StrLiteral strLiteral -> {
-						yield new ArrayType(BaseType.CHAR , strLiteral.len+1);
-					}
+					case IntLiteral ignored -> BaseType.INT;
+					case SizeOfExpr ignored -> BaseType.INT;
+					case StrLiteral strLiteral -> new ArrayType(BaseType.CHAR , strLiteral.len+1);
 					case TypecastExpr te -> {
 						Type from_type = visit(te.expr);
 						Type to_type = te.type;
@@ -269,19 +268,16 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 					}
 					case ValueAtExpr vae -> {
 						Type t = visit(vae.expr);
-						switch (t){
-							case PointerType pt-> {
-								yield pt.type;
-							}
-							default -> {
-								error("attempt to dereference non-pointer type");
-								yield BaseType.UNKNOWN;
-							}
+						if (Objects.requireNonNull(t) instanceof PointerType pt) {
+							yield pt.type;
 						}
+						error("attempt to dereference non-pointer type");
+						yield BaseType.UNKNOWN;
 					}
 					case VarExpr v -> {
 						//exists bc geterror count doesnt work.
 						if(v.vd == null){
+							//System.out.println("null for: " + v);
 							//error("\'"+ v + "\' not defined");
 							yield v.type;
 						} else{
@@ -289,11 +285,35 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 							yield visit(v.vd);
 						}
 					}
-					case ClassFunCallExpr classFunCallExpr -> {
-						System.out.println("TA: class funcallexpr not implemented");
-						yield null;
+					case ClassFunCallExpr cfce -> {
+						//System.out.println("cfce: " + cfce.class_expr);
+						//ensure FunCall exists in class OR parent
+						Type abs_type = visit(cfce.class_expr);
+						//System.out.println("abstype: " + abs_type);
+						assert abs_type instanceof ClassType;
+
+						ClassDecl class_decl = class_sym_table.get((ClassType) abs_type);
+						boolean found = false;
+						for(FunDecl fce: class_decl.methods){
+							if (fce.name.equals(cfce.fce.name)) {
+								found = true;
+								break;
+							}
+						}
+						if(class_decl.parent_type != null){
+							ClassDecl parentClassDecl = class_sym_table.get(class_decl.parent_type.name);
+							for(FunDecl fce: parentClassDecl.methods){
+								if (fce.equals(cfce.fce)) {
+									found = true;
+									break;
+								}
+							}
+						}
+						if(!found) error("Method '" + cfce.fce + "' not found");
+						yield cfce.type;
+
 					}
-					case ClassInstantiationExpr classInstantiationExpr -> null;
+					case ClassInstantiationExpr cie -> cie.classType;
 				};
 				expr.type = tout; //important
 				yield tout;
@@ -318,89 +338,70 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 
 				yield BaseType.NONE;
 			}
-			case Stmt stmt -> {
-				yield switch (stmt){
-					case Block b -> {
-						for (ASTNode c : b.children())
-							visit(c);
-						yield BaseType.NONE;
+			case Stmt stmt -> switch (stmt){
+				case Block b -> {
+					for (ASTNode c : b.children())
+						visit(c);
+					yield BaseType.NONE;
+				}
+				case ExprStmt es -> visit(es.expr);
+				case If anIf -> {
+					Type t = visit(anIf.expr);
+					if(!isInt(t)){
+						error("invalid cond in if");
 					}
-					case ExprStmt es -> {
-						yield visit(es.expr);
+					visit(anIf.istmt);
+					if(anIf.estmt != null){
+						visit(anIf.estmt);
 					}
-					case If anIf -> {
-						Type t = visit(anIf.expr);
-						if(!isInt(t)){
-							error("invalid cond in if");
-						}
-						visit(anIf.istmt);
-						if(anIf.estmt != null){
-							visit(anIf.estmt);
-						}
-						yield BaseType.NONE;
+					yield BaseType.NONE;
+				}
+				case Return aReturn -> {
+					//ensure it is correct type here?
+					if(aReturn.expr != null){
+						yield visit(aReturn.expr);
 					}
-					case Return aReturn -> {
-						//ensure it is correct type here?
-						if(aReturn.expr != null){
-							yield visit(aReturn.expr);
-						}
-						yield BaseType.VOID;
+					yield BaseType.VOID;
+				}
+				case While aWhile -> {
+					Type t = visit(aWhile.expr);
+					if(!isInt(t)){
+						error("invalid cond in while");
 					}
-					case While aWhile -> {
-						Type t = visit(aWhile.expr);
-						if(!isInt(t)){
-							error("invalid cond in while");
-						}
-						visit(aWhile.stmt);
-						yield BaseType.NONE;
-					}
-				};
-			}
-			case Type t -> {
-				yield t;
-			}
+					visit(aWhile.stmt);
+					yield BaseType.NONE;
+				}
+			};
+			case Type t -> t;
 			default -> throw new IllegalStateException("Unexpected null value");
 		};
 
 	}
 
-//	private boolean ptr_array_same_depth(ArrayType fromType, PointerType toType) {
-//		int fst = 0;
-//		int snd = 0;
-//		while(fromType.t instanceof ArrayType){
-//			fst++;
-//			fromType = (ArrayType) fromType.t;
-//		}
-//		while(toType.type instanceof PointerType){
-//			snd++;
-//			toType = (PointerType) toType.type;
-//		}
-//		return fst==snd;
-//	}
-private void ensure_type_exists(Type type) {
-	switch (type){
-		case ArrayType arrayType -> {
-			ensure_type_exists(arrayType.t);
-		}
-		case BaseType baseType -> {
-			//do nothing
-		}
-		case PointerType pointerType -> {
-			explore_ptr(pointerType);
-		}
-		case StructType structType -> {
-			if(!struct_sym_table.containsKey(structType)){
-				error("Struct does not exist");
-			} else{
-//					System.out.println("decl: " + struct_sym_table.get(structType));
-				structType.std = struct_sym_table.get(structType);
+	private void ensure_type_exists(Type type) {
+		switch (type){
+			case ArrayType arrayType -> {
+				ensure_type_exists(arrayType.t);
+			}
+			case BaseType baseType -> {
+				//do nothing
+			}
+			case PointerType pointerType -> {
+				explore_ptr(pointerType);
+			}
+			case StructType structType -> {
+				if(!struct_sym_table.containsKey(structType)){
+					error("Struct does not exist");
+				} else{
+					//					System.out.println("decl: " + struct_sym_table.get(structType));
+					structType.std = struct_sym_table.get(structType);
+				}
+			}
+			case ClassType classType -> {
+				System.out.println("TA: class type not implemented (ete)");
 			}
 		}
-		case ClassType classType -> {
-			System.out.println("TA: class type not implemented (ete)");
-		}
 	}
-}
 
 	private void explore_ptr(PointerType pointerType) {
 		ensure_type_exists(pointerType.type);
@@ -528,43 +529,6 @@ private void ensure_type_exists(Type type) {
 		explore_stmt(aWhile.stmt,goal,fd);
 	}
 
-	private void valid_return_check(Return r, FunDecl fd){
-		if(r.expr == null){
-			if(fd.type == BaseType.VOID){
-				return;
-			}
-			error("No return statement in function '" + fd.name
-					+ "' which expects return type '" + fd.type +"'");
-		}
-		Type rt = visit(r.expr);
-		if(!rt.equals(fd.type)){
-			error("No return statement in function '" + fd.name
-					+ "' which expects return type '" + fd.type +"'");
-		} else{
-			return;
-		}
-	}
-
-	private void no_return(FunDecl fd) {
-		if(fd.type == BaseType.VOID){
-			return;
-		}
-		error("No return statement in function '" + fd.name
-				+ "' which expects return type '" + fd.type +"'");
-	}
-
-	private Return get_return_from_block(Block b){
-		for(ASTNode child: b.children()){
-			if(child instanceof Block){
-				return get_return_from_block((Block) child);
-			}
-			if(child instanceof Return){
-				return (Return) child;
-			}
-		}
-		return null;
-	}
-
 	private boolean is_valid_lvalue(Expr lhs) {
 		switch (lhs){
 			case VarExpr ve: return true;
@@ -600,15 +564,15 @@ private void ensure_type_exists(Type type) {
 	}
 
 	private boolean isInt(Type t){
-		switch (t){
-			case BaseType bt-> {
-				switch (bt){
-					case INT -> { return true; }
-					default -> {error("invalid cond"); return false;}
-				}
+		if (Objects.requireNonNull(t) instanceof BaseType bt) {
+			if (bt == BaseType.INT) {
+				return true;
 			}
-			default -> {error("invalid cond"); return false; }
+			error("invalid cond");
+			return false;
 		}
+		error("invalid cond");
+		return false;
 	}
 
 	public int getSize(Type type){
@@ -640,51 +604,6 @@ private void ensure_type_exists(Type type) {
 			default -> {assert false; return 0;}
 		}
 	}
-
-//	public boolean arr_ptr_eq(Type a, Type b){
-//		switch (a){
-//			case ArrayType at-> {
-//				if(!ptr_array_same_depth(at,(PointerType)b)){
-//					return false;
-//				}
-//				Type a_base = basetype_arr(at);
-//				Type b_base = basetype_ptr((PointerType)b);
-//				return a_base.equals(b_base);
-//			}
-//			case PointerType pt -> {
-//				System.out.println("Hello: " + b );
-//				ArrayType parama = (ArrayType) b;
-//				System.out.println("Bye");
-//				if(!ptr_array_same_depth(parama,pt)){
-//					return false;
-//				}
-//				Type a_base = basetype_arr((ArrayType)b);
-//				Type b_base = basetype_ptr(pt);
-//				return a_base.equals(b_base);
-//			}
-//			default -> {
-//				assert false;
-//				return false;
-//			}
-//		}
-//	}
-
-	private Type basetype_arr(ArrayType at){
-		ArrayType cpy = new ArrayType(at.t,at.len);
-		while(cpy.t instanceof ArrayType){
-			cpy = (ArrayType) cpy.t;
-		}
-		return cpy.t;
-	}
-
-	private Type basetype_ptr(PointerType pt){
-		PointerType cpy = new PointerType(pt.type);
-		while(cpy.type instanceof PointerType){
-			cpy = (PointerType) cpy.type;
-		}
-		return cpy.type;
-	}
-
 
 	private int getStructSize(StructType structType) {
 		int size = 0;

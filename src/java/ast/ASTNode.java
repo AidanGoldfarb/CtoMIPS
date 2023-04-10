@@ -8,5 +8,5 @@ public sealed interface  ASTNode
     /**
      * Returns all the children of this ASTNode.
      * */
-    abstract List<ASTNode> children();
+    List<ASTNode> children();
 }

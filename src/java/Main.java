@@ -197,7 +197,7 @@ public class Main {
             try {
                 codegen.emitProgram(programAst, outputFile);
             } catch (FileNotFoundException e) {
-                System.out.println("File "+outputFile.toString()+" does not exist.");
+                System.out.println("File "+ outputFile +" does not exist.");
                 System.exit(FILE_NOT_FOUND);
             }
         }

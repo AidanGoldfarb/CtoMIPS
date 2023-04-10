@@ -34,7 +34,7 @@ public class AddrCodeGen extends CodeGen {
             }
             case FieldAccessExpr fae -> {
                 Register offset_reg = Register.Virtual.create();
-                Register adr = (new AddrCodeGen(this.asmProg)).visit(fae.struct);
+                Register adr = (new AddrCodeGen(this.asmProg)).visit(fae.object);
                 int offset = find_offset(fae.st,fae.field);
                 section.emit(OpCode.LI,offset_reg,offset);
                 section.emit(OpCode.ADD,adr,adr,offset_reg);

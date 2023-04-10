@@ -44,10 +44,7 @@ public class FunCodeGen extends CodeGen {
         //
 
         // 3) emit the epilog
-        boolean ismain = false;
-        if(fd.name.equals("main")) {
-            ismain = true;
-        }
+        boolean ismain = fd.name.equals("main");
         emitEpilogue(section,local_var_size,ismain);
         //
     }

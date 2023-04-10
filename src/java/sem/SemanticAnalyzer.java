@@ -10,9 +10,9 @@ public class SemanticAnalyzer {
 		na.visit(prog);
 		errors += na.getErrorCount();
 
-//		TypeAnalyzer tc = new TypeAnalyzer();
-//		tc.visit(prog);
-//		errors += tc.getErrorCount();
+		TypeAnalyzer tc = new TypeAnalyzer();
+		tc.visit(prog);
+		errors += tc.getErrorCount();
 
 		// To complete
 

@@ -5,7 +5,7 @@ import gen.asm.AssemblyProgram.Section;
 
 public class StringParser extends CodeGen{
 
-    private AssemblyProgram asmProg;
+    private final AssemblyProgram asmProg;
     public StringParser(AssemblyProgram asmProg){
         this.asmProg = asmProg;
     }

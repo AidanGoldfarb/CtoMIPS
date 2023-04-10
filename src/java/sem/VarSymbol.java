@@ -9,4 +9,9 @@ public class VarSymbol extends Symbol {
         super(vd.name);
         this.vd = vd;
     }
+
+    @Override
+    public String toString(){
+        return "VarSymbol(" + this.vd + ")";
+    }
 }

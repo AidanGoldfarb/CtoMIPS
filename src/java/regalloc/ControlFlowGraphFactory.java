@@ -2,6 +2,7 @@ package regalloc;
 
 import gen.asm.*;
 import gen.asm.AssemblyProgram.*;
+import gen.asm.Instruction.*;
 import regalloc.Graph.*;
 
 import java.io.IOException;
@@ -35,67 +36,61 @@ public class ControlFlowGraphFactory {
             switch (ai){
                 case Instruction insn -> {
                     Node cur = new Node(insn, insn.registers());
-                    switch (insn) {
-                        case Instruction.ControlFlow ignored -> {
-                            //do something smart
-                            switch (insn.opcode.kind()) {
-                                case JUMP_REGISTER -> { //jr, jalr
-                                    if(isRecCall){
-                                        //cfg.addEdge(cur.id,Label.get(section.items.get(0).toString()));
-                                        cfg.addNode(cur,saveId+1,false);
-                                        isRecCall = false;
-                                    }
-                                    else{
-                                        add_to_bottom(cur, cfg);
-                                    }
-                                }
-                                case JUMP -> { //jal, j
-                                    Label label = ((Instruction.ControlFlow.Jump) insn).label;
+                    if (insn instanceof Instruction.ControlFlow) {//do something smart
+                        switch (insn.opcode.kind()) {
+                            case JUMP_REGISTER -> { //jr, jalr
+                                if (isRecCall) {
+                                    //cfg.addEdge(cur.id,Label.get(section.items.get(0).toString()));
+                                    cfg.addNode(cur, saveId + 1, false);
+                                    isRecCall = false;
+                                } else {
                                     add_to_bottom(cur, cfg);
-                                    if(insn.opcode.toString().equals("j")){
-                                        //System.out.println("ITS A REG JUMP");
-                                        lastInsnJ = true;
-                                        cfg.addEdge(cur.id, label);
+                                }
+                            }
+                            case JUMP -> { //jal, j
+                                Label label = ((ControlFlow.Jump) insn).label;
+                                add_to_bottom(cur, cfg);
+                                if (insn.opcode.toString().equals("j")) {
+                                    //System.out.println("ITS A REG JUMP");
+                                    lastInsnJ = true;
+                                    cfg.addEdge(cur.id, label);
+                                } else {
+                                    //System.out.println("ITS A JAL");
+                                    Section toAdd = this.label_section_map.get(label);
+                                    if (toAdd == null) {
+                                        continue;
                                     }
-                                    else{
-                                        //System.out.println("ITS A JAL");
-                                        Section toAdd = this.label_section_map.get(label);
-                                        if(toAdd == null){
-                                            continue;
-                                        }
-                                        isRecCall = toAdd.items.get(0).toString().equals(section.items.get(0).toString());
-                                        if(isRecCall){
-                                            cfg.addEdge(cur.id, label);
-                                            lastInsnJ = true;
-                                            saveId = cur.id;
-                                        }
+                                    isRecCall = toAdd.items.get(0).toString().equals(section.items.get(0).toString());
+                                    if (isRecCall) {
+                                        cfg.addEdge(cur.id, label);
+                                        lastInsnJ = true;
+                                        saveId = cur.id;
+                                    }
 //                                        else{
 //                                            addToCfg(toAdd,cfg);
 //                                        }
-                                    }
-                                    //jump to label
                                 }
-                                case UNARY_BRANCH -> {
-                                    //jump to snd operand
-                                    Label label = ((Instruction.ControlFlow.UnaryBranch) insn).label;
-                                    add_to_bottom(cur, cfg);
-                                    cfg.addEdge(cur.id, label);
+                                //jump to label
+                            }
+                            case UNARY_BRANCH -> {
+                                //jump to snd operand
+                                Label label = ((ControlFlow.UnaryBranch) insn).label;
+                                add_to_bottom(cur, cfg);
+                                cfg.addEdge(cur.id, label);
 //                                    lastInsnBr = true;
 //                                    saveId = cur.id;
-                                }
-                                case BINARY_BRANCH -> {
-                                    //jump to thrd operand
-                                    Label label = ((Instruction.ControlFlow.BinaryBranch) insn).label;
-                                    add_to_bottom(cur, cfg);
-                                    cfg.addEdge(cur.id, label);
+                            }
+                            case BINARY_BRANCH -> {
+                                //jump to thrd operand
+                                Label label = ((ControlFlow.BinaryBranch) insn).label;
+                                add_to_bottom(cur, cfg);
+                                cfg.addEdge(cur.id, label);
 //                                    lastInsnBr = true;
 //                                    saveId = cur.id;
-                                }
                             }
                         }
-                        default -> {
-                            add_to_bottom(cur, cfg);
-                        }
+                    } else {
+                        add_to_bottom(cur, cfg);
                     }
                 }
                 case Label label -> {
@@ -150,16 +145,11 @@ public class ControlFlowGraphFactory {
 
     private void parse_labels(Section section, ControlFlowGraph cfg) {
         for(AssemblyItem item: section.items) {
-            switch (item) {
-                case Label label -> {
-                    //System.out.println("label: " + label);
-                    Node cur = new Node(label);
-                    cfg.label_list.add(cur);
-                    //cfg.V++;
-                }
-                default -> {
-                    //System.out.println("parselabel not implemented: " + item);
-                }
+            //System.out.println("parselabel not implemented: " + item);
+            if (Objects.requireNonNull(item) instanceof Label label) {//System.out.println("label: " + label);
+                Node cur = new Node(label);
+                cfg.label_list.add(cur);
+                //cfg.V++;
             }
         }
 

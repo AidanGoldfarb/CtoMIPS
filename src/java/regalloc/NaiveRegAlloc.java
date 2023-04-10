@@ -18,15 +18,14 @@ public final class NaiveRegAlloc implements AssemblyPass {
         final Map<Register.Virtual, Label> vrMap = new HashMap<>();
 
         section.items.forEach((item) -> {
-            switch (item) {
-                case Instruction insn -> insn.registers().forEach(reg -> {
-                    if (reg instanceof Register.Virtual) {
-                        Register.Virtual vr = (Register.Virtual) reg;
+            // nothing to do
+            if (Objects.requireNonNull(item) instanceof Instruction insn) {
+                insn.registers().forEach(reg -> {
+                    if (reg instanceof Register.Virtual vr) {
                         Label l = Label.create(vr.toString());
                         vrMap.put(vr, l);
                     }
                 });
-                default -> {} // nothing to do
             }
         });
 

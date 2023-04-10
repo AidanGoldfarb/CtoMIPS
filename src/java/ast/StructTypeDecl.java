@@ -20,7 +20,7 @@ public final class StructTypeDecl extends Decl {
             prefix = ",";
             sb.append(vd);
         }
-        return sb.toString() + ")";
+        return sb + ")";
     }
 
 

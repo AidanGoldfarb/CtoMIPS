@@ -4,6 +4,7 @@ import ast.*;
 import gen.asm.*;
 
 import java.util.ArrayList;
+import java.util.Objects;
 //import gen.asm.AssemblyProgram;
 
 
@@ -230,35 +231,29 @@ public class ExprCodeGen extends CodeGen {
             }
             case Assign assign -> {
                 //by value
-                switch (assign.lhs.type){
-                    case StructType st -> {
-                        if(assign.rhs instanceof FunCallExpr){
-                            Register lhsReg = (new AddrCodeGen(this.asmProg)).visit(assign.lhs);
-                            Register rhsReg = visit(assign.rhs); //sp+4
-                            //lhs is reg
-                            //rhs is
-                            copyStruct(lhsReg,rhsReg,getSize(assign.rhs.type)/4,section);
-                            return lhsReg;
-                        }
-                        else{
-                            int sizeInWords = getSize(st)/4; //assuming structs are word aligned
-                            //System.out.println(sizeInWords);
-                            Register lhsReg = (new AddrCodeGen(this.asmProg)).visit(assign.lhs);
-                            Register rhsReg = (new AddrCodeGen(this.asmProg)).visit(assign.rhs);
-                            //copy size bytes
-                            copyStruct(lhsReg,rhsReg,sizeInWords,section);
-                            return lhsReg;
-                        }
-                    }
-                    default -> {
-                        //by value
+                if (Objects.requireNonNull(assign.lhs.type) instanceof StructType st) {
+                    if (assign.rhs instanceof FunCallExpr) {
                         Register lhsReg = (new AddrCodeGen(this.asmProg)).visit(assign.lhs);
-                        Register rhsReg = visit(assign.rhs);
-                        section.emit("storing rhs in lhs");
-                        section.emit(OpCode.SW,rhsReg,lhsReg,0);
+                        Register rhsReg = visit(assign.rhs); //sp+4
+                        //lhs is reg
+                        //rhs is
+                        copyStruct(lhsReg, rhsReg, getSize(assign.rhs.type) / 4, section);
+                        return lhsReg;
+                    } else {
+                        int sizeInWords = getSize(st) / 4; //assuming structs are word aligned
+                        //System.out.println(sizeInWords);
+                        Register lhsReg = (new AddrCodeGen(this.asmProg)).visit(assign.lhs);
+                        Register rhsReg = (new AddrCodeGen(this.asmProg)).visit(assign.rhs);
+                        //copy size bytes
+                        copyStruct(lhsReg, rhsReg, sizeInWords, section);
                         return lhsReg;
                     }
-                }
+                }//by value
+                Register lhsReg = (new AddrCodeGen(this.asmProg)).visit(assign.lhs);
+                Register rhsReg = visit(assign.rhs);
+                section.emit("storing rhs in lhs");
+                section.emit(OpCode.SW, rhsReg, lhsReg, 0);
+                return lhsReg;
 
             }
             case IntLiteral il -> {

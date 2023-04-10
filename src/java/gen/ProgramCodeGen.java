@@ -5,6 +5,8 @@ import gen.asm.AssemblyProgram;
 import gen.asm.Label;
 import gen.asm.OpCode;
 
+import java.util.Objects;
+
 /**
  * This visitor should produce a program.
  */
@@ -41,13 +43,12 @@ public class ProgramCodeGen extends CodeGen {
 
         // generate the code for each function
         p.decls.forEach((d) -> {
-            switch(d) {
-                case FunDecl fd -> {
-                    FunCodeGen fcg = new FunCodeGen(asmProg);
-                    fcg.visit(fd);
-                }
-                default -> {}// nothing to do
-            }});
+            // nothing to do
+            if (Objects.requireNonNull(d) instanceof FunDecl fd) {
+                FunCodeGen fcg = new FunCodeGen(asmProg);
+                fcg.visit(fd);
+            }
+        });
     }
 
 

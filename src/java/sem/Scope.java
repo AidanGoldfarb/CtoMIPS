@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Scope {
-	private Scope outer;
+	private final Scope outer;
 	public Map<String, Symbol> symbolTable;
 	
 	public Scope(Scope outer) { 

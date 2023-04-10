@@ -2,6 +2,7 @@ package ast;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public final class FunDecl extends Decl {
 
@@ -48,4 +49,16 @@ public final class FunDecl extends Decl {
         return children;
     }
 
+//    @Override
+//    public boolean equals(Object o) {
+//        if (this == o) return true;
+//        if (o == null || getClass() != o.getClass()) return false;
+//        FunDecl funDecl = (FunDecl) o;
+//        return Objects.equals(type, funDecl.type);
+//    }
+//
+//    @Override
+//    public int hashCode() {
+//        return Objects.hash(type);
+//    }
 }

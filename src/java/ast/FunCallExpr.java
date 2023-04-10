@@ -2,6 +2,7 @@ package ast;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public final class FunCallExpr extends Expr{
 
@@ -14,6 +15,7 @@ public final class FunCallExpr extends Expr{
         this.name = name;
         this.args = args;
     }
+
 
     @Override
     public String toString(){
@@ -29,7 +31,7 @@ public final class FunCallExpr extends Expr{
             }
         }
 
-        return sb.toString() + ")";
+        return sb + ")";
     }
     @Override
     public List<ASTNode> children() {
@@ -37,4 +39,17 @@ public final class FunCallExpr extends Expr{
         children.addAll(args);
         return children;
     }
+
+//    @Override
+//    public boolean equals(Object o) {
+//        if (this == o) return true;
+//        if (o == null || getClass() != o.getClass()) return false;
+//        FunCallExpr that = (FunCallExpr) o;
+//        return Objects.equals(name, that.name);
+//    }
+//
+//    @Override
+//    public int hashCode() {
+//        return Objects.hash(name);
+//    }
 }

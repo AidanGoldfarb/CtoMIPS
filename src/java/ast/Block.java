@@ -35,7 +35,7 @@ public final class Block extends Stmt {
                 sb.append(stmt);
             }
         }
-        return sb.toString() + ")";
+        return sb + ")";
     }
 
     @Override

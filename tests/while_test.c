@@ -316,7 +316,7 @@
 //}
 //int set(char row, int col, char mark){
 
-class Course extends Thing{
+class Course{
     char name[20];
     int credit;
     int courseWorkScore;
@@ -325,18 +325,19 @@ class Course extends Thing{
         print_s((char*)"Not determined! The course will be held virtually or in person!\n");
     }
     int hasExam(){
-        if(courseWorkScore == 100)
-            return 0;
-        else
-            return 1;
+        return 1;
+//        if(courseWorkScore == 100)
+//            return 0;
+//        else
+//            return 1;
     }
 }
 
 void main(){
-//    class Course comp520;
-//    comp520 = new class Course();
-//    comp520.whereToAttend();
-//    comp520.hasExam();
+    class Course comp520;
+    comp520 = new class Course();
+    comp520.whereToAttend();
+    comp520.hasExam();
 }
 
 //    int a;

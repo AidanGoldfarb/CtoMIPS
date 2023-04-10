@@ -71,10 +71,8 @@ public class LivenessAnalyzer {
             if(node.instruction != null){
                 Register def = node.instruction.def();
                 if(def != null){
-                    if(!node.liveOut.contains(def)){
-                        //System.out.println("patching");
-                        node.liveOut.add(def);
-                    }
+                    //System.out.println("patching");
+                    node.liveOut.add(def);
                     //assert node.liveOut.contains(def);
                 }
             }

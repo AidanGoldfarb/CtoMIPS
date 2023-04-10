@@ -55,10 +55,7 @@ public class StmtCodeGen extends CodeGen {
                 section.emit(endif);
             }
             case ast.Return aReturn -> {
-                boolean ismain = false;
-                if(aReturn.fd.name.equals("main")){
-                    ismain = true;
-                }
+                boolean ismain = aReturn.fd.name.equals("main");
                 if(aReturn.expr != null){
                     //return reference
                     if(!(aReturn.expr.type instanceof StructType)){

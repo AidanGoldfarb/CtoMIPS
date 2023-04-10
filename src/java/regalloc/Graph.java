@@ -33,10 +33,7 @@ public class Graph {
     }
 
     public void addNode(Node n, int parent, boolean isroot){
-        boolean flag = false;
-        if(parent == 31){
-            flag = true;
-        }
+        boolean flag = parent == 31;
         V++;
         if(parent == -1){
             ArrayList<Node> ll = new ArrayList<>();
@@ -220,7 +217,7 @@ public class Graph {
             sb.append("[" + cur.get(0).id + "]  -> ");
             ListIterator<Node> li = cur.listIterator(1);
             while(li.hasNext()){
-                Node n = (Node)li.next();
+                Node n = li.next();
                 sb.append(n).append("(").append(n.id).append(")").append(",");
             }
             sb.append("\n");

@@ -4,7 +4,7 @@ import java.util.List;
 
 public final class ClassInstantiationExpr extends Expr{
 
-    ClassType classType;
+    public ClassType classType;
 
     public ClassInstantiationExpr(ClassType classType){
         this.classType=classType;

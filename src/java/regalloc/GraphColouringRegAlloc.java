@@ -197,22 +197,19 @@ public class GraphColouringRegAlloc implements AssemblyPass {
     private ArrayList<Register> collectRegistersToSave(AssemblyProgram.Section section, HashMap<Register, Register> map) {
         ArrayList<Register> registers = new ArrayList<>();
         for(AssemblyItem item: section.items){
-            switch (item) {
-                case Instruction insn -> {
-                    insn = insn.rebuild(map);
-                    //var uses = insn.uses();
-                    var def = insn.def();
+            if (Objects.requireNonNull(item) instanceof Instruction insn) {
+                insn = insn.rebuild(map);
+                //var uses = insn.uses();
+                var def = insn.def();
 
-                    if(def!= null &&!registers.contains(def) && isUsableReg(def)){
-                        registers.add(def);
-                    }
+                if (def != null && !registers.contains(def) && isUsableReg(def)) {
+                    registers.add(def);
+                }
 //                    for(var usesreg: uses){
 //                        if(usesreg != null && !registers.contains(usesreg) && isUsableReg(usesreg)){
 //                            registers.add(usesreg);
 //                        }
 //                    }
-                }
-                default -> {}
             }
         }
         return registers;

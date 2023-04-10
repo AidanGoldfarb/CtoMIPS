@@ -402,7 +402,7 @@ public class Tokeniser {
                     //escape char. consume next two as one
                     if( scanner.peek()  == '\\'){
                         sb.append(scanner.next()); // append \
-                        if( "tbnrf\'\"\\0".contains(scanner.peek()+"") ){
+                        if("tbnrf'\"\\0".contains(String.valueOf(scanner.peek())) ){
                             sb.append(scanner.next());
                         }
                         //invalid escape
@@ -445,7 +445,7 @@ public class Tokeniser {
                     if( scanner.peek()  == '\\'){
                         sb.append(scanner.next()); // append \
                         //valid escape
-                        if( "tbnrf\'\"\\0".contains(scanner.peek()+"") ){
+                        if("tbnrf'\"\\0".contains(String.valueOf(scanner.peek())) ){
                             sb.append(scanner.next());
                             if(scanner.peek() != '\''){
                                 //"Expected \' found "+scanner.peek()+""
@@ -507,7 +507,7 @@ public class Tokeniser {
     private void print_rest(){
         while(true){
             try{
-                print(scanner.next()+"");
+                print(String.valueOf(scanner.next()));
             }catch (EOFException e){
                 print("EOF caught");
                 System.exit(0);

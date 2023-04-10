@@ -7,7 +7,7 @@ import java.io.*;
  */
 public class Scanner {
 
-    private BufferedReader input;
+    private final BufferedReader input;
     private int peeked = -1;
 
     private int line = 1;

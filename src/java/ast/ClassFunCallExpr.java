@@ -1,11 +1,12 @@
 package ast;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public final class ClassFunCallExpr extends Expr{
 
-    Expr class_expr;
-    FunCallExpr fce;
+    public Expr class_expr;
+    public FunCallExpr fce;
 
     public ClassFunCallExpr(Expr class_expr, FunCallExpr fce) {
         this.class_expr = class_expr;
@@ -19,6 +20,9 @@ public final class ClassFunCallExpr extends Expr{
 
     @Override
     public List<ASTNode> children() {
-        return null;
+        List<ASTNode> children = new ArrayList<>();
+        children.add(class_expr);
+        children.add(fce);
+        return children;
     }
 }

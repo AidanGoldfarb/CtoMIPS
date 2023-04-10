@@ -21,15 +21,31 @@ public class NameAnalyzer extends BaseSemanticAnalyzer {
 				}
 			}
 			case ClassDecl cd -> {
-				/*
-				ClassType type;
-				ClassType parent_type;
-				List<VarDecl> varDecls;
-				List<FunDecl> methods;
-				 */
+				Symbol s = scope.lookup(cd.name);
+				if(s != null){
+					error("Class '" + cd.name +  "' redefined");
+				}
+				cd.class_type.classTypeDecl = cd;
+				if(cd.parent_type != null){
+					Symbol p = scope.lookup(cd.parent_type.name);
+					if(p == null){
+						error("Parent '" + cd.parent_type.name + "' of class '"
+								+ cd.name + "' not defined");
+					}
+				}
+				Scope oldScope = scope;
+				scope = new Scope(oldScope);
 				for(ASTNode child: cd.children()){
 					visit(child);
 				}
+				scope = oldScope;
+				scope.put(new ClassSymbol(cd));
+			}
+			case ClassFunCallExpr cfce -> {
+				//delay to type check
+				visit(cfce.class_expr);
+				//varExpr, fce
+				//TBH, could be done in type checking
 			}
 			case Block b -> {
 				// visit children
@@ -67,31 +83,28 @@ public class NameAnalyzer extends BaseSemanticAnalyzer {
 			case VarDecl vd -> {
 				Symbol s = scope.lookupCurrent(vd.name); //current bc of shadowing
 				if( s != null){
-					error("Variable \'" + vd.name + "\' redefined");
+					error("Variable '" + vd.name + "' redefined");
 				}
 				else{
-					if(scope.getOuter() == null){ //global
-						vd.global = true;
-					}
-					else{ //
-						vd.global = false;
-					}
+					vd.global = scope.getOuter() == null;
 					scope.put(new VarSymbol(vd));
 				}
 			}
 			case VarExpr v -> {
 				Symbol s = scope.lookup(v.name); //can use a var defined in a higher scope
 				switch (s){
-					case VarSymbol vs -> v.vd = vs.vd;
+					case VarSymbol vs -> {
+						v.vd = vs.vd;
+					}
 					case null, default -> {
-						error("Use before decl: \'" + v.name + "\'");
+						error("Use before decl: '" + v.name + "'");
 					}
 				}
 			}
 			case StructTypeDecl std -> {
-				Symbol s = scope.lookup(std.name); //only global?
+				Symbol s = scope.lookup(std.name); //only global = yes
 				if(s != null){
-					error("Struct \'" + std.name +  "\' redefined");
+					error("Struct '" + std.name +  "' redefined");
 				}
 				std.st.std = std; //update struct type field
 				Scope oldScope = scope;
@@ -123,14 +136,13 @@ public class NameAnalyzer extends BaseSemanticAnalyzer {
 				visit(bo.rhs);
 			}
 			case FieldAccessExpr fae -> {
-				visit(fae.struct); //ensure struct is defined
-				//ensure the string is part of struct, need to get the name to lookup
+				visit(fae.object); //ensure struct/class is defined
 			}
 			case FunCallExpr fce -> {
 				//ensure function exists
 				Symbol s = scope.lookup(fce.name);
 				if(s == null){
-					error("function \'" + fce.name + "\' not defined");
+					error("function '" + fce.name + "' not defined");
 				}
 				//ensure args exist
 				for(ASTNode arg: fce.args){
@@ -170,6 +182,7 @@ public class NameAnalyzer extends BaseSemanticAnalyzer {
 			case ChrLiteral ignored -> {}
 			case StrLiteral ignored -> {}
 			case SizeOfExpr ignored -> {}
+			case ClassInstantiationExpr ignored -> {}
 			case Type ignored -> {}
 			case null -> {
 				throw new IllegalStateException("Unexpected null value");
@@ -178,7 +191,7 @@ public class NameAnalyzer extends BaseSemanticAnalyzer {
 				error("unexpected ASTNODE");//TBD
 				println(node);
 			}
-		};
+		}
 
 	}
 
