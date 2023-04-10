@@ -301,9 +301,9 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 							}
 						}
 						if(class_decl.parent_type != null){
-							ClassDecl parentClassDecl = class_sym_table.get(class_decl.parent_type.name);
+							ClassDecl parentClassDecl = class_sym_table.get(class_decl.parent_type);
 							for(FunDecl fce: parentClassDecl.methods){
-								if (fce.equals(cfce.fce)) {
+								if (fce.name.equals(cfce.fce.name)) {
 									found = true;
 									break;
 								}
@@ -326,6 +326,7 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 						visit(child);
 					}catch (Exception e){
 						System.out.println("Halting due to error");
+						e.printStackTrace();
 					}
 
 				}
