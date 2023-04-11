@@ -267,7 +267,8 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 							if(to_type != BaseType.INT){
 								error("invalid typecast: CHAR to non INT");
 							}
-						} else if(from_type instanceof ArrayType){
+						}
+						else if(from_type instanceof ArrayType){
 							if(!(to_type instanceof PointerType)){
 								error("invalid typecase: Array to non PTR");
 							} else{
@@ -278,13 +279,31 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 									error("invalid typecast, PTR depth or type");
 								}
 							}
-						} else if(from_type instanceof PointerType){
+						}
+						else if(from_type instanceof PointerType){
 							if(!(to_type instanceof PointerType)){
 								error("invalid typecast: PTR to non PTR");
 							} else{
 								if(!from_type.equals(to_type)){
 									error("invalid typecast, PTR depth or type");
 								}
+							}
+						}
+						else if(to_type instanceof ClassType){
+							switch(from_type){
+								case ClassType ct -> {
+									//ensure this is equal to to_type or a parent
+									ClassDecl cd = class_sym_table.get(ct);
+									assert cd!=null; //hmm
+									boolean ccast = cd.class_type.equals(to_type);
+									boolean pcast = false;
+									if(cd.parent_type!=null)
+										pcast = cd.parent_type.equals(to_type);
+
+									if(!ccast && !pcast)
+										error("invalid class cast");
+								}
+								default -> error("attempt to cast invalid type to class '" + to_type + "'");
 							}
 						}
 						yield to_type;
