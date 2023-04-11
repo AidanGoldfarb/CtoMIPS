@@ -2,7 +2,7 @@ package ast;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+import gen.asm.Label;
 
 public final class FunDecl extends Decl {
 
@@ -10,6 +10,8 @@ public final class FunDecl extends Decl {
     public final String name;
     public final List<VarDecl> params;
     public final Block block;
+
+    public Label label; //to be filled in, now just used for class methods
 
 
     public FunDecl(Type type, String name, List<VarDecl> params, Block block) {

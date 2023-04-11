@@ -227,20 +227,22 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 								boolean found = false;
 								boolean foundInParent = false;
 								for(VarDecl vd: cd.varDecls){
-									if(vd.name.equals(fieldname)){
+									if (vd.name.equals(fieldname)) {
 										found = true;
+										break;
 									}
 								}
-								if(cd.parent_type!=null){
-									ClassDecl pd = class_sym_table.get(cd.parent_type);
-									assert pd!=null;
 
-									for(VarDecl vd: pd.varDecls){
+								var ancestors = getAncestors(ct);
+								for(ClassDecl ancestor: ancestors){
+									for(VarDecl vd: ancestor.varDecls){
 										if(vd.name.equals(fieldname)){
 											foundInParent = true;
+											break;
 										}
 									}
 								}
+
 								if(!found && !foundInParent)
 									error("Field '" + fieldname + "' does not exist in class '"
 											+ cd.name + "' or parent");
@@ -308,20 +310,18 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 							}
 						}
 						else if(to_type instanceof ClassType){
-							switch(from_type){
-								case ClassType ct -> {
-									//ensure this is equal to to_type or a parent
-									ClassDecl cd = class_sym_table.get(ct);
-									assert cd!=null; //hmm
-									boolean ccast = cd.class_type.equals(to_type);
-									boolean pcast = false;
-									if(cd.parent_type!=null)
-										pcast = cd.parent_type.equals(to_type);
+							if (Objects.requireNonNull(from_type) instanceof ClassType ct) {//ensure this is equal to to_type or a parent
+								ClassDecl cd = class_sym_table.get(ct);
+								assert cd != null; //hmm
+								boolean ccast = cd.class_type.equals(to_type);
+								boolean pcast = false;
+								if (cd.parent_type != null)
+									pcast = cd.parent_type.equals(to_type);
 
-									if(!ccast && !pcast)
-										error("invalid class cast");
-								}
-								default -> error("attempt to cast invalid type to class '" + to_type + "'");
+								if (!ccast && !pcast)
+									error("invalid class cast");
+							} else {
+								error("attempt to cast invalid type to class '" + to_type + "'");
 							}
 						}
 						yield to_type;
@@ -353,12 +353,23 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 
 						ClassDecl class_decl = class_sym_table.get((ClassType) abs_type);
 						boolean found = false;
-						for(FunDecl fce: class_decl.methods){
-							if (fce.name.equals(cfce.fce.name)) {
+						for(FunDecl fd: class_decl.methods){
+							if (fd.name.equals(cfce.fce.name)) {
 								found = true;
 								break;
 							}
 						}
+
+						for(ClassDecl cd: getAncestors(class_decl.class_type)){
+							for(FunDecl fd: cd.methods){
+								if (fd.name.equals(cfce.fce.name)) {
+									found = true;
+									break;
+								}
+							}
+						}
+
+
 						if(class_decl.parent_type != null){
 							ClassDecl parentClassDecl = class_sym_table.get(class_decl.parent_type);
 							for(FunDecl fce: parentClassDecl.methods){
@@ -385,7 +396,6 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 						visit(child);
 					}catch (Exception e){
 						System.out.println("Halting due to error");
-						e.printStackTrace();
 					}
 
 				}
@@ -435,7 +445,17 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 			case Type t -> t;
 			default -> throw new IllegalStateException("Unexpected null value");
 		};
+	}
 
+	private List<ClassDecl> getAncestors(ClassType ct){
+		ArrayList<ClassDecl> res = new ArrayList<>();
+		ClassDecl cd = class_sym_table.get(ct);
+		ClassDecl pd = class_sym_table.get(cd.parent_type);
+		while(pd != null){
+			res.add(pd);
+			pd = class_sym_table.get(pd.parent_type);
+		}
+		return res;
 	}
 
 	private void ensure_type_exists(Type type) {

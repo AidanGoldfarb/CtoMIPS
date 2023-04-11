@@ -316,41 +316,48 @@
 //}
 //int set(char row, int col, char mark){
 
-class Thing{
-    int hello;
-    int credit;
-    void thingcall(){
+
+//class Course{
+//    char name[20];
+//    int credit;
+//    int courseWorkScore;
+//
+//    void whereToAttend(){
+//        print_s((char*)"Not determined! The course will be held virtually or in person!\n");
+//    }
+//    int hasExam(){
+//        return 1;
+//        if(courseWorkScore == 100)
+//            return 0;
+//        else
+//            return 1;
+//    }
+//}
+class A{
+    int a;
+    int foo(){
     }
 }
-
-class Course extends Thing{
-    char name[20];
-    int credit;
-    int courseWorkScore;
-
-    void whereToAttend(){
-        print_s((char*)"Not determined! The course will be held virtually or in person!\n");
-    }
-    int hasExam(){
-        return 1;
-        if(courseWorkScore == 100)
-            return 0;
-        else
-            return 1;
-    }
+class B extends A{
+    int b;
+}
+class C extends B{
+    int c;
 }
 
 void main(){
-//    int a;
-//    class Course comp520;
+    class C c;
+    c = new class C();
+    c.foo();
+//    //class Course comp520;
 //    class Thing thing;
-
-    //comp520 = new class Course();
-
-    //comp520.thingcall();
-    //thing.credit;
-    //comp520 = (class Course) thing;
-
+//
+//    comp520 = new class Course();
+//
+//    //comp520.thingcall();
+//    //thing.credit;
+//    //comp520 = (class Course) thing;
+//
 }
 
 //    int a;

@@ -13,12 +13,12 @@ import java.util.Objects;
 public class ProgramCodeGen extends CodeGen {
 
 
-    private final AssemblyProgram.Section dataSection ;
+    //private final AssemblyProgram.Section dataSection ;
 
     public ProgramCodeGen(AssemblyProgram asmProg) {
         this.asmProg = asmProg;
         init_code(this.asmProg);
-        this.dataSection = asmProg.newSection(AssemblyProgram.Section.Type.DATA);
+        //this.dataSection = asmProg.newSection(AssemblyProgram.Section.Type.DATA);
     }
 
     private void parse_strings(Program p, AssemblyProgram asmProg) {
@@ -35,11 +35,13 @@ public class ProgramCodeGen extends CodeGen {
     void generate(Program p) {
 
         // allocate all variables
-        MemAllocCodeGen allocator = new MemAllocCodeGen(asmProg);
-        allocator.visit(p);
+        new MemAllocCodeGen(asmProg).visit(p);
 
         //parse strings
         parse_strings(p,asmProg);
+
+        //create vtables for classes
+        new VtableFactory(asmProg).visit(p);
 
         // generate the code for each function
         p.decls.forEach((d) -> {
