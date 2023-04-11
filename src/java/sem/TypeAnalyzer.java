@@ -81,6 +81,24 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 						//System.out.println("putting: " + cd.name);
 						class_sym_table.put(cd.class_type,cd);
 					}
+					if(cd.parent_type != null){
+						//check parent exists and make sure fields are overridden
+						ClassDecl pd = class_sym_table.get(cd.parent_type);
+						if(pd==null)
+							error("parent class does not exist");
+						else{
+							for(VarDecl child_vd: cd.varDecls){
+								for(VarDecl parent_vd: pd.varDecls){
+									if(child_vd.equals(parent_vd)){
+										error("cannot override field");
+									}
+								}
+							}
+						}
+					}
+
+
+
 					yield BaseType.NONE;
 				}
 			};
@@ -319,7 +337,6 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 					case VarExpr v -> {
 						//exists bc geterror count doesnt work.
 						if(v.vd == null){
-							//System.out.println("null for: " + v);
 							//error("\'"+ v + "\' not defined");
 							yield v.type;
 						} else{

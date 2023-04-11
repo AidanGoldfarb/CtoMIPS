@@ -318,6 +318,7 @@
 
 class Thing{
     int hello;
+    int credit;
     void thingcall(){
     }
 }
@@ -340,14 +341,14 @@ class Course extends Thing{
 }
 
 void main(){
-    int a;
-    class Course comp520;
-    class Thing thing;
+//    int a;
+//    class Course comp520;
+//    class Thing thing;
 
-    comp520 = new class Course();
+    //comp520 = new class Course();
 
-    thing = (class Thing) comp520;
-    thing.credit;
+    //comp520.thingcall();
+    //thing.credit;
     //comp520 = (class Course) thing;
 
 }
