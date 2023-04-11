@@ -316,33 +316,37 @@
 //}
 //int set(char row, int col, char mark){
 
-class Thing{
-    int hello;
-    void thingcall(){
-    }
-}
-
-class Course extends Thing{
-    char name[20];
-    int credit;
-    int courseWorkScore;
-
-    void whereToAttend(){
-        print_s((char*)"Not determined! The course will be held virtually or in person!\n");
-    }
-    int hasExam(){
-        return 1;
+//class Thing{
+//    int hello;
+//    void thingcall(){
+//    }
+//}
+//
+//class Course extends Thing{
+//    char name[20];
+//    int credit;
+//    int courseWorkScore;
+//
+//    void whereToAttend(){
+//        print_s((char*)"Not determined! The course will be held virtually or in person!\n");
+//    }
+//    int hasExam(){
+//        return 1;
 //        if(courseWorkScore == 100)
 //            return 0;
 //        else
 //            return 1;
-    }
-}
+//    }
+//}
 
 void main(){
-    class Course comp520;
-    comp520 = new class Course();
-    comp520.hello;
+//    class Course comp520;
+//    class Thing thing;
+//
+//    comp520 = new class Course();
+
+    thing = (class Thing) comp520;
+
 }
 
 //    int a;

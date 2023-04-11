@@ -66,8 +66,7 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 						case ClassType cT -> {
 							if(!class_sym_table.containsKey(cT)){
 								error("Class '" + cT + "' undefined");
-							}
-							else{
+							} else{
 								cT.classTypeDecl = class_sym_table.get(cT);
 							}
 							yield cT;
@@ -208,6 +207,7 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 								ClassDecl cd = class_sym_table.get(ct);
 								assert cd!=null;
 								boolean found = false;
+								boolean foundInParent = false;
 								for(VarDecl vd: cd.varDecls){
 									if(vd.name.equals(fieldname)){
 										found = true;
@@ -219,13 +219,16 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 
 									for(VarDecl vd: pd.varDecls){
 										if(vd.name.equals(fieldname)){
-											found = true;
+											foundInParent = true;
 										}
 									}
 								}
-								if(!found)
+								if(!found && !foundInParent)
 									error("Field '" + fieldname + "' does not exist in class '"
 											+ cd.name + "' or parent");
+								else if (found && foundInParent) {
+									error("Field '" + fieldname + "' cannot be overridden from child");
+								}
 							}
 							case null -> {yield BaseType.UNKNOWN;}
 
