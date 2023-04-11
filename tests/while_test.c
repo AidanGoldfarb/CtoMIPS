@@ -340,15 +340,17 @@ class A{
 }
 class B extends A{
     int b;
+    int foo(){
+    }
 }
 class C extends B{
     int c;
 }
 
-void main(){
-    class C c;
-    c = new class C();
-    c.foo();
+//void main(){
+//    class C c;
+//    c = new class C();
+//    c.foo();
 //    //class Course comp520;
 //    class Thing thing;
 //
@@ -358,7 +360,7 @@ void main(){
 //    //thing.credit;
 //    //comp520 = (class Course) thing;
 //
-}
+//}
 
 //    int a;
 //    a = set('b',2,'X');

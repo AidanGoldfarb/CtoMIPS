@@ -82,18 +82,22 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 						class_sym_table.put(cd.class_type,cd);
 					}
 					if(cd.parent_type != null){
-						//check parent exists and make sure fields are overridden
-						ClassDecl pd = class_sym_table.get(cd.parent_type);
-						if(pd==null)
+						//check parent exists and make sure fields are not overridden
+						var ancestors = getAncestors(cd.class_type);
+						//ClassDecl pd = class_sym_table.get(cd.parent_type);
+						if(ancestors.size()==0)
 							error("parent class does not exist");
 						else{
-							for(VarDecl child_vd: cd.varDecls){
-								for(VarDecl parent_vd: pd.varDecls){
-									if(child_vd.equals(parent_vd)){
-										error("cannot override field");
+							for(ClassDecl pd: ancestors){
+								for(VarDecl child_vd: cd.varDecls){
+									for(VarDecl parent_vd: pd.varDecls){
+										if(child_vd.equals(parent_vd)){
+											error("cannot override field");
+										}
 									}
 								}
 							}
+
 						}
 					}
 
@@ -452,6 +456,7 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 		ClassDecl cd = class_sym_table.get(ct);
 		ClassDecl pd = class_sym_table.get(cd.parent_type);
 		while(pd != null){
+			cd.parent_type.classTypeDecl = pd;
 			res.add(pd);
 			pd = class_sym_table.get(pd.parent_type);
 		}
