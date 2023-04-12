@@ -17,8 +17,29 @@ public class VtableFactory {
         this.lmap  = new LinkedHashMap<>();
     }
 
+    public void emit(ASTNode p){
+        visit(p);
+        //emit methods with labels
+        //emitMethods(p);
+    }
 
-    public void visit(ASTNode p) {
+//    private void emitMethods(ASTNode p){
+//        switch (p){
+//            case ClassDecl cd -> {
+//
+//            }
+//            case null -> System.out.println("unexpected err VTF");
+//            default -> {
+//                if(p.children() != null){
+//                    for(ASTNode child: p.children()){
+//                        visit(child);
+//                    }
+//                }
+//            }
+//        }
+//    }
+
+    private void visit(ASTNode p) {
         switch (p){
             case ClassDecl cd -> {
                 List<ClassDecl> ancestors = getAncestors(cd.class_type);
@@ -47,8 +68,10 @@ public class VtableFactory {
             }
             case null -> System.out.println("unexpected err VTF");
             default -> {
-                for(ASTNode child: p.children()){
-                    visit(child);
+                if(p.children() != null){
+                    for(ASTNode child: p.children()){
+                        visit(child);
+                    }
                 }
             }
         }

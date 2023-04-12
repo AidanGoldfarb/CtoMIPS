@@ -57,11 +57,14 @@ public abstract class CodeGen {
                     }
                 }
             }
-            case PointerType pointerType -> {
+            case PointerType ignored -> {
                 return 4;
             }
             case StructType structType -> {
                 return getStructSize(structType);
+            }
+            case ClassType ignored-> {
+                return 4;
             }
             default -> {assert false; return 0;}
         }

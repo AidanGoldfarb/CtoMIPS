@@ -334,20 +334,20 @@
 //    }
 //}
 class A{
-    int a;
-    int foo(){
+    int x;
+    void foo(){
+        int x;
     }
 }
 class B extends A{
-    int b;
-    int foo(){
+    int y;
+    void foo(){
+    }
+    void bar(){
     }
 }
-class C extends B{
-    int c;
-}
 
-//void main(){
+void main(){
 //    class C c;
 //    c = new class C();
 //    c.foo();
@@ -355,12 +355,12 @@ class C extends B{
 //    class Thing thing;
 //
 //    comp520 = new class Course();
-//
-//    //comp520.thingcall();
-//    //thing.credit;
-//    //comp520 = (class Course) thing;
-//
-//}
+
+    //comp520.thingcall();
+    //thing.credit;
+    //comp520 = (class Course) thing;
+
+}
 
 //    int a;
 //    a = set('b',2,'X');

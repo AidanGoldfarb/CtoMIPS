@@ -101,7 +101,9 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 						}
 					}
 
-
+					for(ASTNode child: cd.children()){
+						visit(child);
+					}
 
 					yield BaseType.NONE;
 				}
@@ -509,6 +511,12 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 					error("Incorrect return type");
 				}
 			}
+			case ClassDecl cd -> {
+				//explore methods for ret
+				for(FunDecl fd: cd.methods){
+					visit_snd(fd);
+				}
+			}
 			case StructTypeDecl structTypeDecl -> {
 			}
 			case VarDecl varDecl -> {
@@ -556,8 +564,6 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 			case PointerType pointerType -> {
 			}
 			case StructType structType -> {
-			}
-			case ClassDecl classDecl -> {
 			}
 			case ClassFunCallExpr classFunCallExpr -> {
 			}

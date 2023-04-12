@@ -18,7 +18,6 @@ public class ProgramCodeGen extends CodeGen {
     public ProgramCodeGen(AssemblyProgram asmProg) {
         this.asmProg = asmProg;
         init_code(this.asmProg);
-        //this.dataSection = asmProg.newSection(AssemblyProgram.Section.Type.DATA);
     }
 
     private void parse_strings(Program p, AssemblyProgram asmProg) {
@@ -41,7 +40,7 @@ public class ProgramCodeGen extends CodeGen {
         parse_strings(p,asmProg);
 
         //create vtables for classes
-        new VtableFactory(asmProg).visit(p);
+        new VtableFactory(asmProg).emit(p);
 
         // generate the code for each function
         p.decls.forEach((d) -> {
