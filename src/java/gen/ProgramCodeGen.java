@@ -13,11 +13,10 @@ import java.util.Objects;
 public class ProgramCodeGen extends CodeGen {
 
 
-    //private final AssemblyProgram.Section dataSection ;
-
     public ProgramCodeGen(AssemblyProgram asmProg) {
         this.asmProg = asmProg;
         init_code(this.asmProg);
+        asmProg.newSection(AssemblyProgram.Section.Type.DATA); //for global vars
     }
 
     private void parse_strings(Program p, AssemblyProgram asmProg) {
@@ -39,7 +38,7 @@ public class ProgramCodeGen extends CodeGen {
         //parse strings
         parse_strings(p,asmProg);
 
-        //create vtables for classes
+        //create vtables for classes and emit method code
         new VtableFactory(asmProg).emit(p);
 
         // generate the code for each function
@@ -47,7 +46,7 @@ public class ProgramCodeGen extends CodeGen {
             // nothing to do
             if (Objects.requireNonNull(d) instanceof FunDecl fd) {
                 FunCodeGen fcg = new FunCodeGen(asmProg);
-                fcg.visit(fd);
+                fcg.visit(fd,false);
             }
         });
     }

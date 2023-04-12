@@ -9,8 +9,6 @@ public final class ClassType implements Type {
     public String name;
     public ClassDecl classTypeDecl; // for type analyzer
 
-    public String vTableAddr;
-
     public ClassType(String name) {
         this.name = name;
     }

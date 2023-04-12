@@ -20,24 +20,29 @@ public class VtableFactory {
     public void emit(ASTNode p){
         visit(p);
         //emit methods with labels
-        //emitMethods(p);
+        emitMethods(p);
     }
 
-//    private void emitMethods(ASTNode p){
-//        switch (p){
-//            case ClassDecl cd -> {
-//
-//            }
-//            case null -> System.out.println("unexpected err VTF");
-//            default -> {
-//                if(p.children() != null){
-//                    for(ASTNode child: p.children()){
-//                        visit(child);
-//                    }
-//                }
-//            }
-//        }
-//    }
+    private void emitMethods(ASTNode p){
+        switch (p){
+            case ClassDecl cd -> {
+                for(FunDecl fd: cd.methods){
+                    //asmProg.newSection(AssemblyProgram.Section.Type.TEXT); //for global vars
+                    //AssemblyProgram.Section section = this.asmProg.getCurrentSection();
+                    //section.emit(fd.label);
+                    new FunCodeGen(this.asmProg).visit(fd,true);
+                }
+            }
+            case null -> System.out.println("unexpected err VTF");
+            default -> {
+                if(p.children() != null){
+                    for(ASTNode child: p.children()){
+                        emitMethods(child);
+                    }
+                }
+            }
+        }
+    }
 
     private void visit(ASTNode p) {
         switch (p){

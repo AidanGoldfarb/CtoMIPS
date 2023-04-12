@@ -332,22 +332,22 @@
 //        else
 //            return 1;
 //    }
-//}
+////}
 class A{
-    int x;
     void foo(){
-        int x;
+        int a;
+        a = 5;
     }
 }
-class B extends A{
-    int y;
-    void foo(){
-    }
-    void bar(){
-    }
-}
-
-void main(){
+//class B extends A{
+//    int y;
+//    void foo(){
+//    }
+//    void bar(){
+//    }
+//}
+//class A myA;
+//void main(){
 //    class C c;
 //    c = new class C();
 //    c.foo();
@@ -360,7 +360,7 @@ void main(){
     //thing.credit;
     //comp520 = (class Course) thing;
 
-}
+//}
 
 //    int a;
 //    a = set('b',2,'X');
