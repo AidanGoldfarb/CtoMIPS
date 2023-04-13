@@ -389,7 +389,11 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 						yield cfce.type;
 
 					}
-					case ClassInstantiationExpr cie -> cie.classType;
+					case ClassInstantiationExpr cie -> {
+						cie.classType.classTypeDecl = class_sym_table.get(cie.classType);
+						yield cie.classType;
+					}
+
 				};
 				expr.type = tout; //important
 				yield tout;

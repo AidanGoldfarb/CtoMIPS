@@ -41,6 +41,9 @@ public class ProgramCodeGen extends CodeGen {
         //create vtables for classes and emit method code
         new VtableFactory(asmProg).emit(p);
 
+        //handle class instantiations
+        new ClassMemAlloc(asmProg).visit(p);
+
         // generate the code for each function
         p.decls.forEach((d) -> {
             // nothing to do

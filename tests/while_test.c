@@ -333,10 +333,9 @@
 //            return 1;
 //    }
 ////}
-class A{
+class A extends B{
+    int x;
     void foo(){
-        int a;
-        a = 5;
     }
 }
 //class B extends A{
@@ -347,20 +346,10 @@ class A{
 //    }
 //}
 //class A myA;
-//void main(){
-//    class C c;
-//    c = new class C();
-//    c.foo();
-//    //class Course comp520;
-//    class Thing thing;
-//
-//    comp520 = new class Course();
-
-    //comp520.thingcall();
-    //thing.credit;
-    //comp520 = (class Course) thing;
-
-//}
+void main(){
+    class A a;
+    a = new class A();
+}
 
 //    int a;
 //    a = set('b',2,'X');

@@ -173,7 +173,8 @@ public class Parser {
                 decls.add(parseStructDecl());
             }
             //classdecl
-            else if(token.tokenClass == TokenClass.CLASS && lookAhead(2).tokenClass == TokenClass.LBRA){
+            else if(token.tokenClass == TokenClass.CLASS && (lookAhead(2).tokenClass == TokenClass.LBRA ||
+                    lookAhead(2).tokenClass == TokenClass.EXTENDS)){
                 decls.add(parseClassdecl());
             }
             //fundecl
@@ -197,13 +198,13 @@ public class Parser {
         }
         expect(TokenClass.EOF);
 //
-        print("\n");
-        print("Program(");
-        for(Decl e: decls){
-            System.out.println(e);
-        }
-        print(")");
-        print("\n");
+//        print("\n");
+//        print("Program(");
+//        for(Decl e: decls){
+//            System.out.println(e);
+//        }
+//        print(")");
+//        print("\n");
         return new Program(decls);
     }
     // includes are ignored, so does not need to return an AST node

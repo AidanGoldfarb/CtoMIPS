@@ -1,10 +1,14 @@
 package ast;
 
+import gen.asm.Label;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public final class ClassInstantiationExpr extends Expr{
 
     public ClassType classType;
+    public Label label; //for classmemalloc
 
     public ClassInstantiationExpr(ClassType classType){
         this.classType=classType;
@@ -16,6 +20,6 @@ public final class ClassInstantiationExpr extends Expr{
     }
     @Override
     public List<ASTNode> children() {
-        return null;
+        return new ArrayList<>();
     }
 }

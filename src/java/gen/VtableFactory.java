@@ -12,6 +12,7 @@ public class VtableFactory {
 
     AssemblyProgram asmProg;
     LinkedHashMap<String,Label> lmap;
+
     public VtableFactory(AssemblyProgram asmProg) {
         this.asmProg = asmProg;
         this.lmap  = new LinkedHashMap<>();

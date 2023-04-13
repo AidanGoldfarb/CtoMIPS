@@ -310,6 +310,10 @@ public class ExprCodeGen extends CodeGen {
                 section.emit(OpCode.LI,dst,sz);
                 return dst;
             }
+            case ClassInstantiationExpr cie -> {
+                section.emit(OpCode.LA,dst,cie.label);
+                return dst;
+            }
             default -> {
                 System.out.println("not implemented (ECG): " + e);
                 return null;
