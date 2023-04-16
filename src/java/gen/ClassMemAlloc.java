@@ -28,6 +28,9 @@ public class ClassMemAlloc {
                     new MemAllocCodeGen(this.asmProg).visit(vd);
                 }
             }
+            case ClassDecl cd -> {
+                //emit vtable
+            }
             default -> {
                 if(p.children() != null){
                     for(ASTNode child: p.children()){

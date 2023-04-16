@@ -33,6 +33,7 @@ public class NameAnalyzer extends BaseSemanticAnalyzer {
 								+ cd.name + "' not defined");
 					}
 				}
+
 				Scope oldScope = scope;
 				scope = new Scope(oldScope);
 				for(ASTNode child: cd.children()){
@@ -45,7 +46,7 @@ public class NameAnalyzer extends BaseSemanticAnalyzer {
 				//delay to type check
 				visit(cfce.class_expr);
 				//varExpr, fce
-				//TBH, could be done in type checking
+
 			}
 			case Block b -> {
 				// visit children
@@ -63,17 +64,15 @@ public class NameAnalyzer extends BaseSemanticAnalyzer {
 				}
 			}
 			case FunDecl fd -> {
-				Symbol s = scope.lookup(fd.name); //function decl are only global?
+				Symbol s = scope.lookupCurrent(fd.name); //function decl are only global?
 				if(s != null){
 					error("Function '" + fd.name + "' already defined");
 				}
 				else{
 					Scope oldScope = scope;
 					scope = new Scope(oldScope);
-					if(fd.params.size() != 0) {
-						for (VarDecl param : fd.params) {
-							visit(param);
-						}
+					for (VarDecl param : fd.params) {
+						visit(param);
 					}
 					oldScope.put(new FunSymbol(fd)); //for circular fun defs
 					visit(fd.block);
@@ -86,7 +85,8 @@ public class NameAnalyzer extends BaseSemanticAnalyzer {
 					error("Variable '" + vd.name + "' redefined");
 				}
 				else{
-					vd.global = scope.getOuter() == null;
+					vd.global = scope.getOuter() == null || vd.type instanceof ClassType;
+					//System.out.println("vardecl: " + vd + " " + vd.global);
 					scope.put(new VarSymbol(vd));
 				}
 			}

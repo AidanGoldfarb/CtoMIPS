@@ -6,6 +6,7 @@ import gen.asm.OpCode;
 import gen.asm.Register;
 
 import java.awt.dnd.InvalidDnDOperationException;
+import java.sql.Struct;
 
 /**
  * Generates code to calculate the address of an expression and return the result in a register.
@@ -34,7 +35,7 @@ public class AddrCodeGen extends CodeGen {
             }
             case FieldAccessExpr fae -> {
                 Register offset_reg = Register.Virtual.create();
-                Register adr = (new AddrCodeGen(this.asmProg)).visit(fae.object);
+                Register adr = visit(fae.object);
                 int offset = find_offset(fae.st,fae.field);
                 section.emit(OpCode.LI,offset_reg,offset);
                 section.emit(OpCode.ADD,adr,adr,offset_reg);
@@ -44,6 +45,7 @@ public class AddrCodeGen extends CodeGen {
                 return visit(aoe.expr);
             }
             case VarExpr v -> {
+                //System.out.println("addrcodegen: " +v.vd.label);
                 Register res = Register.Virtual.create();
                 if(v.vd.global){
                     section.emit(OpCode.LA,res,v.vd.label);
@@ -64,15 +66,30 @@ public class AddrCodeGen extends CodeGen {
         return null;
     }
 
-    private int find_offset(StructType st, String field) {
-        int offset = 0;
-        for(VarDecl vd: st.std.vardecls){
-            if(field.equals(vd.name)){
-                return offset;
+    private int find_offset(Type type, String field) {
+        if(type instanceof StructType){
+            StructType st = (StructType) type;
+            int offset = 0;
+            for(VarDecl vd: st.std.vardecls){
+                if(field.equals(vd.name)){
+                    return offset;
+                }
+                int size = getSize(vd.type);
+                offset+=size+padding(size);
             }
-            int size = getSize(vd.type);
-            offset+=size+padding(size);
         }
+        else if(type instanceof ClassType){
+            ClassType ct = (ClassType) type;
+            int offset = 0; //set to 4 for VFT
+            for(VarDecl vd: ct.classTypeDecl.varDecls){
+                if(field.equals(vd.name)){
+                    return offset;
+                }
+                int size = getSize(vd.type);
+                offset+=size+padding(size);
+            }
+        }
+
         assert false;
         return -1;
     }

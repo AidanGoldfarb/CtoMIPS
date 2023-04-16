@@ -63,8 +63,12 @@ public abstract class CodeGen {
             case StructType structType -> {
                 return getStructSize(structType);
             }
-            case ClassType ignored-> {
-                return 4;
+            case ClassType ct-> {
+                int size = 0;
+                for(VarDecl vd: ct.classTypeDecl.varDecls){
+                    size += getSize(vd.type);
+                }
+                return size;
             }
             default -> {assert false; return 0;}
         }

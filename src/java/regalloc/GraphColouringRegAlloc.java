@@ -38,19 +38,19 @@ public class GraphColouringRegAlloc implements AssemblyPass {
             }
         }
 
-        {//print CFG
-            for(ControlFlowGraph cfg: cfgs){
-                //System.out.println(cfg.preorderTraversal());
-                try{
-                    String name = cfg.section.toString().split("\n")[2];
-                    int len = name.length();
-                    name = name.substring(0,len-1);
-                    cfg.writeDotRep(name+"_cfg" + ".dot");
-                }catch (Exception e){
-
-                }
-            }
-        }
+//        {//print CFG
+//            for(ControlFlowGraph cfg: cfgs){
+//                //System.out.println(cfg.preorderTraversal());
+//                try{
+//                    String name = cfg.section.toString().split("\n")[2];
+//                    int len = name.length();
+//                    name = name.substring(0,len-1);
+//                    cfg.writeDotRep(name+"_cfg" + ".dot");
+//                }catch (Exception e){
+//
+//                }
+//            }
+//        }
 
         for(ControlFlowGraph cfg: cfgs){
             la.run(cfg);
@@ -59,19 +59,19 @@ public class GraphColouringRegAlloc implements AssemblyPass {
             igs.add(cur);
         }
 
-        { //Print IG
-            for(InterferenceGraph ig: igs){
-                //System.out.println(cfg.preorderTraversal());
-                try{
-                    String name = ig.section.toString().split("\n")[2];
-                    int len = name.length();
-                    name = name.substring(0,len-1);
-                    ig.writeDotRep(name+"_ig" + ".dot");
-                }catch (Exception e){
-
-                }
-            }
-        }
+//        { //Print IG
+//            for(InterferenceGraph ig: igs){
+//                //System.out.println(cfg.preorderTraversal());
+//                try{
+//                    String name = ig.section.toString().split("\n")[2];
+//                    int len = name.length();
+//                    name = name.substring(0,len-1);
+//                    ig.writeDotRep(name+"_ig" + ".dot");
+//                }catch (Exception e){
+//
+//                }
+//            }
+//        }
 
         for(InterferenceGraph ig: igs){
             var section = ig.section;

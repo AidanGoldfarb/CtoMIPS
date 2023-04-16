@@ -333,22 +333,38 @@
 //            return 1;
 //    }
 ////}
-class A extends B{
-    int x;
-    void foo(){
+class A{
+    void x(int a){
+    }
+    void y(){
     }
 }
-//class B extends A{
-//    int y;
-//    void foo(){
-//    }
-//    void bar(){
-//    }
-//}
-//class A myA;
+
+class B extends A{
+    void x(int a){
+    }
+}
+
+class C extends B{
+    void x(int a){
+    }
+}
+
+class D extends C{
+    int z;
+    void x(int a){
+    }
+}
 void main(){
     class A a;
+    class B b;
+    class C c;
+    class D d;
     a = new class A();
+    b = new class B();
+    c = new class C();
+    d = new class D();
+    d.y();
 }
 
 //    int a;

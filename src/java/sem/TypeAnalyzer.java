@@ -375,7 +375,6 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 							}
 						}
 
-
 						if(class_decl.parent_type != null){
 							ClassDecl parentClassDecl = class_sym_table.get(class_decl.parent_type);
 							for(FunDecl fce: parentClassDecl.methods){
@@ -386,6 +385,44 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 							}
 						}
 						if(!found) error("Method '" + cfce.fce + "' not found");
+
+
+						//set fun decl (could be cleaner and faster)
+						for(FunDecl fd: class_decl.methods){
+							if(fd.name.equals(cfce.fce.name)){
+								cfce.fce.fd = fd;
+							}
+						}
+
+						for(ClassDecl cd: getAncestors(class_decl.class_type)){
+							for(FunDecl fd: cd.methods){
+								if(fd.name.equals(cfce.fce.name)){
+									cfce.fce.fd = fd;
+								}
+							}
+						}
+
+
+						if(cfce.fce.fd == null){
+							error("method does not exist");
+						}
+						else{
+							//check args
+							if(cfce.fce.args.size() != cfce.fce.fd.params.size()){
+								error("Invalid number of args supplied to '" + cfce.fce.name + "'");
+							}
+							//arg type equality
+							int index = 0;
+							for(Expr arg: cfce.fce.args){
+								Type param_t = visit(arg);
+								Type arg_t = visit(cfce.fce.fd.params.get(index));
+								if(!arg_t.equals(param_t)){
+									error("Incorrect arg type supplied to '" + cfce.fce.name + "'." +
+											" Expected: '" + arg_t +"' got: '" + param_t +"'");
+								}
+								index++;
+							}
+						}
 						yield cfce.type;
 
 					}
@@ -406,6 +443,7 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 						visit(child);
 					}catch (Exception e){
 						System.out.println("Halting due to error");
+						e.printStackTrace();
 					}
 
 				}

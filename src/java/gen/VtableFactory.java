@@ -11,11 +11,9 @@ import java.util.List;
 public class VtableFactory {
 
     AssemblyProgram asmProg;
-    LinkedHashMap<String,Label> lmap;
 
     public VtableFactory(AssemblyProgram asmProg) {
         this.asmProg = asmProg;
-        this.lmap  = new LinkedHashMap<>();
     }
 
     public void emit(ASTNode p){
@@ -28,9 +26,6 @@ public class VtableFactory {
         switch (p){
             case ClassDecl cd -> {
                 for(FunDecl fd: cd.methods){
-                    //asmProg.newSection(AssemblyProgram.Section.Type.TEXT); //for global vars
-                    //AssemblyProgram.Section section = this.asmProg.getCurrentSection();
-                    //section.emit(fd.label);
                     new FunCodeGen(this.asmProg).visit(fd,true);
                 }
             }
@@ -48,9 +43,13 @@ public class VtableFactory {
     private void visit(ASTNode p) {
         switch (p){
             case ClassDecl cd -> {
+                LinkedHashMap<String,Label> lmap  = new LinkedHashMap<>();
                 List<ClassDecl> ancestors = getAncestors(cd.class_type);
                 List<ClassDecl> revAncestors = new ArrayList<>(ancestors);
                 Collections.reverse(revAncestors);
+
+
+                //cd.class_type.VtablePtr = Label.create(cd.name+"_vtbl");
 
                 ClassDecl top;
                 if(ancestors.size() > 0){
@@ -71,6 +70,12 @@ public class VtableFactory {
                     }
                 }
 
+//                AssemblyProgram.Section section = this.asmProg.getCurrentSection();
+//                assert section.type == AssemblyProgram.Section.Type.DATA;
+//                section.emit(cd.class_type.VtablePtr);
+//                for(FunDecl fd: cd.methods){
+//                    section.emit();
+//                }
             }
             case null -> System.out.println("unexpected err VTF");
             default -> {
