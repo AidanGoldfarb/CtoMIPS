@@ -52,7 +52,7 @@ public final class PointerType implements Type{
             o = (PointerType) o.type;
         }
         //System.out.println("ptrt: " + ptrt + " o: " + o);
-        return fst==snd && ptrt.type == o.type;
+        return fst==snd && ptrt.type.equals(o.type);
     }
 
     private boolean arr_eq_ptr(ArrayType fromType, PointerType toType) {

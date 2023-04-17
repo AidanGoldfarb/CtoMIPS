@@ -656,6 +656,8 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 					rt = BaseType.VOID;
 				}
 				if(!rt.equals(goal)){
+					System.out.println(rt);
+					System.out.println(goal);
 					error("incorrect return type");
 				}
 			}

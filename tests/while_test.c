@@ -368,6 +368,11 @@ class B foo(){
 
 void bar(class A a){
 }
+
+class C* zig(class B b, class B* bptr){
+    class C c;
+    return &c;
+}
 //void main(){
 //    class A a;
 //    class B b;
