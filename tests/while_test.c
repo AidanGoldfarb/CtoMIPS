@@ -358,12 +358,12 @@ class D extends C{
     }
 }
 
-class D foo(){
+class B foo(){
     class D d;
     d = new class D();
     d.q = 5;
     d.x(d.x(d.q));
-    return d;
+    return (class B)d;
 }
 
 void bar(class A a){

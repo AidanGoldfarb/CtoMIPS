@@ -326,8 +326,13 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 								assert cd != null; //hmm
 								boolean ccast = cd.class_type.equals(to_type);
 								boolean pcast = false;
-								if (cd.parent_type != null)
-									pcast = cd.parent_type.equals(to_type);
+
+								List<ClassDecl> ancestors = getAncestors((ClassType) from_type);
+								for(ClassDecl cldecl: ancestors){
+									ClassType cltype = cldecl.class_type;
+									pcast |= cltype.equals(to_type);
+								}
+
 
 								if (!ccast && !pcast)
 									error("invalid class cast");
