@@ -30,7 +30,7 @@ public class Parser {
     private final TokenClass [] first_fundecl = {TokenClass.INT,TokenClass.CHAR,TokenClass.VOID, TokenClass.STRUCT, TokenClass.CLASS};
     private final TokenClass [] first_type = {TokenClass.INT,TokenClass.CHAR,TokenClass.VOID, TokenClass.STRUCT, TokenClass.CLASS};
     //private final TokenClass [] first_structype = {TokenClass.STRUCT};
-    private final TokenClass [] first_params = {TokenClass.INT,TokenClass.CHAR,TokenClass.VOID, TokenClass.STRUCT};
+    private final TokenClass [] first_params = {TokenClass.INT,TokenClass.CHAR,TokenClass.VOID, TokenClass.STRUCT, TokenClass.CLASS};
     private final TokenClass [] first_stmt = {TokenClass.LBRA, TokenClass.WHILE, TokenClass.IF, TokenClass.RETURN,
                                               TokenClass.LPAR, TokenClass.IDENTIFIER, TokenClass.INT_LITERAL,
                                               TokenClass.MINUS, TokenClass.PLUS, TokenClass.CHAR_LITERAL,
@@ -197,7 +197,7 @@ public class Parser {
             }
         }
         expect(TokenClass.EOF);
-//
+
 //        print("\n");
 //        print("Program(");
 //        for(Decl e: decls){

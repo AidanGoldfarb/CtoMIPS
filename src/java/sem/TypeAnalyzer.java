@@ -235,6 +235,7 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 								for(VarDecl vd: cd.varDecls){
 									if (vd.name.equals(fieldname)) {
 										found = true;
+										t = vd.type;
 										break;
 									}
 								}
@@ -244,6 +245,7 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 									for(VarDecl vd: ancestor.varDecls){
 										if(vd.name.equals(fieldname)){
 											foundInParent = true;
+											t = vd.type;
 											break;
 										}
 									}
@@ -255,8 +257,11 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 								else if (found && foundInParent) {
 									error("Field '" + fieldname + "' cannot be overridden from child");
 								}
+								yield t;
 							}
-							case null -> {yield BaseType.UNKNOWN;}
+							case null -> {
+								yield BaseType.UNKNOWN;
+							}
 
 						}
 						yield BaseType.INT; //wrong
@@ -343,7 +348,6 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 					case VarExpr v -> {
 						//exists bc geterror count doesnt work.
 						if(v.vd == null){
-							//error("\'"+ v + "\' not defined");
 							yield v.type;
 						} else{
 							//System.out.println("not null: " + v.vd);
@@ -402,7 +406,6 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 							}
 						}
 
-
 						if(cfce.fce.fd == null){
 							error("method does not exist");
 						}
@@ -411,18 +414,23 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 							if(cfce.fce.args.size() != cfce.fce.fd.params.size()){
 								error("Invalid number of args supplied to '" + cfce.fce.name + "'");
 							}
-							//arg type equality
-							int index = 0;
-							for(Expr arg: cfce.fce.args){
-								Type param_t = visit(arg);
-								Type arg_t = visit(cfce.fce.fd.params.get(index));
-								if(!arg_t.equals(param_t)){
-									error("Incorrect arg type supplied to '" + cfce.fce.name + "'." +
-											" Expected: '" + arg_t +"' got: '" + param_t +"'");
+							else{
+								//arg type equality
+								int index = 0;
+								for(Expr arg: cfce.fce.args){
+									Type param_t = visit(arg);
+									Type arg_t = visit(cfce.fce.fd.params.get(index));
+									if(!arg_t.equals(param_t)){
+										error("Incorrect arg type supplied to '" + cfce.fce.name + "'." +
+												" Expected: '" + arg_t +"' got: '" + param_t +"'");
+									}
+									index++;
 								}
-								index++;
 							}
 						}
+
+						visit(cfce.fce);
+						cfce.type = cfce.fce.type;
 						yield cfce.type;
 
 					}
@@ -526,8 +534,10 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 					structType.std = struct_sym_table.get(structType);
 				}
 			}
-			case ClassType classType -> {
-				System.out.println("TA: class type not implemented (ete)");
+			case ClassType ct -> {
+				if(!class_sym_table.containsKey(ct)){
+					error("Class type does not exist");
+				}
 			}
 		}
 	}

@@ -332,7 +332,7 @@
 //        else
 //            return 1;
 //    }
-////}
+//}
 class A{
     void x(int a){
     }
@@ -341,6 +341,7 @@ class A{
 }
 
 class B extends A{
+    int q;
     void x(int a){
     }
 }
@@ -352,20 +353,32 @@ class C extends B{
 
 class D extends C{
     int z;
-    void x(int a){
+    int x(int a){
+        return a;
     }
 }
-void main(){
-    class A a;
-    class B b;
-    class C c;
+
+class D foo(){
     class D d;
-    a = new class A();
-    b = new class B();
-    c = new class C();
     d = new class D();
-    d.y();
+    d.q = 5;
+    d.x(d.x(d.q));
+    return d;
 }
+
+void bar(class A a){
+}
+//void main(){
+//    class A a;
+//    class B b;
+//    class C c;
+//    class D d;
+//    a = new class A();
+//    b = new class B();
+//    c = new class C();
+//    d = new class D();
+//    d.y();
+//}
 
 //    int a;
 //    a = set('b',2,'X');

@@ -45,6 +45,8 @@ public class NameAnalyzer extends BaseSemanticAnalyzer {
 			case ClassFunCallExpr cfce -> {
 				//delay to type check
 				visit(cfce.class_expr);
+				for(var arg: cfce.fce.args)
+					visit(arg);
 				//varExpr, fce
 
 			}
