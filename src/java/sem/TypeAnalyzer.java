@@ -78,32 +78,33 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 						error("class '" + cd + "' already declared");
 					}
 					else{
-						class_sym_table.put(cd.class_type,cd);
-					}
-					if(cd.parent_type != null){
-						//check parent exists and make sure fields are not overridden
-						var ancestors = getAncestors(cd.class_type);
-						//ClassDecl pd = class_sym_table.get(cd.parent_type);
-						if(ancestors.size()==0)
-							error("parent class does not exist");
-						else{
-							for(ClassDecl pd: ancestors){
-								for(VarDecl child_vd: cd.varDecls){
-									for(VarDecl parent_vd: pd.varDecls){
-										if(child_vd.equals(parent_vd)){
-											error("cannot override field");
+						if(cd.parent_type != null){
+							//check parent exists and make sure fields are not overridden
+							var ancestors = getAncestors(cd.class_type);
+							//ClassDecl pd = class_sym_table.get(cd.parent_type);
+							if(ancestors.size()==0)
+								error("parent class does not exist");
+							else{
+								for(ClassDecl pd: ancestors){
+									for(VarDecl child_vd: cd.varDecls){
+										for(VarDecl parent_vd: pd.varDecls){
+											if(child_vd.equals(parent_vd)){
+												error("cannot override field");
+											}
 										}
 									}
 								}
+
 							}
-
 						}
+
+						for(ASTNode child: cd.children()){
+							visit(child);
+						}
+						cd.class_type.classTypeDecl = cd;
+						class_sym_table.put(cd.class_type,cd);
 					}
 
-					for(ASTNode child: cd.children()){
-						visit(child);
-					}
-					cd.class_type.classTypeDecl = cd;
 					yield BaseType.NONE;
 				}
 			};
@@ -455,7 +456,7 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 						visit(child);
 					}catch (Exception e){
 						System.out.println("Halting due to error");
-						e.printStackTrace();
+						//e.printStackTrace();
 					}
 
 				}

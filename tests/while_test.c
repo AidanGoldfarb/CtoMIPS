@@ -334,12 +334,17 @@
 //    }
 //}
 class A{
-    int q;
+    class A q;
     int x(int a){
         return 1;
     }
     void y(){
     }
+}
+
+void main(){
+    class A a;
+    a = new class A();
 }
 
 //class B extends A{
@@ -360,13 +365,13 @@ class A{
 //    }
 //}
 //
-class A foo(){
-    class A a;
-    a = new class A();
-    a.q = 5;
-    a.x(a.x(a.q));
-    return (class A)a;
-}
+//class A foo(){
+//    class A a;
+//    a = new class A();
+//    a.q = 5;
+//    a.x(a.x(a.q));
+//    return (class A)a;
+//}
 //
 //void bar(class A a){
 //}
