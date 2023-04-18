@@ -21,7 +21,6 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 					for(VarDecl vd: fd.params){
 						Type t = visit(vd);
 						if(t instanceof PointerType || t instanceof ArrayType){
-							//System.out.println("setting isArgByRef to true in: " + vd);
 							vd.isArgByRef = true;
 						}
 					}
@@ -75,10 +74,10 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 					}
 				}
 				case ClassDecl cd -> {
-					if(class_sym_table.containsKey(cd.type)){
+					if(class_sym_table.containsKey(cd.class_type)){
 						error("class '" + cd + "' already declared");
-					} else{
-						//System.out.println("putting: " + cd.name);
+					}
+					else{
 						class_sym_table.put(cd.class_type,cd);
 					}
 					if(cd.parent_type != null){
@@ -104,7 +103,7 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 					for(ASTNode child: cd.children()){
 						visit(child);
 					}
-
+					cd.class_type.classTypeDecl = cd;
 					yield BaseType.NONE;
 				}
 			};

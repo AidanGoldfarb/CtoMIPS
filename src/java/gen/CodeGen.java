@@ -65,9 +65,9 @@ public abstract class CodeGen {
             }
             case ClassType ct-> {
                 int size = 0;
-                for(VarDecl vd: ct.classTypeDecl.varDecls){
-                    size += getSize(vd.type);
-                }
+//                for(VarDecl vd: ct.classTypeDecl.varDecls){
+//                    size += getSize(vd.type);
+//                }
                 return size;
             }
             default -> {assert false; return 0;}

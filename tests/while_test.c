@@ -334,45 +334,47 @@
 //    }
 //}
 class A{
-    void x(int a){
+    int q;
+    int x(int a){
+        return 1;
     }
     void y(){
     }
 }
 
-class B extends A{
-    int q;
-    void x(int a){
-    }
+//class B extends A{
+//    int q;
+//    void x(int a){
+//    }
+//}
+////
+//class C extends B{
+//    void x(int a){
+//    }
+//}
+//
+//class D extends C{
+//    int z;
+//    int x(int a){
+//        return a;
+//    }
+//}
+//
+class A foo(){
+    class A a;
+    a = new class A();
+    a.q = 5;
+    a.x(a.x(a.q));
+    return (class A)a;
 }
-
-class C extends B{
-    void x(int a){
-    }
-}
-
-class D extends C{
-    int z;
-    int x(int a){
-        return a;
-    }
-}
-
-class B foo(){
-    class D d;
-    d = new class D();
-    d.q = 5;
-    d.x(d.x(d.q));
-    return (class B)d;
-}
-
-void bar(class A a){
-}
-
-class C* zig(class B b, class B* bptr){
-    class C c;
-    return &c;
-}
+//
+//void bar(class A a){
+//}
+//
+//class C* zig(class B b, class B* bptr){
+//    class C c;
+//    return &c;
+//}
 //void main(){
 //    class A a;
 //    class B b;
