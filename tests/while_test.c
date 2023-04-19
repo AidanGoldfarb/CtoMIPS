@@ -333,18 +333,9 @@
 //            return 1;
 //    }
 //}
-class A{
-    class A q;
-    int x(int a){
-        return 1;
-    }
-    void y(){
-    }
-}
 
 void main(){
-    class A a;
-    a = new class A();
+    new class A();
 }
 
 //class B extends A{

@@ -35,11 +35,11 @@ public class Parser {
                                               TokenClass.LPAR, TokenClass.IDENTIFIER, TokenClass.INT_LITERAL,
                                               TokenClass.MINUS, TokenClass.PLUS, TokenClass.CHAR_LITERAL,
                                               TokenClass.STRING_LITERAL, TokenClass.ASTERIX, TokenClass.AND,
-                                              TokenClass.SIZEOF};
+                                              TokenClass.SIZEOF, TokenClass.NEW};
     private final TokenClass [] first_block = {TokenClass.LBRA};
     private final TokenClass [] first_exp = {TokenClass.LPAR, TokenClass.IDENTIFIER, TokenClass.INT_LITERAL, TokenClass.MINUS,
                                              TokenClass.PLUS, TokenClass.CHAR_LITERAL, TokenClass.STRING_LITERAL, TokenClass.ASTERIX,
-                                             TokenClass.AND, TokenClass.SIZEOF};
+                                             TokenClass.AND, TokenClass.SIZEOF,TokenClass.NEW};
 
 //    private final TokenClass [] first_exptail = {TokenClass.ASSIGN, TokenClass.LT, TokenClass.GT, TokenClass.LE,
 //                                                 TokenClass.GE, TokenClass.NE, TokenClass.PLUS, TokenClass.MINUS,

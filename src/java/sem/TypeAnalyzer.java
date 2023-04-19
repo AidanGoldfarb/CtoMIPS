@@ -78,6 +78,7 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 						error("class '" + cd + "' already declared");
 					}
 					else{
+						class_sym_table.put(cd.class_type,cd);
 						if(cd.parent_type != null){
 							//check parent exists and make sure fields are not overridden
 							var ancestors = getAncestors(cd.class_type);
@@ -102,7 +103,6 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 							visit(child);
 						}
 						cd.class_type.classTypeDecl = cd;
-						class_sym_table.put(cd.class_type,cd);
 					}
 
 					yield BaseType.NONE;
@@ -440,7 +440,13 @@ public class TypeAnalyzer extends BaseSemanticAnalyzer {
 
 					}
 					case ClassInstantiationExpr cie -> {
-						cie.classType.classTypeDecl = class_sym_table.get(cie.classType);
+						if(class_sym_table.get(cie.classType) == null){
+							error("class does not exist");
+						}
+						else{
+							cie.classType.classTypeDecl = class_sym_table.get(cie.classType);
+
+						}
 						yield cie.classType;
 					}
 
